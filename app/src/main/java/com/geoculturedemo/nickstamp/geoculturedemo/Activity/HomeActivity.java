@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.NetworkUtils;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -27,12 +28,19 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.bCurrentLocation:
-                Snackbar.make(bCurrentLocation , "Current Location" , Snackbar.LENGTH_SHORT).show();
+                if (!new NetworkUtils(HomeActivity.this).hasInternet())
+                    Snackbar.make(bCurrentLocation, "No internet connection", Snackbar.LENGTH_SHORT).show();
+                else
+                    Snackbar.make(bCurrentLocation, "Current Location", Snackbar.LENGTH_SHORT).show();
+
                 break;
             case R.id.bPickLocation:
-                Snackbar.make(bPickLocation , "Pick Location" , Snackbar.LENGTH_SHORT).show();
+                if (!new NetworkUtils(HomeActivity.this).hasInternet())
+                    Snackbar.make(bCurrentLocation, "No internet connection", Snackbar.LENGTH_SHORT).show();
+                else
+                    Snackbar.make(bPickLocation, "Pick Location", Snackbar.LENGTH_SHORT).show();
                 break;
         }
     }
