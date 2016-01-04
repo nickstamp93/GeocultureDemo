@@ -7,10 +7,68 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.geoculturedemo.nickstamp.geoculturedemo.HomeActivity">
+    tools:context=".Activity.HomeActivity">
 
     <TextView
+        android:id="@+id/tvAppTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:text="@string/app_name"
+        android:textSize="30sp" />
+
+
+    <FrameLayout
+        android:id="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvAppTitle"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorAccent"
+        android:clickable="false">
+
+        <TextView
+            android:id="@+id/bCurrentLocation"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="EXPLORE"
+            android:textSize="30sp" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvOr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ll1"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
+        android:text="OR"
+        android:textSize="24sp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvOr"
+        android:background="@color/colorAccent"
+        android:clickable="false">
+
+        <TextView
+            android:id="@+id/bPickLocation"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="?selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="PICK LOCATION"
+            android:textSize="30sp" />
+
+    </FrameLayout>
+
+
 </RelativeLayout>
