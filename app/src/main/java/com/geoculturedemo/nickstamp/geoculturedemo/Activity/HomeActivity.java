@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
-import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
-import com.geoculturedemo.nickstamp.geoculturedemo.Utils.NetworkUtils;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
