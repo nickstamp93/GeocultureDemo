@@ -52,4 +52,12 @@ public class Location {
     public void setCountry(String country) {
         this.country = country;
     }
+
+    public String getFullName() {
+        if (city.equals(area)) {
+            return city + " , " + country;
+        } else {
+            return area + " , " + city + " , " + country;
+        }
+    }
 }

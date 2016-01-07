@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
@@ -17,6 +18,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
     Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
+    private TextView tvCurrentLocation;
 
     private GPSUtils gpsUtils;
     private LocationUtils locationUtils;
@@ -28,6 +30,17 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        initViews();
+
+        locationUtils = new LocationUtils(this);
+        gpsUtils = new GPSUtils(this);
+
+        manageGPSCards();
+
+
+    }
+
+    private void initViews() {
         cardLoading = findViewById(R.id.cardSearching);
         cardNoLocation = findViewById(R.id.cardNoLocation);
         cardLocationFound = findViewById(R.id.cardLocation);
@@ -47,22 +60,28 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bRetry = (Button) findViewById(R.id.bRetry);
         bRetry.setOnClickListener(this);
 
-        locationUtils = new LocationUtils();
-
-        gpsUtils = new GPSUtils(this);
-        manageGPSCards();
-
-
+        tvCurrentLocation = (TextView) findViewById(R.id.tvCurrentLocation);
 
     }
 
     private void manageGPSCards() {
         if (gpsUtils.canGetLocation()) {
             cardLoading.setVisibility(View.GONE);
-            cardNoLocation.setVisibility(View.GONE);
-            cardLocationFound.setVisibility(View.VISIBLE);
 
-            //TODO get location info from the coordinates found
+            location = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
+            if (location != null) {
+                //if location was found,
+
+                Toast.makeText(HomeActivity.this, "City:" + location.getCity(), Toast.LENGTH_LONG).show();
+
+                tvCurrentLocation.setText(locationUtils.toGreekLocale(location).getFullName());
+
+                cardNoLocation.setVisibility(View.GONE);
+                cardLocationFound.setVisibility(View.VISIBLE);
+            } else {
+                cardNoLocation.setVisibility(View.VISIBLE);
+                cardLocationFound.setVisibility(View.GONE);
+            }
 
         } else {
             gpsUtils.showGPSErrorDialog();
@@ -80,13 +99,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.bExploreLocal:
                 Toast.makeText(HomeActivity.this, "You Explore locally!!!", Toast.LENGTH_LONG).show();
+                //TODO launch tabs activity with the content for the current location
                 break;
             case R.id.cardbuttonPickLocation:
                 cardPickLocation.setVisibility(View.VISIBLE);
                 cardButtonPickLocation.setVisibility(View.GONE);
+                //TODO launch place picker activity for the user to pick a location
                 break;
             case R.id.bExploreCustom:
                 Toast.makeText(HomeActivity.this, "You Explore Custom location!!!", Toast.LENGTH_LONG).show();
+                //TODO launch tabs activity with the content for the custom location
                 break;
         }
     }

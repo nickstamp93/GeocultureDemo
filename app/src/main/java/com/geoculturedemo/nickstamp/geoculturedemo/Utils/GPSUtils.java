@@ -54,6 +54,7 @@ public class GPSUtils extends Service implements LocationListener {
     }
 
     public Location getLocation() {
+
         try {
             locationManager = (LocationManager) context
                     .getSystemService(LOCATION_SERVICE);
