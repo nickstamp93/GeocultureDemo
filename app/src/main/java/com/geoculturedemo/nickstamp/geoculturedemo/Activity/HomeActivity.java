@@ -1,5 +1,6 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,19 +12,26 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlacePicker;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+
+
+    int PLACE_PICKER_REQUEST = 1;
 
     View cardLoading, cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
 
 
     Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
-    private TextView tvCurrentLocation;
+    private TextView tvCurrentLocation, tvCustomLocation;
 
     private GPSUtils gpsUtils;
     private LocationUtils locationUtils;
 
-    private Location location;
+    private Location currentLocation, customLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +69,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         bRetry.setOnClickListener(this);
 
         tvCurrentLocation = (TextView) findViewById(R.id.tvCurrentLocation);
+        tvCustomLocation = (TextView) findViewById(R.id.tvCustomLocation);
 
     }
 
@@ -68,13 +77,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         if (gpsUtils.canGetLocation()) {
             cardLoading.setVisibility(View.GONE);
 
-            location = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
-            if (location != null) {
-                //if location was found,
+            currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
+            if (currentLocation != null) {
+                //if currentLocation was found,
 
-                Toast.makeText(HomeActivity.this, "City:" + location.getCity(), Toast.LENGTH_LONG).show();
-
-                tvCurrentLocation.setText(locationUtils.toGreekLocale(location).getFullName());
+                tvCurrentLocation.setText(currentLocation.getFullName() + "\n");
+                tvCurrentLocation.append(locationUtils.toGreekLocale(currentLocation).getFullName());
 
                 cardNoLocation.setVisibility(View.GONE);
                 cardLocationFound.setVisibility(View.VISIBLE);
@@ -98,18 +106,62 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 manageGPSCards();
                 break;
             case R.id.bExploreLocal:
-                Toast.makeText(HomeActivity.this, "You Explore locally!!!", Toast.LENGTH_LONG).show();
-                //TODO launch tabs activity with the content for the current location
+//                Toast.makeText(HomeActivity.this, "You Explore locally!!!", Toast.LENGTH_LONG).show();
+                //TODO launch tabs activity with the content for the current currentLocation
+                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
                 break;
             case R.id.cardbuttonPickLocation:
-                cardPickLocation.setVisibility(View.VISIBLE);
-                cardButtonPickLocation.setVisibility(View.GONE);
-                //TODO launch place picker activity for the user to pick a location
+//                cardPickLocation.setVisibility(View.VISIBLE);
+//                cardButtonPickLocation.setVisibility(View.GONE);
+                //TODO launch place picker activity for the user to pick a currentLocation
+                try {
+
+                    PlacePicker.IntentBuilder intentBuilder =
+
+                            new PlacePicker.IntentBuilder();
+
+                    Intent intent = intentBuilder.build(HomeActivity.this);
+
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
+
+                } catch (GooglePlayServicesRepairableException e) {
+                    Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+
+                    e.printStackTrace();
+
+                }
+
                 break;
             case R.id.bExploreCustom:
-                Toast.makeText(HomeActivity.this, "You Explore Custom location!!!", Toast.LENGTH_LONG).show();
-                //TODO launch tabs activity with the content for the custom location
+//                Toast.makeText(HomeActivity.this, "You Explore Custom currentLocation!!!", Toast.LENGTH_LONG).show();
+                //TODO launch tabs activity with the content for the custom currentLocation
+                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
                 break;
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+
+                Place place = PlacePicker.getPlace(data, this);
+
+                customLocation = locationUtils.getLocation(place.getLatLng().latitude, place.getLatLng().longitude);
+                if (customLocation != null) {
+                    //if custom location was found,
+
+                    tvCustomLocation.setText(customLocation.getFullName() + "\n");
+                    tvCustomLocation.append(locationUtils.toGreekLocale(customLocation).getFullName());
+
+                    cardButtonPickLocation.setVisibility(View.GONE);
+                    cardPickLocation.setVisibility(View.VISIBLE);
+                }
+
+            }
         }
     }
 
