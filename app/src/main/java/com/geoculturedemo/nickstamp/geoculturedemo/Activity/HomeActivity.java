@@ -7,6 +7,7 @@ import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.NetworkUtils;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -15,12 +16,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        GPSUtils gpsUtils = new GPSUtils(this);
-        if (gpsUtils.canGetLocation())
-            Toast.makeText(this, "Long:" + gpsUtils.getLongitude() + " Lat: " + gpsUtils.getLatitude(), Toast.LENGTH_SHORT).show();
-        else
-            gpsUtils.showGPSErrorDialog();
 
 
     }

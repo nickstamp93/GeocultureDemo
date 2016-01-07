@@ -169,7 +169,7 @@ public class GPSUtils extends Service implements LocationListener {
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
 
         // Setting Icon to Dialog
-        //alertDialog.setIcon(R.drawable.delete);
+        alertDialog.setIcon(android.R.drawable.stat_notify_error);
 
         // On pressing Settings button
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
