@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.MovieListFragment;
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
 public class TabsActivity extends AppCompatActivity {
@@ -68,7 +70,12 @@ public class TabsActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+//            return PlaceholderFragment.newInstance(position + 1);
+            Location location = new Location();
+            location.setCity("City");
+            location.setArea("Area");
+            location.setCountry("Country");
+            return new MovieListFragment().newInstance(location);
         }
 
         @Override
