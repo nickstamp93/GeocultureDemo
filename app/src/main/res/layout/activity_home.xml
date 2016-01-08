@@ -9,6 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:animateLayoutChanges="true"
     tools:context=".Activity.HomeActivity">
 
     <android.support.v7.widget.CardView
@@ -41,11 +42,47 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:id="@+id/cardLocal"
+        android:id="@+id/cardNoLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="16dp"
+        android:visibility="gone"
+        cardview:contentPadding="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Can't find location"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bRetry"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/button"
+                android:layout_marginTop="20dp"
+                android:background="?selectableItemBackground"
+                android:text="RETRY"
+                android:textColor="@color/colorAccent"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,10 +105,11 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/tvCurrentLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Serres, Greece"
+                    android:text="N/A"
                     android:textSize="24sp"
                     android:textStyle="bold|italic" />
 
@@ -82,7 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/button"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="16dp"
                 android:background="?selectableItemBackground"
                 android:text="EXPLORE"
                 android:textColor="@color/colorAccent"
@@ -98,7 +136,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp">
+        android:layout_marginTop="8dp"
+        android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -121,10 +160,11 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/tvCustomLocation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Thessaloniki, Greece"
+                    android:text="N/A"
                     android:textSize="24sp"
                     android:textStyle="bold|italic" />
 
@@ -148,9 +188,9 @@
                     android:textSize="20sp" />
 
                 <Button
+                    android:id="@+id/bExploreCustom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/button"
                     android:layout_weight="1"
                     android:background="?selectableItemBackground"
                     android:text="EXPLORE"
