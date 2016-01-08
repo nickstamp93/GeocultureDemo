@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -44,6 +45,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        startActivity(new Intent(this , TabsActivity.class));
+
+        /*setUpToolbar();
+
         //initialize the UI vies
         initViews();
 
@@ -52,8 +57,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         gpsUtils = new GPSUtils(this);
 
         //hide/show appropriate cards
-        manageGPSCards();
+        manageGPSCards();*/
 
+
+    }
+
+    private void setUpToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     /**
