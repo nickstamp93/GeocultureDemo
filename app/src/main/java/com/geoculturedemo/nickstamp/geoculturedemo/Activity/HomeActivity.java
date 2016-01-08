@@ -1,5 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,21 +18,25 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
 
-    int PLACE_PICKER_REQUEST = 1;
+    private static final int PLACE_PICKER_REQUEST = 1;
+    private LatLngBounds lastBounds = null;
 
-    View cardLoading, cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
-
-
-    Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
+    //Views
+    private View cardLoading, cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
+    private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
+    //Gps utilities
     private GPSUtils gpsUtils;
+    //Location Utilities
     private LocationUtils locationUtils;
 
+    //Location objects for current location and custom location
     private Location currentLocation, customLocation;
 
     @Override
@@ -38,16 +44,21 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        //initialize the UI vies
         initViews();
 
+        //initialize the utility objects
         locationUtils = new LocationUtils(this);
         gpsUtils = new GPSUtils(this);
 
+        //hide/show appropriate cards
         manageGPSCards();
-
 
     }
 
+    /**
+     * Initializes the UI views such as the cards , buttons etc
+     */
     private void initViews() {
         cardLoading = findViewById(R.id.cardSearching);
         cardNoLocation = findViewById(R.id.cardNoLocation);
@@ -58,6 +69,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         cardButtonPickLocation.setOnClickListener(this);
 
         bPickLocation = (Button) findViewById(R.id.bPickLocation);
+        bPickLocation.setOnClickListener(this);
 
         bExploreCustom = (Button) findViewById(R.id.bExploreCustom);
         bExploreCustom.setOnClickListener(this);
@@ -73,25 +85,52 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * Show or hide each card according to the status of the GPS and the Network
+     */
     private void manageGPSCards() {
+
+        //if can get the current device location , hide the Loading card
+        //show the Current Location card
         if (gpsUtils.canGetLocation()) {
             cardLoading.setVisibility(View.GONE);
 
+            //get current location
             currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
             if (currentLocation != null) {
                 //if currentLocation was found,
 
-                tvCurrentLocation.setText(currentLocation.getFullName() + "\n");
-                tvCurrentLocation.append(locationUtils.toGreekLocale(currentLocation).getFullName());
+                tvCurrentLocation.setText(currentLocation.getFullName());
+//                tvCurrentLocation.append(locationUtils.toGreekLocale(currentLocation).getFullName());
 
-                cardNoLocation.setVisibility(View.GONE);
-                cardLocationFound.setVisibility(View.VISIBLE);
+                cardNoLocation.animate()
+                        .translationX(cardNoLocation.getWidth())
+                        .setDuration(1000)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardNoLocation.setVisibility(View.GONE);
+                            }
+                        });
+                cardLocationFound.animate()
+                        .alpha(0.0f)
+                        .setDuration(1000)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardLocationFound.setVisibility(View.VISIBLE);
+                            }
+                        });
+
             } else {
                 cardNoLocation.setVisibility(View.VISIBLE);
                 cardLocationFound.setVisibility(View.GONE);
             }
 
         } else {
+            //can't get location, should turn on GPS
             gpsUtils.showGPSErrorDialog();
             cardLoading.setVisibility(View.GONE);
             cardNoLocation.setVisibility(View.VISIBLE);
@@ -106,41 +145,47 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 manageGPSCards();
                 break;
             case R.id.bExploreLocal:
-//                Toast.makeText(HomeActivity.this, "You Explore locally!!!", Toast.LENGTH_LONG).show();
-                //TODO launch tabs activity with the content for the current currentLocation
                 startActivity(new Intent(HomeActivity.this, TabsActivity.class));
                 break;
             case R.id.cardbuttonPickLocation:
-//                cardPickLocation.setVisibility(View.VISIBLE);
-//                cardButtonPickLocation.setVisibility(View.GONE);
-                //TODO launch place picker activity for the user to pick a currentLocation
-                try {
-
-                    PlacePicker.IntentBuilder intentBuilder =
-
-                            new PlacePicker.IntentBuilder();
-
-                    Intent intent = intentBuilder.build(HomeActivity.this);
-
-                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
-
-                } catch (GooglePlayServicesRepairableException e) {
-                    Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
-
-                } catch (GooglePlayServicesNotAvailableException e) {
-                    Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
-
-                    e.printStackTrace();
-
-                }
-
+                launchPlacePicker();
+                break;
+            case R.id.bPickLocation:
+                launchPlacePicker();
                 break;
             case R.id.bExploreCustom:
-//                Toast.makeText(HomeActivity.this, "You Explore Custom currentLocation!!!", Toast.LENGTH_LONG).show();
-                //TODO launch tabs activity with the content for the custom currentLocation
                 startActivity(new Intent(HomeActivity.this, TabsActivity.class));
                 break;
+        }
+    }
+
+    /**
+     * Launches an intent with a Place picker Activity, so the user can search and pick
+     * a custom location to explore
+     */
+    private void launchPlacePicker() {
+        try {
+
+            PlacePicker.IntentBuilder intentBuilder =
+
+                    new PlacePicker.IntentBuilder();
+
+            //starting position should be the last one picked, if any
+            if (lastBounds != null)
+                intentBuilder.setLatLngBounds(lastBounds);
+            Intent intent = intentBuilder.build(HomeActivity.this);
+
+            startActivityForResult(intent, PLACE_PICKER_REQUEST);
+
+        } catch (GooglePlayServicesRepairableException e) {
+            Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+            e.printStackTrace();
+
+        } catch (GooglePlayServicesNotAvailableException e) {
+            Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+
+            e.printStackTrace();
+
         }
     }
 
@@ -149,16 +194,40 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (resultCode == RESULT_OK) {
 
                 Place place = PlacePicker.getPlace(data, this);
+                lastBounds = PlacePicker.getLatLngBounds(data);
 
+                //create a location object from the coordinates picked by the user in the place picker
                 customLocation = locationUtils.getLocation(place.getLatLng().latitude, place.getLatLng().longitude);
                 if (customLocation != null) {
                     //if custom location was found,
 
-                    tvCustomLocation.setText(customLocation.getFullName() + "\n");
-                    tvCustomLocation.append(locationUtils.toGreekLocale(customLocation).getFullName());
+                    tvCustomLocation.setText(customLocation.getFullName());
+//                    tvCustomLocation.append(locationUtils.toGreekLocale(customLocation).getFullName());
 
-                    cardButtonPickLocation.setVisibility(View.GONE);
-                    cardPickLocation.setVisibility(View.VISIBLE);
+                    cardButtonPickLocation.animate()
+                            .translationX(cardButtonPickLocation.getWidth())
+                            .setDuration(1000)
+                            .setListener(new AnimatorListenerAdapter() {
+                                @Override
+                                public void onAnimationEnd(Animator animation) {
+                                    super.onAnimationEnd(animation);
+                                    cardButtonPickLocation.setVisibility(View.GONE);
+                                }
+                            });
+                    if (cardPickLocation.getVisibility() != View.VISIBLE)
+                        cardPickLocation.animate()
+                                .alpha(0.0f)
+                                .setDuration(1000)
+                                .setListener(new AnimatorListenerAdapter() {
+                                    @Override
+                                    public void onAnimationEnd(Animator animation) {
+                                        super.onAnimationEnd(animation);
+                                        cardPickLocation.setVisibility(View.VISIBLE);
+                                    }
+                                });
+                } else {
+                    cardButtonPickLocation.setVisibility(View.VISIBLE);
+                    cardPickLocation.setVisibility(View.GONE);
                 }
 
             }
