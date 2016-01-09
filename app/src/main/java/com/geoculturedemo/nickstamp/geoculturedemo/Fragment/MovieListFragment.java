@@ -63,13 +63,14 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             location = (Location) getArguments().getSerializable(ARG_LOCATION);
-//            Toast.makeText(getContext(), "Location:" + location.getFullName(), Toast.LENGTH_LONG).show();
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        //TODO somehow give the user the option to load more(distinct for area-city???)
 
         if (fragmentView == null) {
 
