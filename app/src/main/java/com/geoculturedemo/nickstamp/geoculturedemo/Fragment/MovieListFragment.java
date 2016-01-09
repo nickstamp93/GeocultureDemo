@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -80,15 +81,18 @@ public class MovieListFragment extends Fragment {
             linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
 
-            urlCity = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location.getCity() + SORT_BY_YEAR;
+            parseMovies();
 
-            moviesParser = new MovieParser();
-            moviesParser.execute();
 
         }
 
 
         return fragmentView;
+    }
+
+    private void parseMovies() {
+        moviesParser = new MovieParser();
+        moviesParser.execute();
     }
 
     public void setOnMovieClickedListener(OnMovieClicked listener) {
@@ -108,6 +112,8 @@ public class MovieListFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
 
+            movies.clear();
+
             progressDialog = new ProgressDialog(context);
             progressDialog.setTitle("IMDB Search");
             progressDialog.setMessage("Searching for " + location.getFullName());
@@ -118,35 +124,9 @@ public class MovieListFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            try {
-                // Connect to the web site
-                Document document = Jsoup.connect(urlCity).get();
-                // Using Elements to get the class data
-                Elements tables = document.select("table");
-                Element table = tables.get(0);
-                Elements rows = table.getElementsByTag("tr");
-                for (int i = 1; i < rows.size(); i++) {
+            parseLocation(location.getArea());
+            parseLocation(location.getCity());
 
-                    Element row = rows.get(i);
-                    String imgUrl = row.getElementsByClass("image").get(0).getElementsByTag("img").attr("src");
-
-                    Element elementTitle = row.getElementsByClass("title").get(0);
-                    String title = elementTitle.getElementsByTag("a").get(0).text();
-                    String url = elementTitle.getElementsByTag("a").get(0).attr("href");
-                    String genre = elementTitle.getElementsByClass("genre").text();
-                    String runtime = elementTitle.getElementsByClass("runtime").text();
-                    String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
-
-                    Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
-                    movies.add(movie);
-
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-            }
             return null;
         }
 
@@ -163,8 +143,85 @@ public class MovieListFragment extends Fragment {
 
             progressDialog.dismiss();
 
+        }
+
+        private void parseLocation(String location) {
+
+            urlCity = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location + SORT_BY_YEAR;
+
+            //try to connect 3 times
+            int tries = 0;
+            boolean success = false;
+
+            while (tries < 3 && !success) {
+                tries++;
+                try {
+                    // Connect to the web site
+                    Document document = Jsoup.connect(urlCity).get();
+                    success = true;
+
+                    //this movie will be used to locate the header inside the adapter
+                    Movie notRealMovie = new Movie("", "No results found for \" " + location + " \"", "", "", "-1", "");
+                    //save the pos of the header, to change it later
+                    int headerPos = movies.size();
+                    movies.add(notRealMovie);
+
+                    int moviesCount = 0;
+                    // Using Elements to get the class data
+                    Elements tables = document.select("table");
+                    Element table = tables.get(0);
+                    Elements rows = table.getElementsByTag("tr");
+                    for (int i = 1; i < rows.size(); i++) {
+
+                        Element row = rows.get(i);
+                        String imgUrl = row.getElementsByClass("image").get(0).getElementsByTag("img").attr("src");
+
+                        Element elementTitle = row.getElementsByClass("title").get(0);
+                        String title = elementTitle.getElementsByTag("a").get(0).text();
+                        String url = elementTitle.getElementsByTag("a").get(0).attr("href");
+                        String genre = elementTitle.getElementsByClass("genre").text();
+                        String runtime = elementTitle.getElementsByClass("runtime").text();
+                        String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
+
+                        Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
+                        boolean found = false;
+                        for (Movie movie1 : movies) {
+                            if (movie1 != null && movie1.getTitle().equals(movie.getTitle())) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            movies.add(movie);
+                            moviesCount++;
+                        }
+
+                    }
+
+                    movies.get(headerPos).setTitle(moviesCount + " results for \" " + location + " \"");
+
+                } catch (IOException e) {
+                    Log.i("nikos", "IO Exception");
+                    e.printStackTrace();
+                } catch (IndexOutOfBoundsException e) {
+                    Log.i("nikos", "Out of bounds Exception");
+                    e.printStackTrace();
+                }
+            }
+            if (!success) {
+                Snackbar.make(fragmentView, "Something went wrong", Snackbar.LENGTH_LONG)
+                        .setAction("Retry", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                            }
+                        })
+                        .show();
+            }
 
         }
+
+
     }
 
 }

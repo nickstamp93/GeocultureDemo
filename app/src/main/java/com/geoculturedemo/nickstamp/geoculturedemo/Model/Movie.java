@@ -18,12 +18,6 @@ public class Movie {
 
     private String url;
 
-    public Movie(String title, String genre, String runtime, String rating) {
-        this.title = title;
-        this.genre = genre;
-        this.runtime = runtime;
-        this.rating = rating;
-    }
 
     public Movie(String url, String title, String rating, String imgUrl, String runtime, String genre) {
 
@@ -49,7 +43,11 @@ public class Movie {
     }
 
     public String getRating() {
-        return rating;
+
+        if(rating.trim().length()>0)
+            return rating;
+        else
+            return "-";
     }
 
     public void setRating(String rating) {
@@ -84,7 +82,10 @@ public class Movie {
     }
 
     public String getRuntime() {
-        return runtime;
+        if(runtime.trim().length()>0)
+            return runtime;
+        else
+            return "-";
     }
 
     public void setRuntime(String runtime) {

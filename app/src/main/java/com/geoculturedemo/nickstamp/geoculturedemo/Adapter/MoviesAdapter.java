@@ -21,6 +21,10 @@ import java.util.ArrayList;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesViewHolder> {
 
 
+    private static final int VIEW_TYPE_MOVIE = 1;
+    private static final int VIEW_TYPE_HEADER = 0;
+
+
     private Context context;
     private ArrayList<Movie> movies;
     private OnMovieClicked onMovieClicked;
@@ -37,26 +41,36 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     @Override
     public MoviesAdapter.MoviesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = inflater.inflate(R.layout.list_item_movie, parent, false);
+        if (viewType == VIEW_TYPE_HEADER) {
+            View view = inflater.inflate(R.layout.list_item_header, parent, false);
 
-        return new MoviesViewHolder(view);
+            return new MoviesViewHolder(view, VIEW_TYPE_HEADER);
+        } else {
+            View view = inflater.inflate(R.layout.list_item_movie, parent, false);
+
+            return new MoviesViewHolder(view, VIEW_TYPE_MOVIE);
+        }
 
     }
 
     @Override
     public void onBindViewHolder(MoviesAdapter.MoviesViewHolder holder, int position) {
 
-        Movie movie = movies.get(position);
+        if (holder.type == VIEW_TYPE_MOVIE) {
+            Movie movie = movies.get(position);
 
-        holder.movieTitle.setText(movie.getTitle());
-        holder.movieGenre.setText(movie.getGenre());
-        holder.movieRuntime.setText(movie.getRuntime());
-        holder.movieRating.setText(movie.getRating());
-//        Picasso.with(context).load(R.drawable.ic_image)
-        Picasso.with(context).load(movies.get(position).getImgUrl())
-                .resize(54, 74)
-                .centerInside()
-                .into(holder.movieImage);
+            holder.movieTitle.setText(movie.getTitle());
+            holder.movieGenre.setText(movie.getGenre());
+            holder.movieRuntime.setText(movie.getRuntime());
+            holder.movieRating.setText(movie.getRating());
+            Picasso.with(context).load(movies.get(position).getImgUrl())
+                    .resize(54, 74)
+                    .centerInside()
+                    .into(holder.movieImage);
+        } else {
+            holder.tvHeaderResults.setText(movies.get(position).getTitle());
+        }
+
 
     }
 
@@ -65,21 +79,40 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         return movies.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        if (movies.get(position).getRuntime().equals("-1"))
+            return VIEW_TYPE_HEADER;
+        else
+            return VIEW_TYPE_MOVIE;
+    }
+
     public class MoviesViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+        int type;
 
         ImageView movieImage;
         TextView movieTitle, movieGenre, movieRating, movieRuntime;
 
-        public MoviesViewHolder(View itemView) {
+        TextView tvHeaderResults;
+
+        public MoviesViewHolder(View itemView, int viewType) {
             super(itemView);
 
-            movieImage = (ImageView) itemView.findViewById(R.id.ivMovieImage);
-            movieTitle = (TextView) itemView.findViewById(R.id.tvMovieTitle);
-            movieGenre = (TextView) itemView.findViewById(R.id.tvMovieGenre);
-            movieRating = (TextView) itemView.findViewById(R.id.tvMovieRating);
-            movieRuntime = (TextView) itemView.findViewById(R.id.tvMovieRuntime);
+            if (viewType == VIEW_TYPE_MOVIE) {
+                type = VIEW_TYPE_MOVIE;
+                movieImage = (ImageView) itemView.findViewById(R.id.ivMovieImage);
+                movieTitle = (TextView) itemView.findViewById(R.id.tvMovieTitle);
+                movieGenre = (TextView) itemView.findViewById(R.id.tvMovieGenre);
+                movieRating = (TextView) itemView.findViewById(R.id.tvMovieRating);
+                movieRuntime = (TextView) itemView.findViewById(R.id.tvMovieRuntime);
 
-            itemView.setOnClickListener(this);
+                itemView.setOnClickListener(this);
+            } else {
+                type = VIEW_TYPE_HEADER;
+                tvHeaderResults = (TextView) itemView.findViewById(R.id.tvHeader);
+            }
+
         }
 
         @Override
