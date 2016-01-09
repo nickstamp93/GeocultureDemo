@@ -1,30 +1,52 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.MoviesAdapter;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MovieListFragment extends Fragment {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
+    private static final String SORT_BY_YEAR = "&sort=year,desc";
     private final ArrayList<Movie> movies;
 
     private Location location;
 
     private RecyclerView recyclerView;
+    private View fragmentView;
+    private Context context;
+    private MovieParser moviesParser;
+    private MoviesAdapter moviesAdapter;
+    private OnMovieClicked onMovieClicked;
+    private LinearLayoutManager linearLayoutManager;
+    private String urlCity;
 
     public MovieListFragment() {
         movies = new ArrayList<>();
+
+        moviesAdapter = null;
     }
 
     public static MovieListFragment newInstance(Location location) {
@@ -40,7 +62,7 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             location = (Location) getArguments().getSerializable(ARG_LOCATION);
-            Toast.makeText(getContext(), "Location:" + location.getFullName(), Toast.LENGTH_LONG).show();
+//            Toast.makeText(getContext(), "Location:" + location.getFullName(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -48,11 +70,101 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_list, container, false);
+        if (fragmentView == null) {
 
-        recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerList);
+            context = getContext();
+
+            fragmentView = inflater.inflate(R.layout.fragment_list, container, false);
+
+            recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerList);
+            linearLayoutManager = new LinearLayoutManager(context);
+            recyclerView.setLayoutManager(linearLayoutManager);
+
+            urlCity = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location.getCity() + SORT_BY_YEAR;
+
+            moviesParser = new MovieParser();
+            moviesParser.execute();
+
+        }
+
 
         return fragmentView;
+    }
+
+    public void setOnMovieClickedListener(OnMovieClicked listener) {
+        onMovieClicked = listener;
+    }
+
+    public class MovieParser extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog progressDialog;
+
+        public MovieParser() {
+
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setTitle("IMDB Search");
+            progressDialog.setMessage("Searching for " + location.getFullName());
+            progressDialog.setIndeterminate(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+            try {
+                // Connect to the web site
+                Document document = Jsoup.connect(urlCity).get();
+                // Using Elements to get the class data
+                Elements tables = document.select("table");
+                Element table = tables.get(0);
+                Elements rows = table.getElementsByTag("tr");
+                for (int i = 1; i < rows.size(); i++) {
+
+                    Element row = rows.get(i);
+                    String imgUrl = row.getElementsByClass("image").get(0).getElementsByTag("img").attr("src");
+
+                    Element elementTitle = row.getElementsByClass("title").get(0);
+                    String title = elementTitle.getElementsByTag("a").get(0).text();
+                    String url = elementTitle.getElementsByTag("a").get(0).attr("href");
+                    String genre = elementTitle.getElementsByClass("genre").text();
+                    String runtime = elementTitle.getElementsByClass("runtime").text();
+                    String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
+
+                    Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
+                    movies.add(movie);
+
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            if (moviesAdapter != null) {
+                ;
+            } else {
+                moviesAdapter = new MoviesAdapter(context, movies, onMovieClicked);
+                recyclerView.swapAdapter(moviesAdapter, true);
+            }
+
+            progressDialog.dismiss();
+
+
+        }
     }
 
 }

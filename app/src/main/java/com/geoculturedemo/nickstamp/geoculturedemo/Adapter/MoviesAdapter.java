@@ -52,6 +52,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         holder.movieGenre.setText(movie.getGenre());
         holder.movieRuntime.setText(movie.getRuntime());
         holder.movieRating.setText(movie.getRating());
+//        Picasso.with(context).load(R.drawable.ic_image)
         Picasso.with(context).load(movies.get(position).getImgUrl())
                 .resize(54, 74)
                 .centerInside()
@@ -83,7 +84,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         @Override
         public void onClick(View v) {
-            onMovieClicked.onMovie(movies.get(getAdapterPosition()));
+//            onMovieClicked.onMovie(movies.get(getAdapterPosition()));
         }
     }
 }
