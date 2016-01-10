@@ -58,8 +58,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
         components = new HashMap<>();
 
         location = new Location();
-        location.setCity("Serres");
-        location.setArea("Agia Eleni");
+        location.setCity("Thessaloniki");
+        location.setArea("Kalamaria");
         location.setCountry("Country");
         MovieListFragment movieListFragment = new MovieListFragment().newInstance(location);
         movieListFragment.setOnMovieClickedListener(this);

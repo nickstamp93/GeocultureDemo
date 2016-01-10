@@ -33,7 +33,7 @@ public class Movie implements Serializable {
 
 
     public String getUrl() {
-        return url;
+        return "http://www.imdb.com/" + url;
     }
 
     public String getTitle() {

@@ -183,8 +183,47 @@ public class MovieListFragment extends Fragment {
                         String genre = elementTitle.getElementsByClass("genre").text();
                         String runtime = elementTitle.getElementsByClass("runtime").text();
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
+                        String credit = elementTitle.getElementsByClass("credit").text();
+
+//                        Log.i("nikos", "Credit:" + credit);
+
+                        String director = "", cast = "";
+
+                        /*if (credit.length() > 0 && (credit.contains("Dir") || credit.contains("With"))) {
+                            //contains director
+                            if (credit.contains("Dir")) {
+                                director = credit.split(":")[1];
+                                Log.i("nikos", director);
+                                //and cast
+                                if (credit.contains("With")) {
+                                    cast = credit.split(":")[3];
+                                    Log.i("nikos", cast);
+                                }
+                                //no director , so contains cast
+                            } else {
+                                cast = credit.split(":")[1];
+                                Log.i("nikos", cast);
+                            }
+                        }*/
+
+                        if(credit.length()>0){
+                            String[] tokens = credit.split(":");
+                            if(tokens.length == 3){
+                                director = tokens[1].subSequence(0,tokens[1].length()-4).toString();
+                                cast = tokens[2];
+                            }else{
+                                if(tokens[0].equalsIgnoreCase("dir"))
+                                    cast = tokens[1];
+                                else
+                                    director = tokens[1];
+                            }
+                        }
 
                         Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
+                        movie.setDirector(director);
+                        movie.setCast(cast);
+
+
                         boolean found = false;
                         for (Movie movie1 : movies) {
                             if (movie1 != null && movie1.getTitle().equals(movie.getTitle())) {
