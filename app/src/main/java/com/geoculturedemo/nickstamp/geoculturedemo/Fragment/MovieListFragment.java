@@ -72,6 +72,7 @@ public class MovieListFragment extends Fragment {
 
         //TODO somehow give the user the option to load more(distinct for area-city???)
 
+
         if (fragmentView == null) {
 
             context = getContext();
@@ -136,7 +137,6 @@ public class MovieListFragment extends Fragment {
             super.onPostExecute(aVoid);
 
             if (moviesAdapter != null) {
-                ;
             } else {
                 moviesAdapter = new MoviesAdapter(context, movies, onMovieClicked);
                 recyclerView.swapAdapter(moviesAdapter, true);

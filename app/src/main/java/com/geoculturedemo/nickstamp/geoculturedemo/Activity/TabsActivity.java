@@ -13,26 +13,62 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
+import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.MovieFragment;
 import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.MovieListFragment;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
-public class TabsActivity extends AppCompatActivity {
+import java.util.HashMap;
 
+public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
+
+
+    private static final String TAG_MOVIE_LIST = "movielist";
+    private static final String TAG_MOVIE_DETAILS = "moviedetails";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
     private TabLayout tabLayout;
 
+    private Fragment movieTab;
+    private HashMap<String, Fragment> components;
+    private FragmentManager manager;
+
+    private String currentMovieTag;
+    private Location location;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tabs);
 
+        init();
+
         setUpToolbar();
 
         setUpTabs();
+
+
+    }
+
+    private void init() {
+        components = new HashMap<>();
+
+        location = new Location();
+        location.setCity("Serres");
+        location.setArea("Agia Eleni");
+        location.setCountry("Country");
+        MovieListFragment movieListFragment = new MovieListFragment().newInstance(location);
+        movieListFragment.setOnMovieClickedListener(this);
+
+        components.put(TAG_MOVIE_LIST, movieListFragment);
+
+        currentMovieTag = TAG_MOVIE_LIST;
+
+        manager = getSupportFragmentManager();
     }
 
     private void setUpTabs() {
@@ -55,11 +91,20 @@ public class TabsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
+    @Override
+    public void onMovie(Movie movie) {
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
+        //remove the movie list fragment and create a movie details fragment with the movie selected
+        manager.beginTransaction().remove(components.get(currentMovieTag)).commit();
+        currentMovieTag = TAG_MOVIE_DETAILS;
+        components.remove(TAG_MOVIE_DETAILS);
+        components.put(TAG_MOVIE_DETAILS, new MovieFragment().newInstance(movie));
+        movieTab = components.get(currentMovieTag);
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -68,24 +113,24 @@ public class TabsActivity extends AppCompatActivity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-//            return PlaceholderFragment.newInstance(position + 1);
-            if(position == 0){
 
-                Location location = new Location();
-                location.setCity("Thessaloniki");
-                location.setArea("Kalamaria");
-                location.setCountry("Country");
-                return new MovieListFragment().newInstance(location);
-            }else{
-                return PlaceholderFragment.newInstance(position + 1);
+            switch (position) {
+                case 0:
+                    if (movieTab == null)
+                        movieTab = components.get(currentMovieTag);
+
+                    return movieTab;
+
+                case 1:
+                    return PlaceholderFragment.newInstance(position + 1);
             }
+            return null;
+
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
+            // Show 2 total pages.
             return 2;
         }
 
@@ -99,12 +144,57 @@ public class TabsActivity extends AppCompatActivity {
             }
             return null;
         }
+
+        @Override
+        public int getItemPosition(Object object) {
+
+            return POSITION_NONE;
+
+            /*if (object instanceof MovieListFragment && movieTab instanceof MovieFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof MovieFragment && movieTab instanceof MovieListFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof MovieListFragment && movieTab instanceof MovieListFragment) {
+                return POSITION_NONE;
+            }
+            if (object instanceof PlaceholderFragment) {
+                return POSITION_UNCHANGED;
+            }
+            return POSITION_UNCHANGED;*/
+
+        }
+
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        finish();
+
+        //if we are in the movie tab
+        if (mViewPager.getCurrentItem() == 0) {
+
+            //and currently movie details is shown
+            if (movieTab instanceof MovieFragment) {
+
+                //go back to the movie list
+                manager.beginTransaction().remove(components.get(currentMovieTag)).commit();
+                currentMovieTag = TAG_MOVIE_LIST;
+                movieTab = components.get(currentMovieTag);
+
+                mSectionsPagerAdapter.notifyDataSetChanged();
+            } else {
+                //else finish the activity
+                super.onBackPressed();
+            }
+
+        } else {
+            //else finish the activity
+            super.onBackPressed();
+        }
+
+        mSectionsPagerAdapter.notifyDataSetChanged();
+
     }
 
     /**
