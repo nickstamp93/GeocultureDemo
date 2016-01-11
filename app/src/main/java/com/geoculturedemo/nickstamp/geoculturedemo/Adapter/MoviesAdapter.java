@@ -59,7 +59,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         if (holder.type == VIEW_TYPE_MOVIE) {
             Movie movie = movies.get(position);
 
-            holder.movieTitle.setText(movie.getTitle());
+            holder.movieTitle.setText(movie.getTitle() + " " + movie.getYear());
             holder.movieGenre.setText(movie.getGenre());
             holder.movieRuntime.setText(movie.getRuntime());
             holder.movieRating.setText(movie.getRating());

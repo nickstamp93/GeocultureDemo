@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.MoviesAdapter;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
@@ -34,6 +35,8 @@ public class MovieListFragment extends Fragment {
     private final ArrayList<Movie> movies;
 
     private Location location;
+
+    private ProgressBar pbList;
 
     private RecyclerView recyclerView;
     private View fragmentView;
@@ -79,6 +82,8 @@ public class MovieListFragment extends Fragment {
 
             fragmentView = inflater.inflate(R.layout.fragment_list, container, false);
 
+            pbList = (ProgressBar) fragmentView.findViewById(R.id.pbList);
+
             recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerList);
             linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
@@ -107,7 +112,6 @@ public class MovieListFragment extends Fragment {
 
         public MovieParser() {
 
-
         }
 
         @Override
@@ -116,17 +120,15 @@ public class MovieListFragment extends Fragment {
 
             movies.clear();
 
-            progressDialog = new ProgressDialog(context);
-            progressDialog.setTitle("IMDB Search");
-            progressDialog.setMessage("Searching for " + location.getFullName());
-            progressDialog.setIndeterminate(false);
-            progressDialog.show();
+            recyclerView.setVisibility(View.INVISIBLE);
+
         }
 
         @Override
         protected Void doInBackground(Void... params) {
 
-            parseLocation(location.getArea());
+            if (!location.getCity().equals(location.getArea()))
+                parseLocation(location.getArea());
             parseLocation(location.getCity());
 
             return null;
@@ -142,7 +144,8 @@ public class MovieListFragment extends Fragment {
                 recyclerView.swapAdapter(moviesAdapter, true);
             }
 
-            progressDialog.dismiss();
+            pbList.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
 
         }
 
@@ -159,6 +162,7 @@ public class MovieListFragment extends Fragment {
                 try {
                     // Connect to the web site
                     Document document = Jsoup.connect(urlCity).get();
+
                     success = true;
 
                     //this movie will be used to locate the header inside the adapter
@@ -179,40 +183,22 @@ public class MovieListFragment extends Fragment {
 
                         Element elementTitle = row.getElementsByClass("title").get(0);
                         String title = elementTitle.getElementsByTag("a").get(0).text();
+                        String year = elementTitle.getElementsByClass("year_type").text();
                         String url = elementTitle.getElementsByTag("a").get(0).attr("href");
                         String genre = elementTitle.getElementsByClass("genre").text();
                         String runtime = elementTitle.getElementsByClass("runtime").text();
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
                         String credit = elementTitle.getElementsByClass("credit").text();
 
-//                        Log.i("nikos", "Credit:" + credit);
-
                         String director = "", cast = "";
 
-                        /*if (credit.length() > 0 && (credit.contains("Dir") || credit.contains("With"))) {
-                            //contains director
-                            if (credit.contains("Dir")) {
-                                director = credit.split(":")[1];
-                                Log.i("nikos", director);
-                                //and cast
-                                if (credit.contains("With")) {
-                                    cast = credit.split(":")[3];
-                                    Log.i("nikos", cast);
-                                }
-                                //no director , so contains cast
-                            } else {
-                                cast = credit.split(":")[1];
-                                Log.i("nikos", cast);
-                            }
-                        }*/
-
-                        if(credit.length()>0){
+                        if (credit.length() > 0) {
                             String[] tokens = credit.split(":");
-                            if(tokens.length == 3){
-                                director = tokens[1].subSequence(0,tokens[1].length()-4).toString();
+                            if (tokens.length == 3) {
+                                director = tokens[1].subSequence(0, tokens[1].length() - 4).toString();
                                 cast = tokens[2];
-                            }else{
-                                if(tokens[0].equalsIgnoreCase("dir"))
+                            } else {
+                                if (tokens[0].equalsIgnoreCase("dir"))
                                     cast = tokens[1];
                                 else
                                     director = tokens[1];
@@ -222,6 +208,7 @@ public class MovieListFragment extends Fragment {
                         Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
                         movie.setDirector(director);
                         movie.setCast(cast);
+                        movie.setYear(year);
 
 
                         boolean found = false;

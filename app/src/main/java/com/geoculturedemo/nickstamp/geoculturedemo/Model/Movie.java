@@ -46,7 +46,7 @@ public class Movie implements Serializable {
 
     public String getRating() {
 
-        if(rating.trim().length()>0)
+        if (rating.trim().length() > 0)
             return rating;
         else
             return "-";
@@ -65,8 +65,8 @@ public class Movie implements Serializable {
     }
 
     public String getGenre() {
-        if(genre.trim().length()>0)
-        return genre;
+        if (genre.trim().length() > 0)
+            return genre;
         else
             return "-";
     }
@@ -84,7 +84,7 @@ public class Movie implements Serializable {
     }
 
     public String getRuntime() {
-        if(runtime.trim().length()>0)
+        if (runtime.trim().length() > 0)
             return runtime;
         else
             return "-";
@@ -95,7 +95,11 @@ public class Movie implements Serializable {
     }
 
     public String getSynopsis() {
-        return synopsis;
+
+        if (synopsis != null && synopsis.trim().length() > 0)
+            return synopsis;
+        else
+            return "Not Available";
     }
 
     public void setSynopsis(String synopsis) {
