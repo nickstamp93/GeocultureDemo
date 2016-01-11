@@ -10,6 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <FrameLayout
@@ -18,89 +19,131 @@
             android:background="@color/dim_foreground_disabled_material_dark"
             android:padding="16dp">
 
-            <ImageView
-                android:layout_width="200dp"
-                android:layout_height="282dp"
+            <ProgressBar
+                android:id="@+id/pbImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:src="@drawable/image" />
+                android:indeterminateBehavior="cycle" />
+
+            <ImageView
+                android:id="@+id/ivMovieImage"
+                android:layout_width="216dp"
+                android:layout_height="319dp"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter" />
         </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvMovieTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
             android:layout_marginBottom="8dp"
-            >
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="16dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:padding="16dp">
 
-                <TextView
+                <TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Eternal Sunshine of the Spotless Mind (2007)"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:shrinkColumns="1">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <TableRow
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="Cast : " />
+                        android:layout_marginTop="8dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Genre : "
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvMovieGenre"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="false" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Actor 1, Actor 2, Actor 3" />
+                        android:layout_marginTop="8dp">
 
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Cast : "
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/tvMovieCast"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="false" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="Director : " />
+                        android:layout_marginTop="8dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Director : "
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvMovieDirector"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:singleLine="false" />
+
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Steven Spielberg" />
+                        android:layout_marginTop="8dp">
 
-                </TableRow>
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_marginTop="8dp"
-                    android:layout_height="wrap_content">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Writer : "
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="Writer : " />
+                        <TextView
+                            android:id="@+id/tvMovieWriter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="A Writer" />
+                    </TableRow>
 
-                </TableRow>
+                </TableLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -115,7 +158,7 @@
                         android:drawablePadding="8dp"
                         android:drawableRight="@mipmap/ic_imdb"
                         android:gravity="center"
-                        android:text="8.2"
+                        android:text="-"
                         android:textSize="16sp" />
 
                     <TextView
@@ -126,7 +169,7 @@
                         android:drawableRight="@mipmap/ic_clock"
                         android:gravity="center"
                         android:paddingLeft="16dp"
-                        android:text="120'"
+                        android:text="-"
                         android:textSize="16sp" />
 
                 </LinearLayout>
@@ -137,22 +180,22 @@
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_height="wrap_content">
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:padding="16dp"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:padding="16dp">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Synopsis"/>
+                    android:text="Synopsis" />
 
                 <View
                     android:layout_width="match_parent"
@@ -160,9 +203,11 @@
                     android:background="@color/dim_foreground_disabled_material_dark" />
 
                 <TextView
+                    android:id="@+id/tvMovieSynopsis"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Alexander, an old writer, is ill and prepared to die. He says his goodbyes and recalls his life with his wife long ago. While driving his car he saves a street kid, an illegal immigrant from Albania, from being arrested. Later in the day, by chance, he sees the same boy being abducted, and follows in his car. Although he is preoccupied with his own regrets, he puts death on hold to find a way to help the boy. "/>
+                    android:layout_marginTop="16dp"
+                    android:text="Alexander, an old writer, is ill and prepared to die. He says his goodbyes and recalls his life with his wife long ago. While driving his car he saves a street kid, an illegal immigrant from Albania, from being arrested. Later in the day, by chance, he sees the same boy being abducted, and follows in his car. Although he is preoccupied with his own regrets, he puts death on hold to find a way to help the boy. " />
 
             </LinearLayout>
 

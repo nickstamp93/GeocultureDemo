@@ -1,9 +1,11 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by nickstamp on 1/6/2016.
  */
-public class Location {
+public class Location implements Serializable{
     private double longitude, latitude;
     private String country, city, area;
 
