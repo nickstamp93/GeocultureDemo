@@ -3,9 +3,10 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -26,9 +27,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PLACE_PICKER_REQUEST = 1;
     private LatLngBounds lastBounds = null;
+    private int animDuration = 1200;
 
     //Views
-    private View cardLoading, cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
+    private View cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
     private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
@@ -43,11 +45,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.content_home);
 
-        startActivity(new Intent(this , TabsActivity.class));
 
-        /*setUpToolbar();
+//        setUpToolbar();
 
         //initialize the UI vies
         initViews();
@@ -57,21 +58,16 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         gpsUtils = new GPSUtils(this);
 
         //hide/show appropriate cards
-        manageGPSCards();*/
-
+        manageGPSCards();
 
     }
 
-    private void setUpToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-    }
 
     /**
      * Initializes the UI views such as the cards , buttons etc
      */
     private void initViews() {
-        cardLoading = findViewById(R.id.cardSearching);
+
         cardNoLocation = findViewById(R.id.cardNoLocation);
         cardLocationFound = findViewById(R.id.cardLocation);
         cardPickLocation = findViewById(R.id.cardPickLocation);
@@ -104,7 +100,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //if can get the current device location , hide the Loading card
         //show the Current Location card
         if (gpsUtils.canGetLocation()) {
-            cardLoading.setVisibility(View.GONE);
 
             //get current location
             currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
@@ -116,7 +111,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 cardNoLocation.animate()
                         .translationX(cardNoLocation.getWidth())
-                        .setDuration(1000)
+                        .setDuration(animDuration)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -126,7 +121,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                         });
                 cardLocationFound.animate()
                         .alpha(0.0f)
-                        .setDuration(1000)
+                        .setDuration(animDuration)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -138,25 +133,31 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             } else {
                 cardNoLocation.setVisibility(View.VISIBLE);
                 cardLocationFound.setVisibility(View.GONE);
+                Snackbar.make(cardNoLocation, "Location not found yet.Try again in a while", Snackbar.LENGTH_SHORT).show();
             }
 
         } else {
             //can't get location, should turn on GPS
             gpsUtils.showGPSErrorDialog();
-            cardLoading.setVisibility(View.GONE);
             cardNoLocation.setVisibility(View.VISIBLE);
+
         }
     }
 
     @Override
     public void onClick(View v) {
+
+        Intent i;
+
         switch (v.getId()) {
             case R.id.bRetry:
                 gpsUtils.getLocation();
                 manageGPSCards();
                 break;
             case R.id.bExploreLocal:
-                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
+                i = new Intent(HomeActivity.this, TabsActivity.class);
+                i.putExtra("location", currentLocation);
+                startActivity(i);
                 break;
             case R.id.cardbuttonPickLocation:
                 launchPlacePicker();
@@ -165,7 +166,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 launchPlacePicker();
                 break;
             case R.id.bExploreCustom:
-                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
+//                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
+                i = new Intent(HomeActivity.this, TabsActivity.class);
+                i.putExtra("location", customLocation);
+                startActivity(i);
                 break;
         }
     }
@@ -213,11 +217,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     //if custom location was found,
 
                     tvCustomLocation.setText(customLocation.getFullName());
-//                    tvCustomLocation.append(locationUtils.toGreekLocale(customLocation).getFullName());
 
                     cardButtonPickLocation.animate()
                             .translationX(cardButtonPickLocation.getWidth())
-                            .setDuration(1000)
+                            .setDuration(animDuration)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
                                 public void onAnimationEnd(Animator animation) {
@@ -228,7 +231,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     if (cardPickLocation.getVisibility() != View.VISIBLE)
                         cardPickLocation.animate()
                                 .alpha(0.0f)
-                                .setDuration(1000)
+                                .setDuration(animDuration)
                                 .setListener(new AnimatorListenerAdapter() {
                                     @Override
                                     public void onAnimationEnd(Animator animation) {
@@ -245,5 +248,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    public class AsyncFindLocation extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            return null;
+        }
+
+
+    }
 
 }

@@ -57,11 +57,16 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
     private void init() {
         components = new HashMap<>();
 
-        location = new Location();
-        location.setCity("Thessaloniki");
-        location.setArea("Kalamaria");
-        location.setCountry("Country");
+
+        location = (Location) getIntent().getSerializableExtra("location");
+        if (location == null) {
+            location = new Location();
+            location.setCity("Thessaloniki");
+            location.setArea("Thessaloniki");
+            location.setCountry("Greece");
+        }
         MovieListFragment movieListFragment = new MovieListFragment().newInstance(location);
+
         movieListFragment.setOnMovieClickedListener(this);
 
         components.put(TAG_MOVIE_LIST, movieListFragment);
@@ -115,13 +120,13 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
         public Fragment getItem(int position) {
 
             switch (position) {
-                case 0:
+                case 1:
                     if (movieTab == null)
                         movieTab = components.get(currentMovieTag);
 
                     return movieTab;
 
-                case 1:
+                case 0:
                     return PlaceholderFragment.newInstance(position + 1);
             }
             return null;
@@ -137,9 +142,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0:
-                    return "MOVIES";
                 case 1:
+                    return "MOVIES";
+                case 0:
                     return "SONGS";
             }
             return null;
@@ -172,7 +177,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
     public void onBackPressed() {
 
         //if we are in the movie tab
-        if (mViewPager.getCurrentItem() == 0) {
+        if (mViewPager.getCurrentItem() == 1) {
 
             //and currently movie details is shown
             if (movieTab instanceof MovieFragment) {
