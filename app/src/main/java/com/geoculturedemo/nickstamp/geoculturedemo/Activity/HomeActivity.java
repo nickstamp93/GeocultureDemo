@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,10 +28,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PLACE_PICKER_REQUEST = 1;
     private LatLngBounds lastBounds = null;
-    private int animDuration = 1200;
+    private int animDuration = 800;
 
     //Views
-    private View cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation;
+    private View cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation, llRetry, llSearchLocation;
     private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
@@ -55,10 +56,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         //initialize the utility objects
         locationUtils = new LocationUtils(this);
-        gpsUtils = new GPSUtils(this);
 
         //hide/show appropriate cards
-        manageGPSCards();
+//        manageGPSCards();
+        new AsyncFindLocation().execute();
 
     }
 
@@ -67,6 +68,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
      * Initializes the UI views such as the cards , buttons etc
      */
     private void initViews() {
+        llSearchLocation = findViewById(R.id.llSearchingLocation);
+        llRetry = findViewById(R.id.llRetry);
 
         cardNoLocation = findViewById(R.id.cardNoLocation);
         cardLocationFound = findViewById(R.id.cardLocation);
@@ -92,57 +95,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    /**
-     * Show or hide each card according to the status of the GPS and the Network
-     */
-    private void manageGPSCards() {
-
-        //if can get the current device location , hide the Loading card
-        //show the Current Location card
-        if (gpsUtils.canGetLocation()) {
-
-            //get current location
-            currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
-            if (currentLocation != null) {
-                //if currentLocation was found,
-
-                tvCurrentLocation.setText(currentLocation.getFullName());
-//                tvCurrentLocation.append(locationUtils.toGreekLocale(currentLocation).getFullName());
-
-                cardNoLocation.animate()
-                        .translationX(cardNoLocation.getWidth())
-                        .setDuration(animDuration)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                cardNoLocation.setVisibility(View.GONE);
-                            }
-                        });
-                cardLocationFound.animate()
-                        .alpha(0.0f)
-                        .setDuration(animDuration)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                cardLocationFound.setVisibility(View.VISIBLE);
-                            }
-                        });
-
-            } else {
-                cardNoLocation.setVisibility(View.VISIBLE);
-                cardLocationFound.setVisibility(View.GONE);
-                Snackbar.make(cardNoLocation, "Location not found yet.Try again in a while", Snackbar.LENGTH_SHORT).show();
-            }
-
-        } else {
-            //can't get location, should turn on GPS
-            gpsUtils.showGPSErrorDialog();
-            cardNoLocation.setVisibility(View.VISIBLE);
-
-        }
-    }
 
     @Override
     public void onClick(View v) {
@@ -151,8 +103,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.bRetry:
-                gpsUtils.getLocation();
-                manageGPSCards();
+//                gpsUtils.getLocation();
+//                manageGPSCards();
+                new AsyncFindLocation().execute();
                 break;
             case R.id.bExploreLocal:
                 i = new Intent(HomeActivity.this, TabsActivity.class);
@@ -166,7 +119,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 launchPlacePicker();
                 break;
             case R.id.bExploreCustom:
-//                startActivity(new Intent(HomeActivity.this, TabsActivity.class));
                 i = new Intent(HomeActivity.this, TabsActivity.class);
                 i.putExtra("location", customLocation);
                 startActivity(i);
@@ -193,11 +145,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(intent, PLACE_PICKER_REQUEST);
 
         } catch (GooglePlayServicesRepairableException e) {
-            Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Something went wrong with Google Play Services", Toast.LENGTH_LONG).show();
             e.printStackTrace();
 
         } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, "This app needs Google Play services to run properly", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "This app needs Google Play Services to run properly", Toast.LENGTH_LONG).show();
 
             e.printStackTrace();
 
@@ -250,12 +202,93 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     public class AsyncFindLocation extends AsyncTask<Void, Void, Void> {
 
+        private boolean locationFound;
+
+        public AsyncFindLocation() {
+            locationFound = false;
+            gpsUtils = new GPSUtils(HomeActivity.this);
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            cardNoLocation.setVisibility(View.VISIBLE);
+
+            llRetry.setVisibility(View.INVISIBLE);
+            llSearchLocation.setVisibility(View.VISIBLE);
+
+        }
+
         @Override
         protected Void doInBackground(Void... params) {
+
+            boolean success = false;
+            for (int i = 0; !success && i < 5; i++) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                gpsUtils.getLocation();
+                if (gpsUtils.canGetLocation()) {
+                    Log.i("nikos", gpsUtils.getLatitude() + "," + gpsUtils.getLongitude());
+                    currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
+                    if (currentLocation != null) {
+                        locationFound = true;
+                        return null;
+                    }
+                } else {
+                    return null;
+                }
+
+            }
+
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
 
+
+            if (locationFound) {
+                tvCurrentLocation.setText(currentLocation.getFullName());
+
+                cardNoLocation.animate()
+                        .translationX(cardNoLocation.getWidth())
+                        .setDuration(animDuration)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardNoLocation.setVisibility(View.GONE);
+                            }
+                        });
+                cardLocationFound.animate()
+                        .alpha(0.0f)
+                        .setDuration(animDuration)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardLocationFound.setVisibility(View.VISIBLE);
+                            }
+                        });
+//                cardNoLocation.setVisibility(View.GONE);
+//                cardLocationFound.setVisibility(View.VISIBLE);
+            } else {
+
+                if (!gpsUtils.canGetLocation()) {
+                    gpsUtils.showGPSErrorDialog();
+                } else {
+                    Snackbar.make(cardNoLocation, "Location not found yet.Please try again in a while.", Snackbar.LENGTH_SHORT).show();
+                }
+                llRetry.setVisibility(View.VISIBLE);
+                llSearchLocation.setVisibility(View.INVISIBLE);
+            }
+        }
     }
 
 }
