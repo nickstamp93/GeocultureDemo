@@ -1,6 +1,5 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +31,8 @@ public class MovieListFragment extends Fragment {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
     private static final String SORT_BY_YEAR = "&sort=year,desc";
-    private final ArrayList<Movie> movies;
+
+    private ArrayList<Movie> movies;
 
     private Location location;
 
@@ -49,7 +49,6 @@ public class MovieListFragment extends Fragment {
 
     public MovieListFragment() {
         movies = new ArrayList<>();
-
         moviesAdapter = null;
     }
 
@@ -73,7 +72,7 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //TODO somehow give the user the option to load more(distinct for area-city???)
+        //TODO somehow give the user the option to load more results(distinct for area-city???)
 
 
         if (fragmentView == null) {
@@ -107,8 +106,6 @@ public class MovieListFragment extends Fragment {
     }
 
     public class MovieParser extends AsyncTask<Void, Void, Void> {
-
-        private ProgressDialog progressDialog;
 
         public MovieParser() {
 
