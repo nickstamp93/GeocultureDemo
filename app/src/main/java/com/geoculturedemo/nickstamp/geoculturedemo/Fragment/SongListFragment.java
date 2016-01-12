@@ -1,10 +1,10 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,15 +13,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.MoviesAdapter;
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.SongsAdapter;
-import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
-import com.geoculturedemo.nickstamp.geoculturedemo.Parser.SongParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -44,7 +48,7 @@ public class SongListFragment extends Fragment {
     private SongsAdapter songsAdapter;
     private OnSongClicked onSongClicked;
     private LinearLayoutManager linearLayoutManager;
-    private String urlCity;
+    private String urlQuery;
 
 
     public SongListFragment() {
@@ -63,16 +67,13 @@ public class SongListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            location = (Location) getArguments().getSerializable(ARG_LOCATION);
+            location = new LocationUtils(context).toGreekLocale((Location) getArguments().getSerializable(ARG_LOCATION));
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        //TODO somehow give the user the option to load more results(distinct for area-city???)
-
 
         if (fragmentView == null) {
 
@@ -109,16 +110,25 @@ public class SongListFragment extends Fragment {
 
         public SongParser() {
 
+
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
 
+            songs.clear();
+
+            recyclerView.setVisibility(View.INVISIBLE);
+
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+
+            if (!location.getCity().equals(location.getArea()))
+                parseSongList(location.getArea());
+            parseSongList(location.getCity());
 
             return null;
         }
@@ -127,7 +137,71 @@ public class SongListFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
+            if (songsAdapter != null) {
+            } else {
+                songsAdapter = new SongsAdapter(context, songs, onSongClicked);
+                recyclerView.swapAdapter(songsAdapter, true);
+            }
+
+            pbList.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.VISIBLE);
+
         }
+    }
+
+    private void parseSongList(String location) {
+
+        urlQuery = "http://www.stixoi.info/stixoi.php?keywords=" + location + "&act=ss&info=SS";
+
+        //try to connect 3 times
+        int tries = 0;
+        boolean success = false;
+
+        while (tries < 3 && !success) {
+            tries++;
+            try {
+                // Connect to the web site
+                Document document = Jsoup.connect(urlQuery).get();
+
+                Elements elements = document.select("table");
+
+                Element table = elements.get(5);
+
+                Elements rows = table.getElementsByTag("tr");
+                for (int currentRow = 1; currentRow < rows.size(); currentRow++) {
+                    Element row = rows.get(currentRow);
+                    Elements rowElements = row.getElementsByTag("td");
+
+                    String id = rowElements.get(0).text();
+                    String title = rowElements.get(2).text();
+                    String url = rowElements.get(2).getElementsByTag("a").attr("href");
+                    String lyricist = rowElements.get(3).text();
+                    String composer = rowElements.get(4).text();
+                    String singer = rowElements.get(5).text();
+                    String year = rowElements.get(6).text();
+
+                    Song song = new Song(id, title, year, lyricist, composer, singer, url);
+
+                    songs.add(song);
+
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (!success) {
+            Snackbar.make(fragmentView, "Something went wrong", Snackbar.LENGTH_LONG)
+                    .setAction("Retry", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                        }
+                    })
+                    .show();
+        }
+
+
     }
 
 }

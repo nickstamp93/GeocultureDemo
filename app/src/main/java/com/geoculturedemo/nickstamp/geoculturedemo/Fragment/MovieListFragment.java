@@ -45,7 +45,7 @@ public class MovieListFragment extends Fragment {
     private MoviesAdapter moviesAdapter;
     private OnMovieClicked onMovieClicked;
     private LinearLayoutManager linearLayoutManager;
-    private String urlCity;
+    private String urlQuery;
 
     public MovieListFragment() {
         movies = new ArrayList<>();
@@ -148,7 +148,7 @@ public class MovieListFragment extends Fragment {
 
         private void parseLocation(String location) {
 
-            urlCity = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location + SORT_BY_YEAR;
+            urlQuery = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location + SORT_BY_YEAR;
 
             //try to connect 3 times
             int tries = 0;
@@ -158,7 +158,7 @@ public class MovieListFragment extends Fragment {
                 tries++;
                 try {
                     // Connect to the web site
-                    Document document = Jsoup.connect(urlCity).get();
+                    Document document = Jsoup.connect(urlQuery).get();
 
                     success = true;
 

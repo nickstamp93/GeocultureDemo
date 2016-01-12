@@ -6,16 +6,25 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 public class Song {
 
 
+    private String id;
     private String title;
     private String year;
-    private String lyricist;
+    private String lyricsWriter;
+    private final String musicCreator;
     private String composer;
     private String artist;
     private String url;
 
 
-    public Song(String title, String year, String lyricist, String musician, String artist, String url) {
+    public Song(String id, String title, String year, String lyricsWriter, String musicCreator, String artist, String url) {
 
+        this.id = id;
+        this.title = title;
+        this.year = year;
+        this.lyricsWriter = lyricsWriter;
+        this.musicCreator = musicCreator;
+        this.artist = artist;
+        this.url = url;
     }
 
     public String getComposer() {
@@ -26,12 +35,12 @@ public class Song {
         this.composer = composer;
     }
 
-    public String getLyricist() {
-        return lyricist;
+    public String getLyricsWriter() {
+        return lyricsWriter;
     }
 
-    public void setLyricist(String lyricist) {
-        this.lyricist = lyricist;
+    public void setLyricsWriter(String lyricsWriter) {
+        this.lyricsWriter = lyricsWriter;
     }
 
     public String getYear() {
@@ -67,5 +76,13 @@ public class Song {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
