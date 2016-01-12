@@ -1,9 +1,11 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
+import java.io.Serializable;
+
 /**
  * Created by nickstamp on 1/6/2016.
  */
-public class Song {
+public class Song implements Serializable {
 
 
     private String id;

@@ -108,7 +108,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.MoviesViewHo
 
         @Override
         public void onClick(View v) {
-
+            onSongClicked.onSong(songs.get(getAdapterPosition()));
         }
     }
 }
