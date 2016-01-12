@@ -37,8 +37,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     //Gps utilities
     private GPSUtils gpsUtils;
-    //Location Utilities
-    private LocationUtils locationUtils;
 
     //Location objects for current location and custom location
     private Location currentLocation, customLocation;
@@ -53,9 +51,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         //initialize the UI vies
         initViews();
-
-        //initialize the utility objects
-        locationUtils = new LocationUtils(this);
 
         //hide/show appropriate cards
 //        manageGPSCards();
@@ -164,7 +159,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 lastBounds = PlacePicker.getLatLngBounds(data);
 
                 //create a location object from the coordinates picked by the user in the place picker
-                customLocation = locationUtils.getLocation(place.getLatLng().latitude, place.getLatLng().longitude);
+                customLocation = new LocationUtils(this).getLocation(place.getLatLng().latitude, place.getLatLng().longitude);
                 if (customLocation != null) {
                     //if custom location was found,
 
@@ -233,7 +228,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 gpsUtils.getLocation();
                 if (gpsUtils.canGetLocation()) {
-                    currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
+                    currentLocation = new LocationUtils(HomeActivity.this).getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
                     if (currentLocation != null) {
                         locationFound = true;
                         return null;
@@ -275,8 +270,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 cardLocationFound.setVisibility(View.VISIBLE);
                             }
                         });
-//                cardNoLocation.setVisibility(View.GONE);
-//                cardLocationFound.setVisibility(View.VISIBLE);
             } else {
 
                 if (!gpsUtils.canGetLocation()) {
