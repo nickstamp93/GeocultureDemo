@@ -67,7 +67,7 @@ public class SongListFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            location = new LocationUtils(context).toGreekLocale((Location) getArguments().getSerializable(ARG_LOCATION));
+            location = new LocationUtils(getContext()).toGreekLocale((Location) getArguments().getSerializable(ARG_LOCATION));
         }
     }
 
@@ -163,6 +163,16 @@ public class SongListFragment extends Fragment {
                 // Connect to the web site
                 Document document = Jsoup.connect(urlQuery).get();
 
+                success = true;
+
+                //this song will be used to locate the header inside the adapter
+                Song notRealSong = new Song("", "No results found for \"" + location + "\"", "-1", "", "", "", "");
+                //save the pos of the header, to change it later
+                int headerPos = songs.size();
+                songs.add(notRealSong);
+
+                int songCount = 0;
+
                 Elements elements = document.select("table");
 
                 Element table = elements.get(5);
@@ -182,9 +192,23 @@ public class SongListFragment extends Fragment {
 
                     Song song = new Song(id, title, year, lyricist, composer, singer, url);
 
-                    songs.add(song);
+                    boolean found = false;
+                    for (Song song1 : songs) {
+                        //TODO create comparator for song class
+                        if (song1 != null && song1.getTitle().equals(song.getTitle()) && song1.getArtist().equals(song.getArtist())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        songs.add(song);
+                        songCount++;
+                    }
 
                 }
+
+
+                songs.get(headerPos).setTitle(songCount + " results for \" " + location + " \"");
 
             } catch (IOException e) {
                 e.printStackTrace();

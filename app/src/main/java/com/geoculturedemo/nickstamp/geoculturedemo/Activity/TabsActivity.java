@@ -15,30 +15,35 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.MovieFragment;
 import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.MovieListFragment;
+import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.SongListFragment;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
 import java.util.HashMap;
 
-public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
+public class TabsActivity extends AppCompatActivity implements OnMovieClicked, OnSongClicked {
 
 
     private static final String TAG_MOVIE_LIST = "movielist";
     private static final String TAG_MOVIE_DETAILS = "moviedetails";
+    private static final String TAG_SONG_LIST = "songlist";
+    private static final String TAG_SONG_DETAILS = "songdetails";
 
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     private ViewPager mViewPager;
     private TabLayout tabLayout;
 
-    private Fragment movieTab;
+    private Fragment movieTab, songTab;
     private HashMap<String, Fragment> components;
     private FragmentManager manager;
 
-    private String currentMovieTag;
+    private String currentMovieTag, currentSongTag;
     private Location location;
 
     @Override
@@ -73,6 +78,14 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
         components.put(TAG_MOVIE_LIST, movieListFragment);
 
         currentMovieTag = TAG_MOVIE_LIST;
+
+        SongListFragment songListFragment = new SongListFragment().newInstance(location);
+        songListFragment.setOnSongClicked(this);
+
+        components.put(TAG_SONG_LIST, songListFragment);
+
+        currentSongTag = TAG_SONG_LIST;
+
 
         manager = getSupportFragmentManager();
     }
@@ -122,6 +135,11 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
 
     }
 
+    @Override
+    public void onSong(Song song) {
+
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -139,7 +157,10 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked {
                     return movieTab;
 
                 case 0:
-                    return PlaceholderFragment.newInstance(position + 1);
+                    if (songTab == null)
+                        songTab = components.get(currentSongTag);
+
+                    return songTab;
             }
             return null;
 

@@ -58,13 +58,12 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.MoviesViewHo
 
             Song song = songs.get(position);
 
-            holder.songTitle.setText(song.getTitle());
+            holder.songTitle.setText(song.getId() + "." + song.getTitle());
             holder.songArtist.setText(song.getArtist());
 
         } else {
             holder.tvHeaderResults.setText(songs.get(position).getTitle());
         }
-
 
     }
 
@@ -75,7 +74,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.MoviesViewHo
 
     @Override
     public int getItemViewType(int position) {
-        if (true)
+        if (songs.get(position).getYear().equals("-1"))
             return VIEW_TYPE_HEADER;
         else
             return VIEW_TYPE_MOVIE;

@@ -233,7 +233,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 gpsUtils.getLocation();
                 if (gpsUtils.canGetLocation()) {
-                    Log.i("nikos", gpsUtils.getLatitude() + "," + gpsUtils.getLongitude());
                     currentLocation = locationUtils.getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
                     if (currentLocation != null) {
                         locationFound = true;
