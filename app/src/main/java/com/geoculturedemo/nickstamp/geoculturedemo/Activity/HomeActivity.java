@@ -167,6 +167,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     cardButtonPickLocation.animate()
                             .translationX(cardButtonPickLocation.getWidth())
+                            .alpha(0.01f)
                             .setDuration(animDuration)
                             .setListener(new AnimatorListenerAdapter() {
                                 @Override
@@ -252,6 +253,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 cardNoLocation.animate()
                         .translationX(cardNoLocation.getWidth())
+                        .alpha(0.01f)
                         .setDuration(animDuration)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override

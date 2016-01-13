@@ -1,6 +1,8 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.net.Uri;
@@ -15,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
@@ -36,6 +39,8 @@ public class SongFragment extends Fragment {
 
     private TextView tvLyricsBy, tvTitle, tvMusicBy, tvLyrics;
     private LinearLayout llArtists;
+    private ProgressBar pbArtists, pbLyrics;
+
     List<String> artists, links;
 
     public SongFragment() {
@@ -72,6 +77,9 @@ public class SongFragment extends Fragment {
         tvLyrics = (TextView) fragmentView.findViewById(R.id.tvSongLyrics);
 
         llArtists = (LinearLayout) fragmentView.findViewById(R.id.llArtists);
+
+        pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
+        pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
 
         tvTitle.setText(song.getTitle());
         tvMusicBy.setText(song.getMusicCreator());
@@ -111,8 +119,6 @@ public class SongFragment extends Fragment {
                 try {
                     // Connect to the web site
                     Document document = Jsoup.connect(song.getUrl()).get();
-
-                    Log.i("nikos", "URL:" + song.getUrl());
 
                     Element table = document.select(".row3").get(0);
 
@@ -161,6 +167,13 @@ public class SongFragment extends Fragment {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
+
+            crossfade(llArtists, pbArtists);
+            crossfade(tvLyrics, pbLyrics);
+
+//            pbArtists.setVisibility(View.GONE);
+
+//            pbLyrics.setVisibility(View.GONE);
 
             tvLyrics.setText(lyrics);
 
@@ -222,6 +235,34 @@ public class SongFragment extends Fragment {
 
     }
 
+
+    private void crossfade(View viewToShow, final View viewToHide) {
+
+        // Set the content view to 0% opacity but visible, so that it is visible
+        // (but fully transparent) during the animation.
+        viewToShow.setAlpha(0f);
+        viewToShow.setVisibility(View.VISIBLE);
+
+        // Animate the content view to 100% opacity, and clear any animation
+        // listener set on the view.
+        viewToShow.animate()
+                .alpha(1f)
+                .setDuration(1000)
+                .setListener(null);
+
+        // Animate the loading view to 0% opacity. After the animation ends,
+        // set its visibility to GONE as an optimization step (it won't
+        // participate in layout passes, etc.)
+        viewToHide.animate()
+                .alpha(0f)
+                .setDuration(1000)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        viewToHide.setVisibility(View.GONE);
+                    }
+                });
+    }
 
 }
 
