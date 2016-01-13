@@ -18,6 +18,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
 
 import org.jsoup.Jsoup;
@@ -143,8 +144,10 @@ public class SongListFragment extends Fragment {
                 recyclerView.swapAdapter(songsAdapter, true);
             }
 
-            pbList.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            AnimationUtils.crossfade(recyclerView,pbList);
+
+//            pbList.setVisibility(View.GONE);
+//            recyclerView.setVisibility(View.VISIBLE);
 
         }
     }

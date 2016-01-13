@@ -1,13 +1,10 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +12,7 @@ import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -165,7 +163,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     tvCustomLocation.setText(customLocation.getFullName());
 
-                    cardButtonPickLocation.animate()
+
+                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation);
+
+                    /*cardButtonPickLocation.animate()
                             .translationX(cardButtonPickLocation.getWidth())
                             .alpha(0.01f)
                             .setDuration(animDuration)
@@ -186,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                         super.onAnimationEnd(animation);
                                         cardPickLocation.setVisibility(View.VISIBLE);
                                     }
-                                });
+                                });*/
                 } else {
                     cardButtonPickLocation.setVisibility(View.VISIBLE);
                     cardPickLocation.setVisibility(View.GONE);
@@ -251,7 +252,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             if (locationFound) {
                 tvCurrentLocation.setText(currentLocation.getFullName());
 
-                cardNoLocation.animate()
+
+                AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
+
+                /*cardNoLocation.animate()
                         .translationX(cardNoLocation.getWidth())
                         .alpha(0.01f)
                         .setDuration(animDuration)
@@ -271,7 +275,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                                 super.onAnimationEnd(animation);
                                 cardLocationFound.setVisibility(View.VISIBLE);
                             }
-                        });
+                        });*/
             } else {
 
                 if (!gpsUtils.canGetLocation()) {

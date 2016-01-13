@@ -18,6 +18,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -141,8 +142,9 @@ public class MovieListFragment extends Fragment {
                 recyclerView.swapAdapter(moviesAdapter, true);
             }
 
-            pbList.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            AnimationUtils.crossfade(recyclerView, pbList);
+//            pbList.setVisibility(View.GONE);
+//            recyclerView.setVisibility(View.VISIBLE);
 
         }
 

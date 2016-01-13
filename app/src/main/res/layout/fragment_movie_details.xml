@@ -29,7 +29,8 @@
                 android:layout_width="216dp"
                 android:layout_height="319dp"
                 android:layout_gravity="center"
-                android:scaleType="fitCenter" />
+                android:scaleType="fitCenter"
+                android:visibility="invisible" />
         </FrameLayout>
 
         <TextView

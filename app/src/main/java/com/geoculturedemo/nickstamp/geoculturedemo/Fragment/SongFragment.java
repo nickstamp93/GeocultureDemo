@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -168,12 +169,8 @@ public class SongFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            crossfade(llArtists, pbArtists);
-            crossfade(tvLyrics, pbLyrics);
-
-//            pbArtists.setVisibility(View.GONE);
-
-//            pbLyrics.setVisibility(View.GONE);
+            AnimationUtils.crossfade(llArtists, pbArtists);
+            AnimationUtils.crossfade(tvLyrics, pbLyrics);
 
             tvLyrics.setText(lyrics);
 
@@ -221,7 +218,7 @@ public class SongFragment extends Fragment {
                             intent.putExtra("query", song.getTitle() + " " + s);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-//                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
+
                         }
                     });
                     tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_search, 0);
@@ -233,35 +230,6 @@ public class SongFragment extends Fragment {
 
         }
 
-    }
-
-
-    private void crossfade(View viewToShow, final View viewToHide) {
-
-        // Set the content view to 0% opacity but visible, so that it is visible
-        // (but fully transparent) during the animation.
-        viewToShow.setAlpha(0f);
-        viewToShow.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity, and clear any animation
-        // listener set on the view.
-        viewToShow.animate()
-                .alpha(1f)
-                .setDuration(1000)
-                .setListener(null);
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step (it won't
-        // participate in layout passes, etc.)
-        viewToHide.animate()
-                .alpha(0f)
-                .setDuration(1000)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        viewToHide.setVisibility(View.GONE);
-                    }
-                });
     }
 
 }

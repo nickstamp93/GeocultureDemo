@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -132,7 +133,7 @@ public class MovieFragment extends Fragment {
 
                         String synopsis = storylines.first().getElementsByTag("p").text();
                         int pos = synopsis.indexOf("Written by");
-                        synopsis = synopsis.substring(0,pos);
+                        synopsis = synopsis.substring(0, pos);
                         movie.setSynopsis(synopsis);
                     }
 
@@ -155,10 +156,13 @@ public class MovieFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            pbImage.setVisibility(View.GONE);
+
             Picasso.with(getContext())
                     .load(movie.getImgUrl())
                     .into(ivMovieImage);
+
+            AnimationUtils.crossfade(ivMovieImage, pbImage);
+
             tvMovieTitle.setText(movie.getTitle());
             tvMovieWriter.setText(movie.getWriter());
             tvMovieSynopsis.setText(movie.getSynopsis());
