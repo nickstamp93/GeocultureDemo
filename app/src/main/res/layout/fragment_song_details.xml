@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:orientation="vertical"
         android:padding="16dp">
 
         <TextView
+            android:id="@+id/tvSongTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Θεσσαλονίκη (1990)"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -31,9 +33,9 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSongMusicBy"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Βασίλης Τσιτσάνης" />
+                android:layout_height="wrap_content" />
 
         </TableRow>
 
@@ -50,16 +52,17 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/tvSongLyricsBy"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Βασίλης Τσιτσάνης" />
+                android:layout_height="wrap_content" />
 
         </TableRow>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="16dp"
+            android:animateLayoutChanges="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -74,7 +77,13 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
-                <TableLayout
+                <LinearLayout
+                    android:id="@+id/llArtists"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+                <!--<TableLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -147,7 +156,7 @@
                             android:src="@mipmap/ic_tube" />
 
                     </TableRow>
-                </TableLayout>
+                </TableLayout>-->
 
 
             </LinearLayout>
@@ -156,15 +165,13 @@
         </android.support.v7.widget.CardView>
 
         <TextView
-            android:layout_marginTop="24dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="24dp"
             android:id="@+id/tvSongLyrics"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:text="@string/bit_text" />
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center" />
 
     </LinearLayout>
 
