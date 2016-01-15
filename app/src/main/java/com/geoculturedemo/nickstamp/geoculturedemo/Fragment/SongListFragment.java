@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,7 +70,6 @@ public class SongListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             location = new LocationUtils(getContext()).toGreekLocale((Location) getArguments().getSerializable(ARG_LOCATION));
-            location = (Location) getArguments().getSerializable(ARG_LOCATION);
         }
     }
 
@@ -199,10 +199,15 @@ public class SongListFragment extends Fragment {
 
                 }
 
+
                 songs.get(headerPos).setTitle(songCount + " results for \" " + location + " \"");
 
             } catch (IOException e) {
                 e.printStackTrace();
+                Log.i("nikos", "IO Exception");
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
+                Log.i("nikos", "Out of bounds Exception");
             }
         }
         if (!success) {

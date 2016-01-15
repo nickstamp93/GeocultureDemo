@@ -245,7 +245,6 @@
             cardview:contentPadding="16dp">
 
             <LinearLayout
-                android:id="@+id/llRecentPlaces"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -264,6 +263,11 @@
                     android:layout_height="2dp"
                     android:background="@color/dim_foreground_disabled_material_dark" />
 
+                <LinearLayout
+                    android:id="@+id/llRecentPlaces"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
 
             </LinearLayout>
 
@@ -282,7 +286,6 @@
             cardview:contentPadding="16dp">
 
             <LinearLayout
-                android:id="@+id/llRecentSearches"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -301,9 +304,15 @@
                     android:layout_height="2dp"
                     android:background="@color/dim_foreground_disabled_material_dark" />
 
+                <LinearLayout
+                    android:id="@+id/llRecentSearches"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                </LinearLayout>
 
             </LinearLayout>
-
 
         </android.support.v7.widget.CardView>
 

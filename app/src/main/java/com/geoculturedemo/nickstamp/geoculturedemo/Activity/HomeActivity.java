@@ -67,7 +67,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         initHistoryCards();
 
-
     }
 
     private void initHistoryCards() {
@@ -85,6 +84,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         int[] attrs = new int[]{R.attr.selectableItemBackground};
         TypedArray typedArray = obtainStyledAttributes(attrs);
         int backgroundResource = typedArray.getResourceId(0, 0);
+
+        llPlaces.removeAllViews();
 
         if (recentPlaces.size() > 0) {
             cardRecentPlaces.setVisibility(View.VISIBLE);
@@ -116,6 +117,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         }
+
+        llSearches.removeAllViews();
 
         if (recentSearches.size() > 0) {
             cardRecentSearches.setVisibility(View.VISIBLE);
@@ -149,7 +152,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 
     /**
      * Initializes the UI views such as the cards , buttons etc
@@ -186,7 +188,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         llSearches = (LinearLayout) findViewById(R.id.llRecentSearches);
 
     }
-
 
     @Override
     public void onClick(View v) {
@@ -258,7 +259,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if (customLocation != null) {
                     //if custom location was found,
 
-                    HistoryUtils.updateRecentSearches(this,customLocation.getFullName());
+                    HistoryUtils.updateRecentSearches(this, customLocation.getFullName());
 
                     tvCustomLocation.setText(customLocation.getFullName());
 
@@ -269,6 +270,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     cardButtonPickLocation.setVisibility(View.VISIBLE);
                     cardPickLocation.setVisibility(View.GONE);
                 }
+
+
+                initHistoryCards();
 
             }
         }
