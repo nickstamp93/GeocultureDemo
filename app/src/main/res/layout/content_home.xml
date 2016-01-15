@@ -25,11 +25,11 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:paddingTop="16dp"
+                android:layout_height="wrap_content"
                 android:paddingBottom="8dp"
-                android:paddingRight="16dp"
                 android:paddingLeft="16dp"
-                android:layout_height="wrap_content">
+                android:paddingRight="16dp"
+                android:paddingTop="16dp">
 
                 <LinearLayout
                     android:id="@+id/llSearchingLocation"
@@ -117,7 +117,7 @@
                         android:gravity="center"
                         android:text="N/A"
                         android:textSize="24sp"
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -172,7 +172,7 @@
                         android:gravity="center"
                         android:text="N/A"
                         android:textSize="24sp"
-                        android:textStyle="bold|italic" />
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 

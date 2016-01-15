@@ -36,8 +36,7 @@
                 android:ellipsize="end"
                 android:maxLines="2"
                 android:text="This is the title of the movie (2015)"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/tvMovieGenre"

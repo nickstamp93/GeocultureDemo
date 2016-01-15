@@ -1,10 +1,9 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,6 +22,7 @@ import android.widget.TextView;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -44,9 +44,12 @@ public class SongFragment extends Fragment {
 
     List<String> artists, links;
 
+    private Typeface typeface;
+
     public SongFragment() {
         artists = new ArrayList<>();
         links = new ArrayList<>();
+
     }
 
     public static SongFragment newInstance(Song song1) {
@@ -70,6 +73,7 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
         View fragmentView = inflater.inflate(R.layout.fragment_song_details, container, false);
 
         tvTitle = (TextView) fragmentView.findViewById(R.id.tvSongTitle);
@@ -81,6 +85,8 @@ public class SongFragment extends Fragment {
 
         pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
         pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
+
+        FontUtils.setRobotoFont(getContext(), fragmentView);
 
         tvTitle.setText(song.getTitle());
         tvMusicBy.setText(song.getMusicCreator());
@@ -174,12 +180,15 @@ public class SongFragment extends Fragment {
 
             tvLyrics.setText(lyrics);
 
+
             for (int i = 0; i < artists.size(); i++) {
                 final String currentArtist = artists.get(i);
 
                 TextView tv = new TextView(getContext());
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
                 tv.setText(currentArtist);
+                typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
+                tv.setTypeface(typeface);
 
                 int padding_in_dp = 8;  // 12 dps
                 final float scale = getResources().getDisplayMetrics().density;

@@ -93,7 +93,6 @@ public class SongListFragment extends Fragment {
 
         }
 
-
         return fragmentView;
     }
 
@@ -144,10 +143,7 @@ public class SongListFragment extends Fragment {
                 recyclerView.swapAdapter(songsAdapter, true);
             }
 
-            AnimationUtils.crossfade(recyclerView,pbList);
-
-//            pbList.setVisibility(View.GONE);
-//            recyclerView.setVisibility(View.VISIBLE);
+            AnimationUtils.crossfade(recyclerView, pbList);
 
         }
     }

@@ -90,7 +90,6 @@ public class MovieListFragment extends Fragment {
 
             parseMovies();
 
-
         }
 
 
@@ -143,8 +142,6 @@ public class MovieListFragment extends Fragment {
             }
 
             AnimationUtils.crossfade(recyclerView, pbList);
-//            pbList.setVisibility(View.GONE);
-//            recyclerView.setVisibility(View.VISIBLE);
 
         }
 
@@ -235,14 +232,7 @@ public class MovieListFragment extends Fragment {
                 }
             }
             if (!success) {
-                Snackbar.make(fragmentView, "Something went wrong", Snackbar.LENGTH_LONG)
-                        .setAction("Retry", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        })
-                        .show();
+                Snackbar.make(fragmentView, "Something went wrong. Please try again", Snackbar.LENGTH_LONG).show();
             }
 
         }

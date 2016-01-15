@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -26,7 +28,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     private static final int PLACE_PICKER_REQUEST = 1;
     private LatLngBounds lastBounds = null;
-    private int animDuration = 800;
 
     //Views
     private View cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation, llRetry, llSearchLocation;
@@ -44,14 +45,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_home);
 
-
-//        setUpToolbar();
+        FontUtils.setRobotoFont(this, getWindow().getDecorView());
 
         //initialize the UI vies
         initViews();
 
-        //hide/show appropriate cards
-//        manageGPSCards();
         new AsyncFindLocation().execute();
 
     }

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -72,11 +73,14 @@ public class MovieFragment extends Fragment {
         tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
         tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
+        FontUtils.setRobotoFont(getContext(), fragmentView);
+
         tvMovieRating.setText(movie.getRating());
         tvMovieRuntime.setText(movie.getRuntime());
         tvMovieGenre.setText(movie.getGenre());
         tvMovieDirector.setText(movie.getDirector());
         tvMovieCast.setText(movie.getCast());
+
 
         new MovieDetailsParser().execute();
 

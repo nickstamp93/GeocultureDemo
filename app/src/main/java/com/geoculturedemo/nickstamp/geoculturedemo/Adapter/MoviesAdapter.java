@@ -1,6 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Adapter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,6 +30,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
     private ArrayList<Movie> movies;
     private OnMovieClicked onMovieClicked;
     private LayoutInflater inflater;
+    Typeface typeface, typefaceMedium, typefaceBold;
 
     public MoviesAdapter(Context context, ArrayList<Movie> movies, OnMovieClicked onMovieClicked) {
         this.context = context;
@@ -36,6 +38,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
         this.onMovieClicked = onMovieClicked;
 
         inflater = LayoutInflater.from(context);
+
+        typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Regular.ttf");
+        typefaceMedium = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Medium.ttf");
+        typefaceBold = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
     }
 
     @Override
@@ -107,10 +113,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
                 movieRating = (TextView) itemView.findViewById(R.id.tvMovieRating);
                 movieRuntime = (TextView) itemView.findViewById(R.id.tvMovieRuntime);
 
+                movieTitle.setTypeface(typefaceMedium);
+                movieGenre.setTypeface(typeface);
+                movieRating.setTypeface(typeface);
+                movieRuntime.setTypeface(typeface);
+
                 itemView.setOnClickListener(this);
             } else {
                 type = VIEW_TYPE_HEADER;
                 tvHeaderResults = (TextView) itemView.findViewById(R.id.tvHeader);
+                tvHeaderResults.setTypeface(typefaceBold);
             }
 
         }
