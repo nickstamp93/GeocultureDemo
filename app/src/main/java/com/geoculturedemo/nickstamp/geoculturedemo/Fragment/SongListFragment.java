@@ -69,6 +69,7 @@ public class SongListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             location = new LocationUtils(getContext()).toGreekLocale((Location) getArguments().getSerializable(ARG_LOCATION));
+            location = (Location) getArguments().getSerializable(ARG_LOCATION);
         }
     }
 

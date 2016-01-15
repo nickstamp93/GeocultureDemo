@@ -213,7 +213,7 @@
             android:id="@+id/cardbuttonPickLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:clickable="true"
             android:foreground="?selectableItemBackground"
@@ -230,6 +230,80 @@
                 android:text="PICK LOCATION"
                 android:textColor="@color/colorAccent"
                 android:textSize="20sp" />
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardRecentPlaces"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:visibility="gone"
+            cardview:contentPadding="16dp">
+
+            <LinearLayout
+                android:id="@+id/llRecentPlaces"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/button"
+                    android:gravity="center"
+                    android:text="Recent Places"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/dim_foreground_disabled_material_dark" />
+
+
+            </LinearLayout>
+
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/cardRecentSearches"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:foreground="?selectableItemBackground"
+            android:visibility="gone"
+            cardview:contentPadding="16dp">
+
+            <LinearLayout
+                android:id="@+id/llRecentSearches"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/button"
+                    android:gravity="center"
+                    android:text="Last Searches"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/dim_foreground_disabled_material_dark" />
+
+
+            </LinearLayout>
+
 
         </android.support.v7.widget.CardView>
 
