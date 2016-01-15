@@ -159,10 +159,12 @@ public class MovieListFragment extends Fragment {
                     // Connect to the web site
                     Document document = Jsoup.connect(urlQuery).get();
 
+                    //if connected successfully
                     success = true;
 
                     //this movie will be used to locate the header inside the adapter
-                    Movie notRealMovie = new Movie("", "No results found for \" " + location + " \"", "", "", "-1", "");
+                    Movie notRealMovie = new Movie("", "No results found for \" " + location + " \"", "", "", "-1", "", "", "", "");
+
                     //save the pos of the header, to change it later
                     int headerPos = movies.size();
                     movies.add(notRealMovie);
@@ -186,8 +188,8 @@ public class MovieListFragment extends Fragment {
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
                         String credit = elementTitle.getElementsByClass("credit").text();
 
+                        //extract actors and director from credits
                         String director = "", cast = "";
-
                         if (credit.length() > 0) {
                             String[] tokens = credit.split(":");
                             if (tokens.length == 3) {
@@ -201,20 +203,9 @@ public class MovieListFragment extends Fragment {
                             }
                         }
 
-                        Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
-                        movie.setDirector(director);
-                        movie.setCast(cast);
-                        movie.setYear(year);
+                        Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre, director, cast, year);
 
-
-                        boolean found = false;
-                        for (Movie movie1 : movies) {
-                            if (movie1 != null && movie1.getTitle().equals(movie.getTitle())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
+                        if (!movies.contains(movie)) {
                             movies.add(movie);
                             moviesCount++;
                         }

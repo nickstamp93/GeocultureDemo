@@ -97,7 +97,7 @@ public class LocationUtils {
 
         try {
 
-            List<Address> addresses = geocoder.getFromLocationName(location.getArea(), 10);
+            List<Address> addresses = geocoder.getFromLocationName(location.getArea() + "," + location.getCity(), 10);
 
             if (addresses != null && addresses.size() > 0) {
 

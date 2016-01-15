@@ -21,7 +21,7 @@ public class Movie implements Serializable {
     private String url;
 
 
-    public Movie(String url, String title, String rating, String imgUrl, String runtime, String genre) {
+    public Movie(String url, String title, String rating, String imgUrl, String runtime, String genre, String director, String cast, String year) {
 
         this.url = url;
         this.title = title;
@@ -29,6 +29,20 @@ public class Movie implements Serializable {
         this.imgUrl = imgUrl;
         this.runtime = runtime;
         this.genre = genre;
+        this.director = director;
+        this.cast = cast;
+        this.year = year;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        boolean isIdentical = false;
+
+        if (object != null && object instanceof Movie) {
+            isIdentical = this.url.equals(((Movie) object).url);
+        }
+
+        return isIdentical;
     }
 
 

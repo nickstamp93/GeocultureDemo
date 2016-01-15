@@ -126,7 +126,7 @@ public class SongListFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
-            if (!location.getCity().equals(location.getArea()))
+            if (location != null && !location.getCity().equals(location.getArea()))
                 parseSongList(location.getArea());
             parseSongList(location.getCity());
 
@@ -191,21 +191,12 @@ public class SongListFragment extends Fragment {
 
                     Song song = new Song(id, title, year, lyricist, composer, singer, url);
 
-                    boolean found = false;
-                    for (Song song1 : songs) {
-                        //TODO create comparator for song class
-                        if (song1 != null && song1.getTitle().equals(song.getTitle()) && song1.getArtist().equals(song.getArtist())) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
+                    if (!songs.contains(song)) {
                         songs.add(song);
                         songCount++;
                     }
 
                 }
-
 
                 songs.get(headerPos).setTitle(songCount + " results for \" " + location + " \"");
 
