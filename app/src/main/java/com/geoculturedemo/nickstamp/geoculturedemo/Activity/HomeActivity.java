@@ -1,9 +1,11 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
+import android.animation.LayoutTransition;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -184,8 +186,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         cardRecentPlaces = findViewById(R.id.cardRecentPlaces);
         cardRecentSearches = findViewById(R.id.cardRecentSearches);
+
         llPlaces = (LinearLayout) findViewById(R.id.llRecentPlaces);
         llSearches = (LinearLayout) findViewById(R.id.llRecentSearches);
+
+//        LayoutTransition layoutTransition = new LayoutTransition();
+//        llPlaces.setLayoutTransition(layoutTransition);
+//        llSearches.setLayoutTransition(layoutTransition);
 
     }
 
@@ -271,7 +278,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     cardPickLocation.setVisibility(View.GONE);
                 }
 
-
                 initHistoryCards();
 
             }
@@ -335,6 +341,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tvCurrentLocation.setText(currentLocation.getFullName());
 
                 AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
+
+                initHistoryCards();
 
             } else {
 
