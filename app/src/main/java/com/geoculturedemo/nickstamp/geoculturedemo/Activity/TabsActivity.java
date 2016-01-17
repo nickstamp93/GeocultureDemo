@@ -61,12 +61,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         components = new HashMap<>();
 
         location = (Location) getIntent().getSerializableExtra("location");
-        if (location == null) {
-            location = new Location();
-            location.setCity("Thessaloniki");
-            location.setArea("Thessaloniki");
-            location.setCountry("Greece");
-        }
+
         MovieListFragment movieListFragment = new MovieListFragment().newInstance(location);
 
         movieListFragment.setOnMovieClickedListener(this);
@@ -81,7 +76,6 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         components.put(TAG_SONG_LIST, songListFragment);
 
         currentSongTag = TAG_SONG_LIST;
-
 
         manager = getSupportFragmentManager();
     }
@@ -180,9 +174,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 1:
-                    return "MOVIES";
+                    return getString(R.string.text_movies);
                 case 0:
-                    return "SONGS";
+                    return getString(R.string.text_songs);
             }
             return null;
         }

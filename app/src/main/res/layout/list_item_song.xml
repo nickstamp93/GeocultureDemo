@@ -23,7 +23,6 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="This is the Song Title"
             android:textSize="24sp" />
 
         <TextView
@@ -34,10 +33,8 @@
             android:layout_marginLeft="16dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="Song Artist"
             android:textSize="20sp" />
 
     </LinearLayout>
-
 
 </android.support.v7.widget.CardView>

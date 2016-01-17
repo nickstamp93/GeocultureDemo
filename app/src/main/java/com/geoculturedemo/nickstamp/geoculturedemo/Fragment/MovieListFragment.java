@@ -73,9 +73,6 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //TODO somehow give the user the option to load more results(distinct for area-city???)
-
-
         if (fragmentView == null) {
 
             context = getContext();
@@ -163,7 +160,7 @@ public class MovieListFragment extends Fragment {
                     success = true;
 
                     //this movie will be used to locate the header inside the adapter
-                    Movie notRealMovie = new Movie("", "No results found for \" " + location + " \"", "", "", "-1", "", "", "", "");
+                    Movie notRealMovie = new Movie("", "0 " + getString(R.string.text_results_for) + " \"" + location + "\"", "", "", "-1", "", "", "", "");
 
                     //save the pos of the header, to change it later
                     int headerPos = movies.size();
@@ -212,7 +209,7 @@ public class MovieListFragment extends Fragment {
 
                     }
 
-                    movies.get(headerPos).setTitle(moviesCount + " results for \" " + location + " \"");
+                    movies.get(headerPos).setTitle(moviesCount + " " + getString(R.string.text_results_for) + " \"" + location + "\"");
 
                 } catch (IOException e) {
                     Log.i("nikos", "IO Exception");
@@ -223,7 +220,7 @@ public class MovieListFragment extends Fragment {
                 }
             }
             if (!success) {
-                Snackbar.make(fragmentView, "Something went wrong. Please try again", Snackbar.LENGTH_LONG).show();
+                Snackbar.make(fragmentView, getString(R.string.snackbar_went_wrong), Snackbar.LENGTH_LONG).show();
             }
 
         }

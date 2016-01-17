@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:scrollbars="none"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -30,6 +30,7 @@
                 android:layout_width="216dp"
                 android:layout_height="319dp"
                 android:layout_gravity="center"
+                android:contentDescription="@string/content_desc_movie_image"
                 android:scaleType="fitCenter"
                 android:visibility="invisible" />
         </FrameLayout>
@@ -72,7 +73,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Genre : "
+                            android:text="@string/text_genre"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -92,7 +93,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cast : "
+                            android:text="@string/text_cast"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -112,7 +113,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Director : "
+                            android:text="@string/text_director"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -132,7 +133,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Writer : "
+                            android:text="@string/text_writer"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -195,7 +196,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Synopsis" />
+                    android:text="@string/text_synopsis" />
 
                 <View
                     android:layout_width="match_parent"
@@ -206,8 +207,7 @@
                     android:id="@+id/tvMovieSynopsis"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Alexander, an old writer, is ill and prepared to die. He says his goodbyes and recalls his life with his wife long ago. While driving his car he saves a street kid, an illegal immigrant from Albania, from being arrested. Later in the day, by chance, he sees the same boy being abducted, and follows in his car. Although he is preoccupied with his own regrets, he puts death on hold to find a way to help the boy. " />
+                    android:layout_marginTop="16dp" />
 
             </LinearLayout>
 

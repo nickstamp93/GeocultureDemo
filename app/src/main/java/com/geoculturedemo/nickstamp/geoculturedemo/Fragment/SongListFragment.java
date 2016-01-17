@@ -166,7 +166,7 @@ public class SongListFragment extends Fragment {
                 success = true;
 
                 //this song will be used to locate the header inside the adapter
-                Song notRealSong = new Song("", "No results found for \"" + location + "\"", "-1", "", "", "", "");
+                Song notRealSong = new Song("", "0 " + getString(R.string.text_results_for) + " \"" + location + "\"", "-1", "", "", "", "");
                 //save the pos of the header, to change it later
                 int headerPos = songs.size();
                 songs.add(notRealSong);
@@ -200,7 +200,7 @@ public class SongListFragment extends Fragment {
                 }
 
 
-                songs.get(headerPos).setTitle(songCount + " results for \" " + location + " \"");
+                songs.get(headerPos).setTitle(songCount + " " + getString(R.string.text_results_for) + " \"" + location + "\"");
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -211,14 +211,7 @@ public class SongListFragment extends Fragment {
             }
         }
         if (!success) {
-            Snackbar.make(fragmentView, "Something went wrong", Snackbar.LENGTH_LONG)
-                    .setAction("Retry", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                        }
-                    })
-                    .show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_went_wrong), Snackbar.LENGTH_LONG).show();
         }
 
 

@@ -17,16 +17,6 @@
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:gravity="center"
-            android:singleLine="true"
-            android:text="GeoCulture"
-            android:textSize="36sp"
-            android:textStyle="bold" />
-
         <android.support.v7.widget.CardView
             android:id="@+id/cardNoLocation"
             android:layout_width="match_parent"
@@ -59,7 +49,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Searching location..."
+                        android:text="@string/text_searching_locatin"
                         android:textSize="20sp" />
                 </LinearLayout>
 
@@ -74,17 +64,16 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Can't find location"
+                        android:text="@string/text_no_location"
                         android:textSize="20sp" />
 
                     <Button
                         android:id="@+id/bRetry"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/button"
                         android:layout_marginTop="20dp"
                         android:background="?selectableItemBackground"
-                        android:text="RETRY"
+                        android:text="@string/text_retry"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp" />
                 </LinearLayout>
@@ -117,7 +106,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Your Location : "
+                        android:text="@string/text_your_location"
                         android:textSize="20sp" />
 
                     <TextView
@@ -125,7 +114,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="N/A"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -135,10 +123,9 @@
                     android:id="@+id/bExploreLocal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/button"
                     android:layout_marginTop="16dp"
                     android:background="?selectableItemBackground"
-                    android:text="EXPLORE"
+                    android:text="@string/text_explore"
                     android:textColor="@color/colorAccent"
                     android:textSize="20sp" />
 
@@ -172,7 +159,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="Selected Location : "
+                        android:text="@string/text_selected_location"
                         android:textSize="20sp" />
 
                     <TextView
@@ -180,7 +167,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:text="N/A"
                         android:textSize="24sp"
                         android:textStyle="bold" />
 
@@ -196,10 +182,9 @@
                         android:id="@+id/bPickLocation"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/button"
                         android:layout_weight="1"
                         android:background="?selectableItemBackground"
-                        android:text="PICK LOCATION"
+                        android:text="@string/text_pick_location"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp" />
 
@@ -209,7 +194,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?selectableItemBackground"
-                        android:text="EXPLORE"
+                        android:text="@string/text_explore"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp" />
 
@@ -237,7 +222,7 @@
                 android:drawableLeft="@mipmap/ic_earth"
                 android:drawablePadding="4dp"
                 android:gravity="center"
-                android:text="PICK LOCATION"
+                android:text="@string/text_pick_location"
                 android:textColor="@color/colorAccent"
                 android:textSize="20sp" />
 
@@ -262,9 +247,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/button"
                     android:gravity="center"
-                    android:text="Recent Places"
+                    android:text="@string/text_recent_places"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
@@ -304,7 +288,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/button"
                     android:gravity="center"
-                    android:text="Last Searches"
+                    android:text="@string/text_last_searches"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 

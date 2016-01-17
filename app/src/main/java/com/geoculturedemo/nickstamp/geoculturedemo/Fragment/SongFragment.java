@@ -45,6 +45,7 @@ public class SongFragment extends Fragment {
     List<String> artists, links;
 
     private Typeface typeface;
+    private View fragmentView;
 
     public SongFragment() {
         artists = new ArrayList<>();
@@ -74,25 +75,28 @@ public class SongFragment extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        View fragmentView = inflater.inflate(R.layout.fragment_song_details, container, false);
+        if (fragmentView == null) {
+            fragmentView = inflater.inflate(R.layout.fragment_song_details, container, false);
 
-        tvTitle = (TextView) fragmentView.findViewById(R.id.tvSongTitle);
-        tvMusicBy = (TextView) fragmentView.findViewById(R.id.tvSongMusicBy);
-        tvLyricsBy = (TextView) fragmentView.findViewById(R.id.tvSongLyricsBy);
-        tvLyrics = (TextView) fragmentView.findViewById(R.id.tvSongLyrics);
+            tvTitle = (TextView) fragmentView.findViewById(R.id.tvSongTitle);
+            tvMusicBy = (TextView) fragmentView.findViewById(R.id.tvSongMusicBy);
+            tvLyricsBy = (TextView) fragmentView.findViewById(R.id.tvSongLyricsBy);
+            tvLyrics = (TextView) fragmentView.findViewById(R.id.tvSongLyrics);
 
-        llArtists = (LinearLayout) fragmentView.findViewById(R.id.llArtists);
+            llArtists = (LinearLayout) fragmentView.findViewById(R.id.llArtists);
 
-        pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
-        pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
+            pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
+            pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
 
-        FontUtils.setRobotoFont(getContext(), fragmentView);
+            FontUtils.setRobotoFont(getContext(), fragmentView);
 
-        tvTitle.setText(song.getTitle());
-        tvMusicBy.setText(song.getMusicCreator());
-        tvLyricsBy.setText(song.getLyricsCreator());
+            tvTitle.setText(song.getTitle());
+            tvMusicBy.setText(song.getMusicCreator());
+            tvLyricsBy.setText(song.getLyricsCreator());
 
-        new SongDetailsParser().execute();
+            new SongDetailsParser().execute();
+        }
+
 
         return fragmentView;
 
@@ -134,7 +138,6 @@ public class SongFragment extends Fragment {
                     for (Element e : trSingers) {
                         String singer = e.text();
                         artists.add(singer);
-                        Log.i("nikos", "Td size:" + e.getElementsByTag("td").size());
                         for (int i = 0; i < e.getElementsByTag("td").size(); i++) {
                             String s = e.getElementsByTag("td").get(i).getElementsByTag("a").attr("href");
                             if (s.contains("youtube")) {

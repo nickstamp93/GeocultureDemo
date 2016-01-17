@@ -34,6 +34,7 @@ public class MovieFragment extends Fragment {
     private ProgressBar pbImage;
 
     private Movie movie;
+    private View fragmentView;
 
     public MovieFragment() {
 
@@ -59,30 +60,33 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
+        if (fragmentView == null) {
 
-        ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
-        pbImage = (ProgressBar) fragmentView.findViewById(R.id.pbImage);
+            fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
-        tvMovieTitle = (TextView) fragmentView.findViewById(R.id.tvMovieTitle);
-        tvMovieGenre = (TextView) fragmentView.findViewById(R.id.tvMovieGenre);
-        tvMovieCast = (TextView) fragmentView.findViewById(R.id.tvMovieCast);
-        tvMovieDirector = (TextView) fragmentView.findViewById(R.id.tvMovieDirector);
-        tvMovieWriter = (TextView) fragmentView.findViewById(R.id.tvMovieWriter);
-        tvMovieRating = (TextView) fragmentView.findViewById(R.id.tvMovieRating);
-        tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
-        tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
+            ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
+            pbImage = (ProgressBar) fragmentView.findViewById(R.id.pbImage);
 
-        FontUtils.setRobotoFont(getContext(), fragmentView);
+            tvMovieTitle = (TextView) fragmentView.findViewById(R.id.tvMovieTitle);
+            tvMovieGenre = (TextView) fragmentView.findViewById(R.id.tvMovieGenre);
+            tvMovieCast = (TextView) fragmentView.findViewById(R.id.tvMovieCast);
+            tvMovieDirector = (TextView) fragmentView.findViewById(R.id.tvMovieDirector);
+            tvMovieWriter = (TextView) fragmentView.findViewById(R.id.tvMovieWriter);
+            tvMovieRating = (TextView) fragmentView.findViewById(R.id.tvMovieRating);
+            tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
+            tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
-        tvMovieRating.setText(movie.getRating());
-        tvMovieRuntime.setText(movie.getRuntime());
-        tvMovieGenre.setText(movie.getGenre());
-        tvMovieDirector.setText(movie.getDirector());
-        tvMovieCast.setText(movie.getCast());
+            FontUtils.setRobotoFont(getContext(), fragmentView);
+
+            tvMovieRating.setText(movie.getRating());
+            tvMovieRuntime.setText(movie.getRuntime());
+            tvMovieGenre.setText(movie.getGenre());
+            tvMovieDirector.setText(movie.getDirector());
+            tvMovieCast.setText(movie.getCast());
 
 
-        new MovieDetailsParser().execute();
+            new MovieDetailsParser().execute();
+        }
 
         return fragmentView;
     }
@@ -171,9 +175,7 @@ public class MovieFragment extends Fragment {
             tvMovieWriter.setText(movie.getWriter());
             tvMovieSynopsis.setText(movie.getSynopsis());
 
-
         }
-
 
     }
 
