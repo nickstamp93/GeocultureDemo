@@ -18,6 +18,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeWithActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +28,8 @@
         </activity>
         <activity
             android:name=".Activity.TabsActivity"
-            android:parentActivityName=".Activity.HomeActivity">
+            android:parentActivityName=".Activity.HomeActivity"
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.geoculturedemo.nickstamp.geoculturedemo.Activity.HomeActivity" />

@@ -188,21 +188,22 @@ public class SongFragment extends Fragment {
                 final String currentArtist = artists.get(i);
 
                 TextView tv = new TextView(getContext());
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                 tv.setText(currentArtist);
                 typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
                 tv.setTypeface(typeface);
 
-                int padding_in_dp = 8;  // 12 dps
+                /*int padding_in_dp = 8;  // 12 dps
                 final float scale = getResources().getDisplayMetrics().density;
                 int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
-                tv.setPadding(0, padding_in_px, 0, padding_in_px);
+                tv.setPadding(0, padding_in_px, 0, padding_in_px);*/
 
                 int[] attrs = new int[]{R.attr.selectableItemBackground};
                 TypedArray typedArray = getActivity().obtainStyledAttributes(attrs);
                 int backgroundResource = typedArray.getResourceId(0, 0);
                 tv.setClickable(true);
                 tv.setBackgroundResource(backgroundResource);
+                typedArray.recycle();
 
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 if (links.get(i).trim().length() > 0) {
@@ -215,6 +216,7 @@ public class SongFragment extends Fragment {
                         }
                     });
                     tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_tube, 0);
+                    tv.setCompoundDrawablePadding(4);
                 } else {
 
 
@@ -234,6 +236,7 @@ public class SongFragment extends Fragment {
                         }
                     });
                     tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
+                    tv.setCompoundDrawablePadding(4);
                 }
 
                 tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

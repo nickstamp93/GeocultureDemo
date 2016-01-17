@@ -9,7 +9,7 @@ import android.view.View;
  */
 public class AnimationUtils {
 
-    private static final int ANIM_DURATION_LONG = 1000;
+    private static final int ANIM_DURATION_LONG = 800;
 
     public static void switchCards(final View cardToShow, final View cardToHide) {
         

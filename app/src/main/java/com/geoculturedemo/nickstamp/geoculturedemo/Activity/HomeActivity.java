@@ -29,6 +29,7 @@ import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -266,7 +267,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                     HistoryUtils.updateRecentSearches(this, customLocation.getFullName());
 
-                    tvCustomLocation.setText(customLocation.getFullName());
+                    //if system language is greek
+                    if (Locale.getDefault().getLanguage().equals("el")) {
+                        tvCustomLocation.setText(new LocationUtils(HomeActivity.this).toGreekLocale(customLocation).getFullName());
+                    } else {
+                        tvCustomLocation.setText(customLocation.getFullName());
+                    }
 
                     AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation);
 
@@ -317,6 +323,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     currentLocation = new LocationUtils(HomeActivity.this).getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
                     if (currentLocation != null) {
                         locationFound = true;
+
                         HistoryUtils.updateRecentPlaces(HomeActivity.this, currentLocation.getFullName());
                         return null;
                     }
@@ -335,7 +342,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
             if (locationFound) {
-                tvCurrentLocation.setText(currentLocation.getFullName());
+                //if system language is greek
+                if (Locale.getDefault().getLanguage().equals("el")) {
+                    tvCurrentLocation.setText(new LocationUtils(HomeActivity.this).toGreekLocale(currentLocation).getFullName());
+                } else {
+                    tvCurrentLocation.setText(currentLocation.getFullName());
+                }
 
                 AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
 

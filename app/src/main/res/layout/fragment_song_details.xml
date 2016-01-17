@@ -36,13 +36,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_music"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvSongMusicBy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp" />
 
             </TableRow>
 
@@ -55,13 +56,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/text_lyrics_by"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvSongLyricsBy"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp" />
 
             </TableRow>
 
@@ -86,6 +88,11 @@
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/dim_foreground_disabled_material_dark" />
+
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -100,6 +107,7 @@
                     <LinearLayout
                         android:id="@+id/llArtists"
                         android:layout_width="match_parent"
+                        android:padding="8dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
                 </FrameLayout>
@@ -126,10 +134,9 @@
                 android:id="@+id/tvSongLyrics"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 android:gravity="center"
+                android:textSize="16sp"
                 android:textStyle="italic" />
         </FrameLayout>
 

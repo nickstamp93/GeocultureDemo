@@ -15,7 +15,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/dim_foreground_disabled_material_dark"
+            android:background="@color/dim_background"
             android:padding="16dp">
 
             <ProgressBar
@@ -43,6 +43,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
+            android:gravity="start"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -74,14 +75,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/text_genre"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieGenre"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp" />
 
                     </TableRow>
 
@@ -94,14 +96,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/text_cast"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieCast"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp"  />
 
                     </TableRow>
 
@@ -114,14 +117,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/text_director"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieDirector"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp"  />
 
                     </TableRow>
 
@@ -134,13 +138,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/text_writer"
-                            android:textSize="18sp"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieWriter"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp" />
 
                     </TableRow>
 
@@ -160,7 +165,7 @@
                         android:drawableRight="@mipmap/ic_imdb"
                         android:gravity="center"
                         android:text="-"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/tvMovieRuntime"
@@ -171,7 +176,7 @@
                         android:gravity="center"
                         android:paddingLeft="16dp"
                         android:text="-"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -196,7 +201,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/text_synopsis" />
+                    android:text="@string/text_synopsis"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <View
                     android:layout_width="match_parent"
@@ -207,7 +214,8 @@
                     android:id="@+id/tvMovieSynopsis"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp" />
+                    android:layout_marginTop="16dp"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
