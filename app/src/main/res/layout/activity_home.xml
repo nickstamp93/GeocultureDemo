@@ -184,7 +184,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?selectableItemBackground"
-                        android:text="@string/text_pick_location"
+                        android:singleLine="true"
+                        android:text="@string/text_new_pick"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp" />
 
@@ -194,6 +195,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?selectableItemBackground"
+                        android:singleLine="true"
                         android:text="@string/text_explore"
                         android:textColor="@color/colorAccent"
                         android:textSize="20sp" />

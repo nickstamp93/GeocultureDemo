@@ -84,6 +84,10 @@ public class MovieFragment extends Fragment {
             tvMovieDirector.setText(movie.getDirector());
             tvMovieCast.setText(movie.getCast());
 
+            if (movie.getCast() == null || movie.getCast().trim().length() == 0)
+                tvMovieCast.setText(getString(R.string.text_not_available));
+            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0)
+                tvMovieDirector.setText(getString(R.string.text_not_available));
 
             new MovieDetailsParser().execute();
         }
@@ -174,6 +178,11 @@ public class MovieFragment extends Fragment {
             tvMovieTitle.setText(movie.getTitle());
             tvMovieWriter.setText(movie.getWriter());
             tvMovieSynopsis.setText(movie.getSynopsis());
+
+            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0)
+                tvMovieWriter.setText(getString(R.string.text_not_available));
+            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0)
+                tvMovieSynopsis.setText(getString(R.string.text_not_available));
 
         }
 

@@ -7,17 +7,17 @@
     <string name="text_searching_locatin">Searching location...</string>
     <string name="text_your_location">Your Location :</string>
     <string name="text_explore">EXPLORE</string>
-    <string name="text_selected_location">Selected Location :</string>
+    <string name="text_selected_location">Selected Location :\u0020</string>
     <string name="text_last_searches">Last Searches</string>
     <string name="text_recent_places">Recent Places</string>
     <string name="content_desc_movie_image">Movie Image</string>
-    <string name="text_genre">Genre :</string>
-    <string name="text_cast">Cast :</string>
-    <string name="text_director">Director :</string>
-    <string name="text_writer">Writer :</string>
+    <string name="text_genre">Genre :\u0020</string>
+    <string name="text_cast">Cast :\u0020</string>
+    <string name="text_director">Director :\u0020</string>
+    <string name="text_writer">Writer :\u0020</string>
     <string name="text_synopsis">Synopsis</string>
-    <string name="text_music">Music By : </string>
-    <string name="text_lyrics_by">Lyrics By : </string>
+    <string name="text_music">Music By :\u0020</string>
+    <string name="text_lyrics_by">Lyrics By :\u0020</string>
     <string name="text_artists">Artists</string>
     <string name="toast_service_unavailable">Service currently unavailable</string>
     <string name="snackbar_no_location">Location not found yet.Please try again in a while.</string>
@@ -25,4 +25,6 @@
     <string name="snackbar_went_wrong">Something went wrong. Please try again.</string>
     <string name="text_movies">MOVIES</string>
     <string name="text_songs">SONGS</string>
+    <string name="text_not_available">Not Available</string>
+    <string name="text_new_pick">NEW PICK</string>
 </resources>
