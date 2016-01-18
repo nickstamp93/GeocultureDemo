@@ -1,5 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
+import android.util.Log;
+
 import java.io.Serializable;
 
 /**
@@ -14,6 +16,20 @@ public class Location implements Serializable{
         longitude = 0;
     }
 
+    public Location(String fullName){
+        latitude = 0;
+        longitude = 0;
+        String[] tokens = fullName.split(",");
+        if(tokens.length == 3){
+            area = tokens[0];
+            city = tokens[1];
+            country = tokens[2];
+        }else{
+            area = tokens[0];
+            city = tokens[0];
+            country = tokens[1];
+        }
+    }
 
     public double getLongitude() {
         return longitude;

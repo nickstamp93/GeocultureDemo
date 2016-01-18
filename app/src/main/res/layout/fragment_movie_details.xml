@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbars="none"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -14,7 +15,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/dim_foreground_disabled_material_dark"
+            android:background="@color/dim_background"
             android:padding="16dp">
 
             <ProgressBar
@@ -29,7 +30,9 @@
                 android:layout_width="216dp"
                 android:layout_height="319dp"
                 android:layout_gravity="center"
-                android:scaleType="fitCenter" />
+                android:contentDescription="@string/content_desc_movie_image"
+                android:scaleType="fitCenter"
+                android:visibility="invisible" />
         </FrameLayout>
 
         <TextView
@@ -40,6 +43,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
+            android:gravity="start"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -70,15 +74,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Genre : "
-                            android:textSize="18sp"
+                            android:text="@string/text_genre"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieGenre"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp" />
 
                     </TableRow>
 
@@ -90,15 +95,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Cast : "
-                            android:textSize="18sp"
+                            android:text="@string/text_cast"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieCast"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp"  />
 
                     </TableRow>
 
@@ -110,15 +116,16 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Director : "
-                            android:textSize="18sp"
+                            android:text="@string/text_director"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieDirector"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:singleLine="false" />
+                            android:singleLine="false"
+                            android:textSize="18sp"  />
 
                     </TableRow>
 
@@ -130,14 +137,15 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Writer : "
-                            android:textSize="18sp"
+                            android:text="@string/text_writer"
+                            android:textSize="20sp"
                             android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tvMovieWriter"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:textSize="18sp" />
 
                     </TableRow>
 
@@ -157,7 +165,7 @@
                         android:drawableRight="@mipmap/ic_imdb"
                         android:gravity="center"
                         android:text="-"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
 
                     <TextView
                         android:id="@+id/tvMovieRuntime"
@@ -168,7 +176,7 @@
                         android:gravity="center"
                         android:paddingLeft="16dp"
                         android:text="-"
-                        android:textSize="16sp" />
+                        android:textSize="18sp" />
 
                 </LinearLayout>
 
@@ -193,7 +201,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Synopsis" />
+                    android:text="@string/text_synopsis"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
                 <View
                     android:layout_width="match_parent"
@@ -205,7 +215,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Alexander, an old writer, is ill and prepared to die. He says his goodbyes and recalls his life with his wife long ago. While driving his car he saves a street kid, an illegal immigrant from Albania, from being arrested. Later in the day, by chance, he sees the same boy being abducted, and follows in his car. Although he is preoccupied with his own regrets, he puts death on hold to find a way to help the boy. " />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 

@@ -1,21 +1,26 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.HistoryUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -23,15 +28,20 @@ import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLngBounds;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
+import java.util.ArrayList;
+import java.util.Locale;
 
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int PLACE_PICKER_REQUEST = 1;
     private LatLngBounds lastBounds = null;
-    private int animDuration = 800;
 
+    //Viewgroups
+    private View cardNoLocation, cardLocationFound, cardPickLocation,
+            cardButtonPickLocation, llRetry, llSearchLocation,
+            cardRecentPlaces, cardRecentSearches;
+    LinearLayout llPlaces, llSearches;
     //Views
-    private View cardNoLocation, cardLocationFound, cardPickLocation, cardButtonPickLocation, llRetry, llSearchLocation;
     private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
@@ -44,20 +54,109 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_home);
+        setContentView(R.layout.activity_home);
 
+        //set the font accross the activity
+        FontUtils.setRobotoFont(this, getWindow().getDecorView());
 
-//        setUpToolbar();
-
-        //initialize the UI vies
+        //initialize the UI views
         initViews();
 
-        //hide/show appropriate cards
-//        manageGPSCards();
+        //find location
         new AsyncFindLocation().execute();
+
+        //fill the history cards
+        initHistoryCards();
 
     }
 
+    /**
+     * Init the history cards according to the saved searches and places in the shared prefs file
+     */
+    private void initHistoryCards() {
+
+        ArrayList<String> recentPlaces = HistoryUtils.getRecentPlaces(this);
+        ArrayList<String> recentSearches = HistoryUtils.getRecentSearches(this);
+
+        Typeface typeface = Typeface.createFromAsset(getAssets(), "fonts/Roboto-Regular.ttf");
+
+        int padding_in_dp = 8;  // 12 dps
+        final float scale = getResources().getDisplayMetrics().density;
+        int textSize = 16;
+        int textPadding = (int) (padding_in_dp * scale + 0.5f);
+
+        int[] attrs = new int[]{R.attr.selectableItemBackground};
+        TypedArray typedArray = obtainStyledAttributes(attrs);
+        int backgroundResource = typedArray.getResourceId(0, 0);
+        typedArray.recycle();
+
+        llPlaces.removeAllViews();
+
+        if (recentPlaces.size() > 0) {
+            cardRecentPlaces.setVisibility(View.VISIBLE);
+            for (final String sPlace : recentPlaces) {
+
+                TextView tv = new TextView(this);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+                tv.setText(sPlace);
+                tv.setTypeface(typeface);
+                tv.setPadding(0, textPadding, 0, textPadding);
+
+                tv.setClickable(true);
+                tv.setBackgroundResource(backgroundResource);
+
+                tv.setGravity(Gravity.START);
+
+                tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(HomeActivity.this, TabsActivity.class);
+                        i.putExtra("location", new Location(sPlace));
+                        startActivity(i);
+                    }
+                });
+
+                llPlaces.addView(tv);
+
+            }
+        }
+
+        llSearches.removeAllViews();
+
+        if (recentSearches.size() > 0) {
+            cardRecentSearches.setVisibility(View.VISIBLE);
+            for (final String sSearch : recentSearches) {
+
+                TextView tv = new TextView(this);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
+                tv.setText(sSearch);
+                tv.setTypeface(typeface);
+                tv.setPadding(0, textPadding, 0, textPadding);
+
+                tv.setClickable(true);
+                tv.setBackgroundResource(backgroundResource);
+
+                tv.setGravity(Gravity.START);
+
+                tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(HomeActivity.this, TabsActivity.class);
+                        i.putExtra("location", new Location(sSearch));
+                        startActivity(i);
+                    }
+                });
+
+
+                llSearches.addView(tv);
+
+            }
+        }
+    }
 
     /**
      * Initializes the UI views such as the cards , buttons etc
@@ -88,8 +187,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         tvCurrentLocation = (TextView) findViewById(R.id.tvCurrentLocation);
         tvCustomLocation = (TextView) findViewById(R.id.tvCustomLocation);
 
-    }
+        cardRecentPlaces = findViewById(R.id.cardRecentPlaces);
+        cardRecentSearches = findViewById(R.id.cardRecentSearches);
 
+        llPlaces = (LinearLayout) findViewById(R.id.llRecentPlaces);
+        llSearches = (LinearLayout) findViewById(R.id.llRecentSearches);
+
+    }
 
     @Override
     public void onClick(View v) {
@@ -98,8 +202,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.bRetry:
-//                gpsUtils.getLocation();
-//                manageGPSCards();
                 new AsyncFindLocation().execute();
                 break;
             case R.id.bExploreLocal:
@@ -163,34 +265,24 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 if (customLocation != null) {
                     //if custom location was found,
 
-                    tvCustomLocation.setText(customLocation.getFullName());
+                    HistoryUtils.updateRecentSearches(this, customLocation.getFullName());
 
-                    cardButtonPickLocation.animate()
-                            .translationX(cardButtonPickLocation.getWidth())
-                            .alpha(0.01f)
-                            .setDuration(animDuration)
-                            .setListener(new AnimatorListenerAdapter() {
-                                @Override
-                                public void onAnimationEnd(Animator animation) {
-                                    super.onAnimationEnd(animation);
-                                    cardButtonPickLocation.setVisibility(View.GONE);
-                                }
-                            });
-                    if (cardPickLocation.getVisibility() != View.VISIBLE)
-                        cardPickLocation.animate()
-                                .alpha(0.0f)
-                                .setDuration(animDuration)
-                                .setListener(new AnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(Animator animation) {
-                                        super.onAnimationEnd(animation);
-                                        cardPickLocation.setVisibility(View.VISIBLE);
-                                    }
-                                });
+                    //if system language is greek
+                    if (Locale.getDefault().getLanguage().equals("el")) {
+                        tvCustomLocation.setText(new LocationUtils(HomeActivity.this).toGreekLocale(customLocation).getFullName());
+                    } else {
+                        tvCustomLocation.setText(customLocation.getFullName());
+                    }
+
+                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation);
+
                 } else {
+                    Toast.makeText(this, getString(R.string.toast_service_unavailable), Toast.LENGTH_SHORT).show();
                     cardButtonPickLocation.setVisibility(View.VISIBLE);
                     cardPickLocation.setVisibility(View.GONE);
                 }
+
+                initHistoryCards();
 
             }
         }
@@ -219,8 +311,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         protected Void doInBackground(Void... params) {
 
-            boolean success = false;
-            for (int i = 0; !success && i < 5; i++) {
+            for (int i = 0; i < 5; i++) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -232,6 +323,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                     currentLocation = new LocationUtils(HomeActivity.this).getLocation(gpsUtils.getLatitude(), gpsUtils.getLongitude());
                     if (currentLocation != null) {
                         locationFound = true;
+
+                        HistoryUtils.updateRecentPlaces(HomeActivity.this, currentLocation.getFullName());
                         return null;
                     }
                 } else {
@@ -249,35 +342,23 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
 
             if (locationFound) {
-                tvCurrentLocation.setText(currentLocation.getFullName());
+                //if system language is greek
+                if (Locale.getDefault().getLanguage().equals("el")) {
+                    tvCurrentLocation.setText(new LocationUtils(HomeActivity.this).toGreekLocale(currentLocation).getFullName());
+                } else {
+                    tvCurrentLocation.setText(currentLocation.getFullName());
+                }
 
-                cardNoLocation.animate()
-                        .translationX(cardNoLocation.getWidth())
-                        .alpha(0.01f)
-                        .setDuration(animDuration)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                cardNoLocation.setVisibility(View.GONE);
-                            }
-                        });
-                cardLocationFound.animate()
-                        .alpha(0.0f)
-                        .setDuration(animDuration)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                cardLocationFound.setVisibility(View.VISIBLE);
-                            }
-                        });
+                AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
+
+                initHistoryCards();
+
             } else {
 
                 if (!gpsUtils.canGetLocation()) {
                     gpsUtils.showGPSErrorDialog();
                 } else {
-                    Snackbar.make(cardNoLocation, "Location not found yet.Please try again in a while.", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
                 }
                 llRetry.setVisibility(View.VISIBLE);
                 llSearchLocation.setVisibility(View.INVISIBLE);

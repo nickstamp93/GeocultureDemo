@@ -9,7 +9,7 @@
     android:clickable="true"
     android:foreground="?selectableItemBackground">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -23,8 +23,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="2"
-            android:text="This is the Song Title"
-            android:textSize="24sp" />
+            android:textSize="22sp" />
 
         <TextView
             android:id="@+id/tvSongArtist"
@@ -33,11 +32,8 @@
             android:layout_marginBottom="8dp"
             android:layout_marginLeft="16dp"
             android:ellipsize="end"
-            android:maxLines="2"
-            android:text="Song Artist"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
     </LinearLayout>
-
 
 </android.support.v7.widget.CardView>

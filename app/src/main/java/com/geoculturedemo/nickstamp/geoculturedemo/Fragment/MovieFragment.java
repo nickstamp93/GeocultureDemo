@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
 
 import org.jsoup.Jsoup;
@@ -32,6 +34,7 @@ public class MovieFragment extends Fragment {
     private ProgressBar pbImage;
 
     private Movie movie;
+    private View fragmentView;
 
     public MovieFragment() {
 
@@ -57,27 +60,37 @@ public class MovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
+        if (fragmentView == null) {
 
-        ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
-        pbImage = (ProgressBar) fragmentView.findViewById(R.id.pbImage);
+            fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
-        tvMovieTitle = (TextView) fragmentView.findViewById(R.id.tvMovieTitle);
-        tvMovieGenre = (TextView) fragmentView.findViewById(R.id.tvMovieGenre);
-        tvMovieCast = (TextView) fragmentView.findViewById(R.id.tvMovieCast);
-        tvMovieDirector = (TextView) fragmentView.findViewById(R.id.tvMovieDirector);
-        tvMovieWriter = (TextView) fragmentView.findViewById(R.id.tvMovieWriter);
-        tvMovieRating = (TextView) fragmentView.findViewById(R.id.tvMovieRating);
-        tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
-        tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
+            ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
+            pbImage = (ProgressBar) fragmentView.findViewById(R.id.pbImage);
 
-        tvMovieRating.setText(movie.getRating());
-        tvMovieRuntime.setText(movie.getRuntime());
-        tvMovieGenre.setText(movie.getGenre());
-        tvMovieDirector.setText(movie.getDirector());
-        tvMovieCast.setText(movie.getCast());
+            tvMovieTitle = (TextView) fragmentView.findViewById(R.id.tvMovieTitle);
+            tvMovieGenre = (TextView) fragmentView.findViewById(R.id.tvMovieGenre);
+            tvMovieCast = (TextView) fragmentView.findViewById(R.id.tvMovieCast);
+            tvMovieDirector = (TextView) fragmentView.findViewById(R.id.tvMovieDirector);
+            tvMovieWriter = (TextView) fragmentView.findViewById(R.id.tvMovieWriter);
+            tvMovieRating = (TextView) fragmentView.findViewById(R.id.tvMovieRating);
+            tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
+            tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
-        new MovieDetailsParser().execute();
+            FontUtils.setRobotoFont(getContext(), fragmentView);
+
+            tvMovieRating.setText(movie.getRating());
+            tvMovieRuntime.setText(movie.getRuntime());
+            tvMovieGenre.setText(movie.getGenre());
+            tvMovieDirector.setText(movie.getDirector());
+            tvMovieCast.setText(movie.getCast());
+
+            if (movie.getCast() == null || movie.getCast().trim().length() == 0)
+                tvMovieCast.setText(getString(R.string.text_not_available));
+            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0)
+                tvMovieDirector.setText(getString(R.string.text_not_available));
+
+            new MovieDetailsParser().execute();
+        }
 
         return fragmentView;
     }
@@ -132,7 +145,7 @@ public class MovieFragment extends Fragment {
 
                         String synopsis = storylines.first().getElementsByTag("p").text();
                         int pos = synopsis.indexOf("Written by");
-                        synopsis = synopsis.substring(0,pos);
+                        synopsis = synopsis.substring(0, pos);
                         movie.setSynopsis(synopsis);
                     }
 
@@ -155,17 +168,23 @@ public class MovieFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            pbImage.setVisibility(View.GONE);
+
             Picasso.with(getContext())
                     .load(movie.getImgUrl())
                     .into(ivMovieImage);
+
+            AnimationUtils.crossfade(ivMovieImage, pbImage);
+
             tvMovieTitle.setText(movie.getTitle());
             tvMovieWriter.setText(movie.getWriter());
             tvMovieSynopsis.setText(movie.getSynopsis());
 
+            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0)
+                tvMovieWriter.setText(getString(R.string.text_not_available));
+            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0)
+                tvMovieSynopsis.setText(getString(R.string.text_not_available));
 
         }
-
 
     }
 

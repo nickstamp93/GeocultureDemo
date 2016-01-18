@@ -29,6 +29,19 @@ public class Song implements Serializable {
         this.url = url;
     }
 
+    @Override
+    public boolean equals(Object object) {
+        boolean isIdentical = false;
+
+        if (object != null && object instanceof Song) {
+            isIdentical = this.title.equals(((Song) object).title)
+                    && this.year.equals(((Song) object).year)
+                    && this.artist.equals(((Song) object).artist);
+        }
+
+        return isIdentical;
+    }
+
     public String getLyricsCreator() {
         return lyricsCreator;
     }

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
+    android:scrollbars="none"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <LinearLayout
@@ -20,43 +21,53 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
-        <TableRow
+
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            android:shrinkColumns="1">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Μουσικη : "
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/tvSongMusicBy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_music"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-        </TableRow>
+                <TextView
+                    android:id="@+id/tvSongMusicBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp" />
 
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp">
+            </TableRow>
 
-            <TextView
-                android:layout_width="wrap_content"
+            <TableRow
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Στιχοι : "
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:layout_marginTop="8dp">
 
-            <TextView
-                android:id="@+id/tvSongLyricsBy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_lyrics_by"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-        </TableRow>
+                <TextView
+                    android:id="@+id/tvSongLyricsBy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp" />
+
+            </TableRow>
+
+        </TableLayout>
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -73,9 +84,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Ερμηνευτές"
+                    android:text="@string/text_artists"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/dim_foreground_disabled_material_dark" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -86,12 +102,12 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:indeterminateBehavior="cycle"
-                        android:indeterminateTint="@color/colorAccent" />
+                        android:indeterminateBehavior="cycle" />
 
                     <LinearLayout
                         android:id="@+id/llArtists"
                         android:layout_width="match_parent"
+                        android:padding="8dp"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
                 </FrameLayout>
@@ -104,8 +120,8 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:minHeight="200dp"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:minHeight="200dp">
 
             <ProgressBar
                 android:id="@+id/pbLyrics"
@@ -118,88 +134,12 @@
                 android:id="@+id/tvSongLyrics"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:textSize="16sp"
+                android:textStyle="italic" />
         </FrameLayout>
-
 
     </LinearLayout>
 
 </ScrollView>
-
-    <!--<TableLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:background="?selectableItemBackground"
-            android:layout_marginTop="8dp"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:paddingRight="16dp"
-                android:text="1. Βασίλης Τσιτσάνης"
-                android:textSize="18sp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:src="@mipmap/ic_tube" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:background="?selectableItemBackground"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="2. Γρηγόρης Μπιθικώτσης"
-                android:textSize="18sp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:src="@mipmap/ic_tube" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?selectableItemBackground"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:text="3. Κώστας Μακεδόνας"
-                android:textSize="18sp" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:src="@mipmap/ic_tube" />
-
-        </TableRow>
-    </TableLayout>-->

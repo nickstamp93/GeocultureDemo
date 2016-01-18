@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
@@ -61,12 +62,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         components = new HashMap<>();
 
         location = (Location) getIntent().getSerializableExtra("location");
-        if (location == null) {
-            location = new Location();
-            location.setCity("Thessaloniki");
-            location.setArea("Thessaloniki");
-            location.setCountry("Greece");
-        }
+
         MovieListFragment movieListFragment = new MovieListFragment().newInstance(location);
 
         movieListFragment.setOnMovieClickedListener(this);
@@ -82,7 +78,6 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         currentSongTag = TAG_SONG_LIST;
 
-
         manager = getSupportFragmentManager();
     }
 
@@ -97,6 +92,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_note_white_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie_white_24dp);
     }
 
     private void setUpToolbar() {
@@ -180,9 +177,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 1:
-                    return "MOVIES";
+                    return getString(R.string.text_movies);
                 case 0:
-                    return "SONGS";
+                    return getString(R.string.text_songs);
             }
             return null;
         }

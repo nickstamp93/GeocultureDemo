@@ -18,6 +18,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -72,9 +73,6 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        //TODO somehow give the user the option to load more results(distinct for area-city???)
-
-
         if (fragmentView == null) {
 
             context = getContext();
@@ -88,7 +86,6 @@ public class MovieListFragment extends Fragment {
             recyclerView.setLayoutManager(linearLayoutManager);
 
             parseMovies();
-
 
         }
 
@@ -141,8 +138,7 @@ public class MovieListFragment extends Fragment {
                 recyclerView.swapAdapter(moviesAdapter, true);
             }
 
-            pbList.setVisibility(View.GONE);
-            recyclerView.setVisibility(View.VISIBLE);
+            AnimationUtils.crossfade(recyclerView, pbList);
 
         }
 
@@ -160,10 +156,12 @@ public class MovieListFragment extends Fragment {
                     // Connect to the web site
                     Document document = Jsoup.connect(urlQuery).get();
 
+                    //if connected successfully
                     success = true;
 
                     //this movie will be used to locate the header inside the adapter
-                    Movie notRealMovie = new Movie("", "No results found for \" " + location + " \"", "", "", "-1", "");
+                    Movie notRealMovie = new Movie("", "0 " + getString(R.string.text_results_for) + " \"" + location + "\"", "", "", "-1", "", "", "", "");
+
                     //save the pos of the header, to change it later
                     int headerPos = movies.size();
                     movies.add(notRealMovie);
@@ -187,8 +185,8 @@ public class MovieListFragment extends Fragment {
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
                         String credit = elementTitle.getElementsByClass("credit").text();
 
+                        //extract actors and director from credits
                         String director = "", cast = "";
-
                         if (credit.length() > 0) {
                             String[] tokens = credit.split(":");
                             if (tokens.length == 3) {
@@ -202,27 +200,16 @@ public class MovieListFragment extends Fragment {
                             }
                         }
 
-                        Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre);
-                        movie.setDirector(director);
-                        movie.setCast(cast);
-                        movie.setYear(year);
+                        Movie movie = new Movie(url, title, rating, imgUrl, runtime, genre, director, cast, year);
 
-
-                        boolean found = false;
-                        for (Movie movie1 : movies) {
-                            if (movie1 != null && movie1.getTitle().equals(movie.getTitle())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (!found) {
+                        if (!movies.contains(movie)) {
                             movies.add(movie);
                             moviesCount++;
                         }
 
                     }
 
-                    movies.get(headerPos).setTitle(moviesCount + " results for \" " + location + " \"");
+                    movies.get(headerPos).setTitle(moviesCount + " " + getString(R.string.text_results_for) + " \"" + location + "\"");
 
                 } catch (IOException e) {
                     Log.i("nikos", "IO Exception");
@@ -233,14 +220,7 @@ public class MovieListFragment extends Fragment {
                 }
             }
             if (!success) {
-                Snackbar.make(fragmentView, "Something went wrong", Snackbar.LENGTH_LONG)
-                        .setAction("Retry", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                            }
-                        })
-                        .show();
+                Snackbar.make(fragmentView, getString(R.string.snackbar_went_wrong), Snackbar.LENGTH_LONG).show();
             }
 
         }

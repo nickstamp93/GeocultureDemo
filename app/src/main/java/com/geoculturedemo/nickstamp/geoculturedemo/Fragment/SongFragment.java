@@ -1,10 +1,9 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,6 +21,8 @@ import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,9 +44,13 @@ public class SongFragment extends Fragment {
 
     List<String> artists, links;
 
+    private Typeface typeface;
+    private View fragmentView;
+
     public SongFragment() {
         artists = new ArrayList<>();
         links = new ArrayList<>();
+
     }
 
     public static SongFragment newInstance(Song song1) {
@@ -69,23 +74,29 @@ public class SongFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_song_details, container, false);
 
-        tvTitle = (TextView) fragmentView.findViewById(R.id.tvSongTitle);
-        tvMusicBy = (TextView) fragmentView.findViewById(R.id.tvSongMusicBy);
-        tvLyricsBy = (TextView) fragmentView.findViewById(R.id.tvSongLyricsBy);
-        tvLyrics = (TextView) fragmentView.findViewById(R.id.tvSongLyrics);
+        if (fragmentView == null) {
+            fragmentView = inflater.inflate(R.layout.fragment_song_details, container, false);
 
-        llArtists = (LinearLayout) fragmentView.findViewById(R.id.llArtists);
+            tvTitle = (TextView) fragmentView.findViewById(R.id.tvSongTitle);
+            tvMusicBy = (TextView) fragmentView.findViewById(R.id.tvSongMusicBy);
+            tvLyricsBy = (TextView) fragmentView.findViewById(R.id.tvSongLyricsBy);
+            tvLyrics = (TextView) fragmentView.findViewById(R.id.tvSongLyrics);
 
-        pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
-        pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
+            llArtists = (LinearLayout) fragmentView.findViewById(R.id.llArtists);
 
-        tvTitle.setText(song.getTitle());
-        tvMusicBy.setText(song.getMusicCreator());
-        tvLyricsBy.setText(song.getLyricsCreator());
+            pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
+            pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
 
-        new SongDetailsParser().execute();
+            FontUtils.setRobotoFont(getContext(), fragmentView);
+
+            tvTitle.setText(song.getTitle());
+            tvMusicBy.setText(song.getMusicCreator());
+            tvLyricsBy.setText(song.getLyricsCreator());
+
+            new SongDetailsParser().execute();
+        }
+
 
         return fragmentView;
 
@@ -127,7 +138,6 @@ public class SongFragment extends Fragment {
                     for (Element e : trSingers) {
                         String singer = e.text();
                         artists.add(singer);
-                        Log.i("nikos", "Td size:" + e.getElementsByTag("td").size());
                         for (int i = 0; i < e.getElementsByTag("td").size(); i++) {
                             String s = e.getElementsByTag("td").get(i).getElementsByTag("a").attr("href");
                             if (s.contains("youtube")) {
@@ -168,32 +178,32 @@ public class SongFragment extends Fragment {
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
 
-            crossfade(llArtists, pbArtists);
-            crossfade(tvLyrics, pbLyrics);
-
-//            pbArtists.setVisibility(View.GONE);
-
-//            pbLyrics.setVisibility(View.GONE);
+            AnimationUtils.crossfade(llArtists, pbArtists);
+            AnimationUtils.crossfade(tvLyrics, pbLyrics);
 
             tvLyrics.setText(lyrics);
+
 
             for (int i = 0; i < artists.size(); i++) {
                 final String currentArtist = artists.get(i);
 
                 TextView tv = new TextView(getContext());
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
+                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
                 tv.setText(currentArtist);
+                typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
+                tv.setTypeface(typeface);
 
-                int padding_in_dp = 8;  // 12 dps
+                /*int padding_in_dp = 8;  // 12 dps
                 final float scale = getResources().getDisplayMetrics().density;
                 int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
-                tv.setPadding(0, padding_in_px, 0, padding_in_px);
+                tv.setPadding(0, padding_in_px, 0, padding_in_px);*/
 
                 int[] attrs = new int[]{R.attr.selectableItemBackground};
                 TypedArray typedArray = getActivity().obtainStyledAttributes(attrs);
                 int backgroundResource = typedArray.getResourceId(0, 0);
                 tv.setClickable(true);
                 tv.setBackgroundResource(backgroundResource);
+                typedArray.recycle();
 
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 if (links.get(i).trim().length() > 0) {
@@ -206,6 +216,7 @@ public class SongFragment extends Fragment {
                         }
                     });
                     tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_tube, 0);
+                    tv.setCompoundDrawablePadding(4);
                 } else {
 
 
@@ -221,10 +232,11 @@ public class SongFragment extends Fragment {
                             intent.putExtra("query", song.getTitle() + " " + s);
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
-//                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
+
                         }
                     });
-                    tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, android.R.drawable.ic_menu_search, 0);
+                    tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
+                    tv.setCompoundDrawablePadding(4);
                 }
 
                 tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -233,35 +245,6 @@ public class SongFragment extends Fragment {
 
         }
 
-    }
-
-
-    private void crossfade(View viewToShow, final View viewToHide) {
-
-        // Set the content view to 0% opacity but visible, so that it is visible
-        // (but fully transparent) during the animation.
-        viewToShow.setAlpha(0f);
-        viewToShow.setVisibility(View.VISIBLE);
-
-        // Animate the content view to 100% opacity, and clear any animation
-        // listener set on the view.
-        viewToShow.animate()
-                .alpha(1f)
-                .setDuration(1000)
-                .setListener(null);
-
-        // Animate the loading view to 0% opacity. After the animation ends,
-        // set its visibility to GONE as an optimization step (it won't
-        // participate in layout passes, etc.)
-        viewToHide.animate()
-                .alpha(0f)
-                .setDuration(1000)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        viewToHide.setVisibility(View.GONE);
-                    }
-                });
     }
 
 }
