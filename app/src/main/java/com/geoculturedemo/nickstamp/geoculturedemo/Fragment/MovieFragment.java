@@ -122,18 +122,19 @@ public class MovieFragment extends Fragment {
                     // Connect to the web site
                     Document document = Jsoup.connect(movie.getUrl()).get();
 
-                    // Using Elements to get the class data
-                    Elements images = document.select("#img_primary");
-                    if (images.size() > 0) {
-                        Element image = images.get(0);
-                        movie.setImgUrl(image.getElementsByTag("img").attr("src"));
-                    }
-                    Element overview = document.getElementById("overview-top");
+                    Element titleSection = document.select("div.titleBar").get(0);
 
-                    String title = overview.getElementsByClass("header").text();
+                    String title = titleSection.getElementsByClass("titleWrapper").text();
                     movie.setTitle(title);
 
-                    Elements writers = overview.getElementsByAttributeValue("itemprop", "creator").select("a[itemprop=url]");
+                    String imgUrl = document.select("div.poster").get(0).getElementsByTag("img").attr("src");
+                    movie.setImgUrl(imgUrl);
+
+                    String creditWriter = document.select(".credit_summary_item").get(1).text();
+                    movie.setWriter(creditWriter);
+
+                    Element plotSummary = document.select("div.plot_summary").get(0);
+                    Elements writers = plotSummary.getElementsByAttributeValue("itemprop", "creator").select("a[itemprop=url]");
                     String writer = "";
                     for (Element w : writers) {
                         writer += w.text() + " , ";
