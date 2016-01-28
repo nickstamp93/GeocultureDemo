@@ -7,6 +7,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
@@ -33,7 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SongFragment extends Fragment {
+public class SongFragment extends Fragment implements View.OnClickListener {
 
     private static final String ARG_SONG = "song";
     private Song song;
@@ -46,6 +49,9 @@ public class SongFragment extends Fragment {
 
     private Typeface typeface;
     private View fragmentView;
+
+    private FloatingActionButton fab;
+    private boolean isSaved;
 
     public SongFragment() {
         artists = new ArrayList<>();
@@ -94,12 +100,33 @@ public class SongFragment extends Fragment {
             tvMusicBy.setText(song.getMusicCreator());
             tvLyricsBy.setText(song.getLyricsCreator());
 
+            fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+            fab.setOnClickListener(this);
+
+
+            //TODO check if it is saved in the db
+            if (isSaved)
+                fab.setImageResource(R.drawable.ic_star);
+
             new SongDetailsParser().execute();
         }
 
 
         return fragmentView;
 
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        isSaved = !isSaved;
+        YoYo.with(Techniques.Pulse)
+                .duration(500)
+                .playOn(fab);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
     }
 
     public class SongDetailsParser extends AsyncTask<Void, Void, Void> {
@@ -242,6 +269,8 @@ public class SongFragment extends Fragment {
                 tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 llArtists.addView(tv);
             }
+
+            fab.show();
 
         }
 

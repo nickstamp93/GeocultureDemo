@@ -3,6 +3,7 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
@@ -25,7 +28,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements View.OnClickListener {
 
     private static final String ARG_MOVIE = "movie";
 
@@ -35,6 +38,9 @@ public class MovieFragment extends Fragment {
 
     private Movie movie;
     private View fragmentView;
+
+    private FloatingActionButton fab;
+    private boolean isSaved;
 
     public MovieFragment() {
 
@@ -89,10 +95,30 @@ public class MovieFragment extends Fragment {
             if (movie.getDirector() == null || movie.getDirector().trim().length() == 0)
                 tvMovieDirector.setText(getString(R.string.text_not_available));
 
+            fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+            fab.setOnClickListener(this);
+
+            isSaved = false;
+            //TODO check if it is saved in the db
+            if (isSaved)
+                fab.setImageResource(R.drawable.ic_star);
+
             new MovieDetailsParser().execute();
         }
 
         return fragmentView;
+    }
+
+    @Override
+    public void onClick(View v) {
+        isSaved = !isSaved;
+        YoYo.with(Techniques.Pulse)
+                .duration(500)
+                .playOn(fab);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
     }
 
     public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {
@@ -150,7 +176,6 @@ public class MovieFragment extends Fragment {
                         movie.setSynopsis(synopsis);
                     }
 
-
                     success = true;
 
                 } catch (IOException e) {
@@ -184,6 +209,8 @@ public class MovieFragment extends Fragment {
                 tvMovieWriter.setText(getString(R.string.text_not_available));
             if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0)
                 tvMovieSynopsis.setText(getString(R.string.text_not_available));
+
+            fab.show();
 
         }
 
