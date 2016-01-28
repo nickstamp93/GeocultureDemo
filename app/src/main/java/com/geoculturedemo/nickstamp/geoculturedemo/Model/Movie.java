@@ -1,5 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
+import android.database.Cursor;
+
 import java.io.Serializable;
 
 /**
@@ -32,6 +34,20 @@ public class Movie implements Serializable {
         this.director = director;
         this.cast = cast;
         this.year = year;
+    }
+
+    public Movie(Cursor cMovie) {
+        this.url = cMovie.getString(1);
+        this.title = cMovie.getString(2);
+        this.year = cMovie.getString(3);
+        this.genre = cMovie.getString(4);
+        this.rating = cMovie.getString(5);
+        this.runtime = cMovie.getString(6);
+        this.imgUrl = cMovie.getString(7);
+        this.cast = cMovie.getString(8);
+        this.director = cMovie.getString(9);
+        this.writer = cMovie.getString(10);
+        this.synopsis = cMovie.getString(11);
     }
 
     @Override

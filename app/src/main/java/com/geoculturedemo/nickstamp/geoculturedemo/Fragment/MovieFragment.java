@@ -15,6 +15,8 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
@@ -111,6 +113,11 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+
+        Database database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
+        database.insert(movie);
+
+
         isSaved = !isSaved;
         YoYo.with(Techniques.Pulse)
                 .duration(500)
@@ -150,7 +157,8 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
                     Element titleSection = document.select("div.titleBar").get(0);
 
-                    String title = titleSection.getElementsByClass("titleWrapper").text();
+                    Element titleWrapper =  titleSection.getElementsByClass("title_wrapper").get(0);
+                    String title = titleWrapper.getElementsByTag("h1").text();
                     movie.setTitle(title);
 
                     String imgUrl = document.select("div.poster").get(0).getElementsByTag("img").attr("src");
@@ -205,10 +213,16 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
             tvMovieWriter.setText(movie.getWriter());
             tvMovieSynopsis.setText(movie.getSynopsis());
 
-            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0)
+            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0) {
+
+                movie.setWriter(getString(R.string.text_not_available));
                 tvMovieWriter.setText(getString(R.string.text_not_available));
-            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0)
+            }
+            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0) {
+
+                movie.setSynopsis(getString(R.string.text_not_available));
                 tvMovieSynopsis.setText(getString(R.string.text_not_available));
+            }
 
             fab.show();
 

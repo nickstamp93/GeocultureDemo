@@ -1,8 +1,14 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Database;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
+
+import java.util.ArrayList;
 
 /**
  * Created by nickstamp on 1/28/2016.
@@ -35,7 +41,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        
+
         db.execSQL(Contract.SQL_CREATE_TABLE_MOVIES);
         db.execSQL(Contract.SQL_CREATE_TABLE_SONGS);
 
@@ -43,6 +49,54 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        //Nothing so far
+    }
+
+    /**
+     * @return a list with all the workouts
+     */
+    public ArrayList<Movie> getListMovies() {
+
+        Cursor cMovies = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + Contract.Movies.TABLE_NAME +
+                        " ORDER BY " + Contract.Movies.COLUMN_TITLE, null);
+        ArrayList<Movie> items = new ArrayList<>();
+
+        for (cMovies.moveToFirst(); !cMovies.isAfterLast(); cMovies.moveToNext()) {
+
+            items.add(new Movie(cMovies));
+
+        }
+
+
+        return items;
+    }
+
+    /**
+     * Insert a new movie in the database
+     *
+     * @param movie the movie to be inserted
+     */
+    public void insert(Movie movie) {
+        //In order to insert a new movie , must do 2 things
+
+        //1.Must insert the movie in the workouts table
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Contract.Movies.COLUMN_URL, movie.getUrl());
+        contentValues.put(Contract.Movies.COLUMN_TITLE, movie.getTitle());
+        contentValues.put(Contract.Movies.COLUMN_YEAR, movie.getYear());
+        contentValues.put(Contract.Movies.COLUMN_GENRE, movie.getGenre());
+        contentValues.put(Contract.Movies.COLUMN_RATING, movie.getRating());
+        contentValues.put(Contract.Movies.COLUMN_RUNTIME, movie.getRuntime());
+        contentValues.put(Contract.Movies.COLUMN_IMG_URL, movie.getImgUrl());
+        contentValues.put(Contract.Movies.COLUMN_CAST, movie.getCast());
+        contentValues.put(Contract.Movies.COLUMN_DIRECTOR, movie.getDirector());
+        contentValues.put(Contract.Movies.COLUMN_WRITER, movie.getWriter());
+        contentValues.put(Contract.Movies.COLUMN_SYNOPSIS, movie.getSynopsis());
+
+        getWritableDatabase().insert(Contract.Movies.TABLE_NAME, "null", contentValues);
 
     }
+
+
 }

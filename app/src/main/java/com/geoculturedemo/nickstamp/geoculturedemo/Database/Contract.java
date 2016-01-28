@@ -23,7 +23,7 @@ public class Contract {
                     Movies.COLUMN_CAST + " TEXT NOT NULL," +
                     Movies.COLUMN_DIRECTOR + " TEXT NOT NULL," +
                     Movies.COLUMN_WRITER + " TEXT NOT NULL," +
-                    Movies.COLUMN_SYNOPSIS + " TEXT NOT NULL," +
+                    Movies.COLUMN_SYNOPSIS + " TEXT NOT NULL" +
                     ")";
 
     public static final String SQL_CREATE_TABLE_SONGS =
@@ -35,7 +35,7 @@ public class Contract {
                     Songs.COLUMN_LYRICS_BY + " TEXT NOT NULL," +
                     Songs.COLUMN_MUSIC_BY + " TEXT NOT NULL," +
                     Songs.COLUMN_ARTIST + " TEXT NOT NULL," +
-                    Songs.COLUMN_LYRICS + " TEXT NOT NULL," +
+                    Songs.COLUMN_LYRICS + " TEXT NOT NULL" +
                     ")";
 
     public abstract class Movies implements BaseColumns {
