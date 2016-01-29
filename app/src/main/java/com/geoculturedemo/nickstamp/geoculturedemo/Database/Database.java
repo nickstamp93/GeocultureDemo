@@ -98,5 +98,27 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
+    public boolean isSaved(Movie movie) {
+        //find the exercise
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + Contract.Movies.TABLE_NAME +
+                        " WHERE " + Contract.Movies.COLUMN_TITLE + "=\"" + movie.getTitle()
+                        + "\" AND " + Contract.Movies.COLUMN_YEAR + "=\"" + movie.getYear() + "\"", null);
+
+        if (c.moveToFirst()) {
+            return true;
+        }
+        return false;
+    }
+
+    public void delete(Movie movie) {
+
+        String selection = Contract.Movies.COLUMN_TITLE + " = ?";
+
+        String[] selectionArgs = {String.valueOf(movie.getTitle())};
+
+        getWritableDatabase().delete(Contract.Movies.TABLE_NAME, selection, selectionArgs);
+
+    }
 
 }

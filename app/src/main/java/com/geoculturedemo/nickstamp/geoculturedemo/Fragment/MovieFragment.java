@@ -1,9 +1,12 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +25,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,6 +47,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
     private FloatingActionButton fab;
     private boolean isSaved;
+    private Database database;
 
     public MovieFragment() {
 
@@ -70,6 +75,8 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
         if (fragmentView == null) {
 
+            Log.i("nikos", "on create");
+
             fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
             ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
@@ -92,18 +99,19 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
             tvMovieDirector.setText(movie.getDirector());
             tvMovieCast.setText(movie.getCast());
 
-            if (movie.getCast() == null || movie.getCast().trim().length() == 0)
-                tvMovieCast.setText(getString(R.string.text_not_available));
-            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0)
-                tvMovieDirector.setText(getString(R.string.text_not_available));
+            if (movie.getCast() == null || movie.getCast().trim().length() == 0) {
+                movie.setCast(getString(R.string.text_not_available));
+                tvMovieCast.setText(movie.getCast());
+            }
+            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0) {
+                movie.setDirector(getString(R.string.text_not_available));
+                tvMovieDirector.setText(movie.getDirector());
+            }
 
             fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
             fab.setOnClickListener(this);
 
-            isSaved = false;
-            //TODO check if it is saved in the db
-            if (isSaved)
-                fab.setImageResource(R.drawable.ic_star);
+            database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
 
             new MovieDetailsParser().execute();
         }
@@ -114,18 +122,19 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        Database database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
-        database.insert(movie);
-
-
-        isSaved = !isSaved;
         YoYo.with(Techniques.Pulse)
                 .duration(500)
                 .playOn(fab);
-        if (isSaved)
-            fab.setImageResource(R.drawable.ic_star);
-        else
+        if (isSaved) {
+            database.delete(movie);
             fab.setImageResource(R.drawable.ic_star_outline);
+            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+        } else {
+            database.insert(movie);
+            fab.setImageResource(R.drawable.ic_star);
+            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+        }
+        isSaved = !isSaved;
     }
 
     public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {
@@ -157,7 +166,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
                     Element titleSection = document.select("div.titleBar").get(0);
 
-                    Element titleWrapper =  titleSection.getElementsByClass("title_wrapper").get(0);
+                    Element titleWrapper = titleSection.getElementsByClass("title_wrapper").get(0);
                     String title = titleWrapper.getElementsByTag("h1").text();
                     movie.setTitle(title);
 
@@ -187,10 +196,8 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
                     success = true;
 
                 } catch (IOException e) {
-                    Log.i("nikos", "IO Exception");
                     e.printStackTrace();
                 } catch (IndexOutOfBoundsException e) {
-                    Log.i("nikos", "Out of bounds Exception");
                     e.printStackTrace();
                 }
             }
@@ -214,16 +221,19 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
             tvMovieSynopsis.setText(movie.getSynopsis());
 
             if (movie.getWriter() == null || movie.getWriter().trim().length() == 0) {
-
                 movie.setWriter(getString(R.string.text_not_available));
-                tvMovieWriter.setText(getString(R.string.text_not_available));
+                tvMovieWriter.setText(movie.getWriter());
             }
             if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0) {
-
                 movie.setSynopsis(getString(R.string.text_not_available));
-                tvMovieSynopsis.setText(getString(R.string.text_not_available));
+                tvMovieSynopsis.setText(movie.getSynopsis());
             }
 
+            isSaved = database.isSaved(movie);
+            if (isSaved)
+                fab.setImageResource(R.drawable.ic_star);
+            else
+                fab.setImageResource(R.drawable.ic_star_outline);
             fab.show();
 
         }
