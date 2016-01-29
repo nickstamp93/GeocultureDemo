@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 
 import java.util.ArrayList;
 
@@ -53,7 +54,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     /**
-     * @return a list with all the workouts
+     * @return a list with all the movies
      */
     public ArrayList<Movie> getListMovies() {
 
@@ -65,6 +66,26 @@ public class Database extends SQLiteOpenHelper {
         for (cMovies.moveToFirst(); !cMovies.isAfterLast(); cMovies.moveToNext()) {
 
             items.add(new Movie(cMovies));
+
+        }
+
+
+        return items;
+    }
+
+    /**
+     * @return a list with all the songs
+     */
+    public ArrayList<Song> getListSongs() {
+
+        Cursor cSongs = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + Contract.Songs.TABLE_NAME +
+                        " ORDER BY " + Contract.Songs.COLUMN_TITLE, null);
+        ArrayList<Song> items = new ArrayList<>();
+
+        for (cSongs.moveToFirst(); !cSongs.isAfterLast(); cSongs.moveToNext()) {
+
+            items.add(new Song(cSongs));
 
         }
 
@@ -98,6 +119,35 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Insert a new song in the database
+     *
+     * @param song the song to be inserted
+     */
+    public void insert(Song song) {
+        //In order to insert a new song , must do 2 things
+
+        //1.Must insert the song in the workouts table
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(Contract.Songs.COLUMN_URL, song.getUrl());
+        contentValues.put(Contract.Songs.COLUMN_TITLE, song.getTitle());
+        contentValues.put(Contract.Songs.COLUMN_YEAR, song.getYear());
+        contentValues.put(Contract.Songs.COLUMN_LYRICS_BY, song.getLyricsCreator());
+        contentValues.put(Contract.Songs.COLUMN_MUSIC_BY, song.getMusicCreator());
+        contentValues.put(Contract.Songs.COLUMN_ARTIST, song.getArtist());
+        contentValues.put(Contract.Songs.COLUMN_LYRICS, song.getLyrics());
+        contentValues.put(Contract.Songs.COLUMN_LINKS, song.getLinks());
+
+        getWritableDatabase().insert(Contract.Songs.TABLE_NAME, "null", contentValues);
+
+    }
+
+    /**
+     * Checks whether there is a local copy of the requested movie
+     *
+     * @param movie The movie to be checked if is saved
+     * @return whether there is a local copy of the requested movie
+     */
     public boolean isSaved(Movie movie) {
         //find the exercise
         Cursor c = getReadableDatabase().rawQuery(
@@ -111,13 +161,59 @@ public class Database extends SQLiteOpenHelper {
         return false;
     }
 
+    /**
+     * Checks whether there is a local copy of the requested song
+     *
+     * @param song The song to be checked if is saved
+     * @return whether there is a local copy of the requested song
+     */
+    public boolean isSaved(Song song) {
+        //find the exercise
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + Contract.Songs.TABLE_NAME +
+                        " WHERE " + Contract.Songs.COLUMN_TITLE + "=\"" + song.getTitle()
+                        + "\" AND " + Contract.Songs.COLUMN_ARTIST + "=\"" + song.getArtist()
+                        + "\" AND " + Contract.Songs.COLUMN_YEAR + "=\"" + song.getYear() + "\"", null);
+
+        if (c.moveToFirst()) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Delete a movie from the local database
+     *
+     * @param movie the movie to be deleted
+     */
     public void delete(Movie movie) {
 
         String selection = Contract.Movies.COLUMN_TITLE + " = ?";
 
-        String[] selectionArgs = {String.valueOf(movie.getTitle())};
+        String[] selectionArgs = {movie.getTitle()};
 
         getWritableDatabase().delete(Contract.Movies.TABLE_NAME, selection, selectionArgs);
+
+    }
+
+    /**
+     * Delete a song from the local database
+     *
+     * @param song the song to be deleted
+     */
+    public void delete(Song song) {
+
+        /*String selection = Contract.Songs.COLUMN_TITLE + " = ? AND " +
+                Contract.Songs.COLUMN_ARTIST + " = ? AND " +
+                Contract.Songs.COLUMN_YEAR + " = ?";
+
+        String[] selectionArgs = {song.getTitle(), song.getArtist(), song.getYear()};*/
+
+        String selection = Contract.Songs.COLUMN_LYRICS + " = ?";
+
+        String[] selectionArgs = {song.getLyrics()};
+
+        getWritableDatabase().delete(Contract.Songs.TABLE_NAME, selection, selectionArgs);
 
     }
 

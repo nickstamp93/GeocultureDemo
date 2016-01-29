@@ -75,8 +75,6 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
         if (fragmentView == null) {
 
-            Log.i("nikos", "on create");
-
             fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
             ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);

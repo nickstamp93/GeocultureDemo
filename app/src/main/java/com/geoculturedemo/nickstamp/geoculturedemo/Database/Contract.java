@@ -35,7 +35,8 @@ public class Contract {
                     Songs.COLUMN_LYRICS_BY + " TEXT NOT NULL," +
                     Songs.COLUMN_MUSIC_BY + " TEXT NOT NULL," +
                     Songs.COLUMN_ARTIST + " TEXT NOT NULL," +
-                    Songs.COLUMN_LYRICS + " TEXT NOT NULL" +
+                    Songs.COLUMN_LYRICS + " TEXT NOT NULL," +
+                    Songs.COLUMN_LINKS + " TEXT NOT NULL" +
                     ")";
 
     public abstract class Movies implements BaseColumns {
@@ -62,6 +63,7 @@ public class Contract {
         public static final String COLUMN_MUSIC_BY = "music_by";
         public static final String COLUMN_ARTIST = "artist";
         public static final String COLUMN_LYRICS = "lyrics";
+        public static final String COLUMN_LINKS = "links";
     }
 
 }

@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.text.Html;
 import android.util.Log;
@@ -22,6 +23,8 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
@@ -52,6 +55,7 @@ public class SongFragment extends Fragment implements View.OnClickListener {
 
     private FloatingActionButton fab;
     private boolean isSaved;
+    private Database database;
 
     public SongFragment() {
         artists = new ArrayList<>();
@@ -103,10 +107,7 @@ public class SongFragment extends Fragment implements View.OnClickListener {
             fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
             fab.setOnClickListener(this);
 
-
-            //TODO check if it is saved in the db
-            if (isSaved)
-                fab.setImageResource(R.drawable.ic_star);
+            database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
 
             new SongDetailsParser().execute();
         }
@@ -119,14 +120,21 @@ public class SongFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
 
-        isSaved = !isSaved;
         YoYo.with(Techniques.Pulse)
                 .duration(500)
                 .playOn(fab);
-        if (isSaved)
-            fab.setImageResource(R.drawable.ic_star);
-        else
+        if (isSaved) {
+            database.delete(song);
             fab.setImageResource(R.drawable.ic_star_outline);
+            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+        } else {
+            database.insert(song);
+            fab.setImageResource(R.drawable.ic_star);
+            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+        }
+
+        isSaved = !isSaved;
+
     }
 
     public class SongDetailsParser extends AsyncTask<Void, Void, Void> {
@@ -176,6 +184,18 @@ public class SongFragment extends Fragment implements View.OnClickListener {
                             links.add("");
                     }
 
+                    StringBuilder sbArtists = new StringBuilder(), sbLinks = new StringBuilder();
+                    for (String s : artists) {
+                        sbArtists.append(s).append("|");
+                    }
+                    for (String s : links) {
+                        sbLinks.append(s).append(" ");
+                    }
+                    sbArtists.deleteCharAt(sbArtists.length() - 1);
+                    sbLinks.deleteCharAt(sbLinks.length() - 1);
+                    song.setArtist(sbArtists.toString());
+                    song.setLinks(sbLinks.toString());
+
                     Elements divs = table.getElementsByTag("div");
                     divs.remove();
 
@@ -183,16 +203,15 @@ public class SongFragment extends Fragment implements View.OnClickListener {
                     if (b != null)
                         b.remove();
 
+
                     lyrics = Html.fromHtml(table.html()).toString();
                     song.setLyrics(lyrics);
 
                     success = true;
 
                 } catch (IOException e) {
-                    Log.i("nikos", "IO Exception");
                     e.printStackTrace();
                 } catch (IndexOutOfBoundsException e) {
-                    Log.i("nikos", "Out of bounds Exception");
                     e.printStackTrace();
                 }
             }
@@ -270,8 +289,12 @@ public class SongFragment extends Fragment implements View.OnClickListener {
                 llArtists.addView(tv);
             }
 
+            isSaved = database.isSaved(song);
+            if (isSaved)
+                fab.setImageResource(R.drawable.ic_star);
+            else
+                fab.setImageResource(R.drawable.ic_star_outline);
             fab.show();
-
         }
 
     }
