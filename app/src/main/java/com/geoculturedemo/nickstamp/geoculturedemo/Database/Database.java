@@ -5,11 +5,20 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
+import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by nickstamp on 1/28/2016.
@@ -56,12 +65,12 @@ public class Database extends SQLiteOpenHelper {
     /**
      * @return a list with all the movies
      */
-    public ArrayList<Movie> getListMovies() {
+    public ArrayList<Object> getListMovies() {
 
         Cursor cMovies = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + Contract.Movies.TABLE_NAME +
                         " ORDER BY " + Contract.Movies.COLUMN_TITLE, null);
-        ArrayList<Movie> items = new ArrayList<>();
+        ArrayList<Object> items = new ArrayList<>();
 
         for (cMovies.moveToFirst(); !cMovies.isAfterLast(); cMovies.moveToNext()) {
 
@@ -76,12 +85,12 @@ public class Database extends SQLiteOpenHelper {
     /**
      * @return a list with all the songs
      */
-    public ArrayList<Song> getListSongs() {
+    public ArrayList<Object> getListSongs() {
 
         Cursor cSongs = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + Contract.Songs.TABLE_NAME +
                         " ORDER BY " + Contract.Songs.COLUMN_TITLE, null);
-        ArrayList<Song> items = new ArrayList<>();
+        ArrayList<Object> items = new ArrayList<>();
 
         for (cSongs.moveToFirst(); !cSongs.isAfterLast(); cSongs.moveToNext()) {
 
@@ -93,12 +102,21 @@ public class Database extends SQLiteOpenHelper {
         return items;
     }
 
+    public ArrayList<Object> getAllFavorites() {
+        ArrayList<Object> objects = new ArrayList<>();
+        objects.add(context.getString(R.string.text_songs));
+        objects.addAll(getListSongs());
+        objects.add(context.getString(R.string.text_movies));
+        objects.addAll(getListMovies());
+        return objects;
+    }
+
     /**
      * Insert a new movie in the database
      *
      * @param movie the movie to be inserted
      */
-    public void insert(Movie movie) {
+    public void insert(final Movie movie) {
         //In order to insert a new movie , must do 2 things
 
         //1.Must insert the movie in the workouts table
@@ -109,11 +127,54 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(Contract.Movies.COLUMN_GENRE, movie.getGenre());
         contentValues.put(Contract.Movies.COLUMN_RATING, movie.getRating());
         contentValues.put(Contract.Movies.COLUMN_RUNTIME, movie.getRuntime());
-        contentValues.put(Contract.Movies.COLUMN_IMG_URL, movie.getImgUrl());
+        final String path = Environment.getExternalStorageDirectory().getPath()
+                + File.separator + "GeoCulture" + File.separator +
+                movie.getTitle() + ".jpg";
+        contentValues.put(Contract.Movies.COLUMN_IMG_URL, path);
         contentValues.put(Contract.Movies.COLUMN_CAST, movie.getCast());
         contentValues.put(Contract.Movies.COLUMN_DIRECTOR, movie.getDirector());
         contentValues.put(Contract.Movies.COLUMN_WRITER, movie.getWriter());
         contentValues.put(Contract.Movies.COLUMN_SYNOPSIS, movie.getSynopsis());
+
+
+        Target target = new Target() {
+
+            @Override
+            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+
+
+                        File file = new File(path);
+                        try {
+                            file.createNewFile();
+                            FileOutputStream ostream = new FileOutputStream(file);
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+                            ostream.close();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }).start();
+            }
+
+            @Override
+            public void onBitmapFailed(Drawable errorDrawable) {
+            }
+
+            @Override
+            public void onPrepareLoad(Drawable placeHolderDrawable) {
+                if (placeHolderDrawable != null) {
+                }
+            }
+        };
+
+        Picasso.with(context)
+                .load(movie.getImgUrl())
+                .into(target);
 
         getWritableDatabase().insert(Contract.Movies.TABLE_NAME, "null", contentValues);
 
