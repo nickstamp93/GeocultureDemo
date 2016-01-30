@@ -91,6 +91,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     @Override
     public void onMovie(Movie movie) {
         Snackbar.make(recyclerView, movie.getTitle(), Snackbar.LENGTH_SHORT).show();
+
     }
 
     @Override

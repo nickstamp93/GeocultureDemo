@@ -65,7 +65,7 @@ public class SongsAdapter extends RecyclerView.Adapter<SongsAdapter.MoviesViewHo
             Song song = songs.get(position);
 
             holder.songTitle.setText(song.getId() + "." + song.getTitle());
-            holder.songArtist.setText(song.getArtist());
+            holder.songArtist.setText(song.getArtist().split("\\|")[0]);
 
         } else {
             holder.tvHeaderResults.setText(songs.get(position).getTitle());

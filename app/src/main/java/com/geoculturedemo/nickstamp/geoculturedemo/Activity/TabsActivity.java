@@ -121,7 +121,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         manager.beginTransaction().remove(components.get(currentMovieTag)).commit();
         currentMovieTag = TAG_MOVIE_DETAILS;
         components.remove(TAG_MOVIE_DETAILS);
-        components.put(TAG_MOVIE_DETAILS, MovieFragment.newInstance(movie));
+        components.put(TAG_MOVIE_DETAILS, MovieFragment.newInstance(movie, false));
         movieTab = components.get(currentMovieTag);
 
         mSectionsPagerAdapter.notifyDataSetChanged();
@@ -135,7 +135,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
         manager.beginTransaction().remove(components.get(currentSongTag)).commit();
         currentSongTag = TAG_SONG_DETAILS;
         components.remove(TAG_SONG_DETAILS);
-        components.put(TAG_SONG_DETAILS, SongFragment.newInstance(song));
+        components.put(TAG_SONG_DETAILS, SongFragment.newInstance(song, false));
         songTab = components.get(currentSongTag);
 
         mSectionsPagerAdapter.notifyDataSetChanged();

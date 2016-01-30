@@ -1,14 +1,10 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,25 +14,22 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
 import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
+import com.geoculturedemo.nickstamp.geoculturedemo.Parser.MovieDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-
-public class MovieFragment extends Fragment implements View.OnClickListener {
+public class MovieFragment extends Fragment implements View.OnClickListener, OnMovieDetailsDownloaded {
 
     private static final String ARG_MOVIE = "movie";
+    private static final String ARG_OFFLINE = "offline";
+
+    private boolean isOffline;
 
     private TextView tvMovieTitle, tvMovieGenre, tvMovieCast, tvMovieDirector, tvMovieWriter, tvMovieRating, tvMovieRuntime, tvMovieSynopsis;
     private ImageView ivMovieImage;
@@ -44,20 +37,22 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
     private Movie movie;
     private View fragmentView;
+    private MovieDetailsParser movieDetailsParser;
 
     private FloatingActionButton fab;
-    private boolean isSaved;
     private Database database;
-    private MovieDetailsParser movieDetailsParser;
+
+    private boolean isSaved;
 
     public MovieFragment() {
 
     }
 
-    public static MovieFragment newInstance(Movie movie1) {
+    public static MovieFragment newInstance(Movie movie1, boolean isOffline) {
         MovieFragment fragment = new MovieFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOVIE, movie1);
+        args.putBoolean(ARG_OFFLINE, isOffline);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,6 +62,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable(ARG_MOVIE);
+            isOffline = getArguments().getBoolean(ARG_OFFLINE);
         }
     }
 
@@ -112,8 +108,12 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
             database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
 
-            movieDetailsParser = new MovieDetailsParser();
-            movieDetailsParser.execute();
+            //if it's not offline, must download the extra details of the item
+            if (!isOffline) {
+                movieDetailsParser = new MovieDetailsParser(movie, this);
+                movieDetailsParser.execute();
+            }
+
         }
 
         return fragmentView;
@@ -141,107 +141,40 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
         movieDetailsParser.cancel(true);
     }
 
-    public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {
 
-        public MovieDetailsParser() {
+    @Override
+    public void onDownload(Movie movie) {
+        this.movie.setTitle(movie.getTitle());
+        this.movie.setImgUrl(movie.getImgUrl());
+        this.movie.setSynopsis(movie.getSynopsis());
+        this.movie.setWriter(movie.getWriter());
 
+        Picasso.with(getContext())
+                .load(this.movie.getImgUrl())
+                .into(ivMovieImage);
 
+        AnimationUtils.crossfade(ivMovieImage, pbImage);
+
+        tvMovieTitle.setText(this.movie.getTitle());
+        tvMovieWriter.setText(this.movie.getWriter());
+        tvMovieSynopsis.setText(this.movie.getSynopsis());
+
+        if (this.movie.getWriter() == null || this.movie.getWriter().trim().length() == 0) {
+            this.movie.setWriter(getString(R.string.text_not_available));
+            tvMovieWriter.setText(this.movie.getWriter());
+        }
+        if (this.movie.getSynopsis() == null || this.movie.getSynopsis().trim().length() == 0) {
+            this.movie.setSynopsis(getString(R.string.text_not_available));
+            tvMovieSynopsis.setText(this.movie.getSynopsis());
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //try to connect 3 times
-            int tries = 0;
-            boolean success = false;
-
-            while (tries < 3 && !success) {
-                tries++;
-
-                try {
-                    // Connect to the web site
-                    Document document = Jsoup.connect(movie.getUrl()).get();
-
-                    Element titleSection = document.select("div.titleBar").get(0);
-
-                    Element titleWrapper = titleSection.getElementsByClass("title_wrapper").get(0);
-                    String title = titleWrapper.getElementsByTag("h1").text();
-                    movie.setTitle(title);
-
-                    String imgUrl = document.select("div.poster").get(0).getElementsByTag("img").attr("src");
-                    movie.setImgUrl(imgUrl);
-
-                    String creditWriter = document.select(".credit_summary_item").get(1).text();
-                    movie.setWriter(creditWriter);
-
-                    Element plotSummary = document.select("div.plot_summary").get(0);
-                    Elements writers = plotSummary.getElementsByAttributeValue("itemprop", "creator").select("a[itemprop=url]");
-                    String writer = "";
-                    for (Element w : writers) {
-                        writer += w.text() + " , ";
-                    }
-                    movie.setWriter(writer.substring(0, writer.length() - 3));
-
-                    Elements storylines = document.select("#titleStoryLine");
-                    if (storylines.size() > 0) {
-
-                        String synopsis = storylines.first().getElementsByTag("p").text();
-                        int pos = synopsis.indexOf("Written by");
-                        synopsis = synopsis.substring(0, pos);
-                        movie.setSynopsis(synopsis);
-                    }
-
-                    success = true;
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (IndexOutOfBoundsException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-
-            Picasso.with(getContext())
-                    .load(movie.getImgUrl())
-                    .into(ivMovieImage);
-
-            AnimationUtils.crossfade(ivMovieImage, pbImage);
-
-            tvMovieTitle.setText(movie.getTitle());
-            tvMovieWriter.setText(movie.getWriter());
-            tvMovieSynopsis.setText(movie.getSynopsis());
-
-            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0) {
-                movie.setWriter(getString(R.string.text_not_available));
-                tvMovieWriter.setText(movie.getWriter());
-            }
-            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0) {
-                movie.setSynopsis(getString(R.string.text_not_available));
-                tvMovieSynopsis.setText(movie.getSynopsis());
-            }
-
-            isSaved = database.isSaved(movie);
-            if (isSaved)
-                fab.setImageResource(R.drawable.ic_star);
-            else
-                fab.setImageResource(R.drawable.ic_star_outline);
-            fab.show();
-
-        }
-
+        isSaved = database.isSaved(this.movie);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
+        fab.show();
     }
+
 
 }

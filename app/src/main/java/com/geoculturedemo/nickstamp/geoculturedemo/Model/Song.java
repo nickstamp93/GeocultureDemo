@@ -30,6 +30,8 @@ public class Song implements Serializable {
         this.musicCreator = musicCreator;
         this.artist = artist;
         this.url = url;
+        this.links = "";
+        this.lyrics = "";
     }
 
     public Song(Cursor cSongs) {
