@@ -87,12 +87,10 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
 
             Song song = ((Song) objects.get(position));
 
-            holder.songTitle.setText(song.getTitle());
-            holder.songArtist.setText(song.getArtist().split("\\|")[0]);
+            holder.songTitle.setText(position + "." + song.getTitle());
+            holder.songArtist.setText(song.getArtist().split("\\|")[0].split("\\.")[1]);
 
-            Log.i("nikos", song.getArtist());
         }
-
 
     }
 

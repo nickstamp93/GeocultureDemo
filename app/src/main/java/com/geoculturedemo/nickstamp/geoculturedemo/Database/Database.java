@@ -98,16 +98,23 @@ public class Database extends SQLiteOpenHelper {
 
         }
 
-
         return items;
     }
 
+    /**
+     * Get all items saved to the favorites
+     *
+     * @return the list with the saved items
+     */
     public ArrayList<Object> getAllFavorites() {
         ArrayList<Object> objects = new ArrayList<>();
-        objects.add(context.getString(R.string.text_songs));
-        objects.addAll(getListSongs());
-        objects.add(context.getString(R.string.text_movies));
-        objects.addAll(getListMovies());
+        ArrayList songs = getListSongs();
+        objects.addAll(songs);
+        objects.add(0, context.getString(R.string.text_songs) + " (" + songs.size() + ")");
+        int movieHeaderPos = songs.size() + 1;
+        ArrayList movies = getListMovies();
+        objects.addAll(movies);
+        objects.add(movieHeaderPos, context.getString(R.string.text_movies) + " (" + movies.size() + ")");
         return objects;
     }
 
