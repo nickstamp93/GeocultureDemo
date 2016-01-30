@@ -216,6 +216,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
             //and currently movie details is shown
             if (movieTab instanceof MovieFragment) {
 
+                //shut down the fragment's async in order to avoid a crash
+                ((MovieFragment) movieTab).shutDownAsyncTask();
+
                 //go back to the movie list
                 manager.beginTransaction().remove(components.get(currentMovieTag)).commit();
                 currentMovieTag = TAG_MOVIE_LIST;
@@ -223,6 +226,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
                 mSectionsPagerAdapter.notifyDataSetChanged();
             } else {
+
+                ((MovieListFragment) movieTab).shutDownAsyncTask();
+
                 //else finish the activity
                 super.onBackPressed();
             }
@@ -231,6 +237,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
             //and currently movie details is shown
             if (songTab instanceof SongFragment) {
+
+                //shut down the fragment's async in order to avoid a crash
+                ((SongFragment) songTab).shutDownAsyncTask();
 
                 //go back to the movie list
                 manager.beginTransaction().remove(components.get(currentSongTag)).commit();
@@ -244,6 +253,9 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
             }
 
         } else {
+
+            ((SongListFragment) songTab).shutDownAsyncTask();
+
             //else finish the activity
             super.onBackPressed();
         }

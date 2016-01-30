@@ -48,6 +48,8 @@ public class MovieListFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private String urlQuery;
 
+    private String sResultsFor;
+
     public MovieListFragment() {
         movies = new ArrayList<>();
         moviesAdapter = null;
@@ -85,10 +87,11 @@ public class MovieListFragment extends Fragment {
             linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
 
+            sResultsFor = getString(R.string.text_results_for);
+
             parseMovies();
 
         }
-
 
         return fragmentView;
     }
@@ -100,6 +103,10 @@ public class MovieListFragment extends Fragment {
 
     public void setOnMovieClickedListener(OnMovieClicked listener) {
         onMovieClicked = listener;
+    }
+
+    public void shutDownAsyncTask() {
+        moviesParser.cancel(true);
     }
 
     public class MovieParser extends AsyncTask<Void, Void, Void> {
@@ -121,6 +128,9 @@ public class MovieListFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
+            if (isCancelled()) {
+                return null;
+            }
             if (!location.getCity().equals(location.getArea()))
                 parseLocation(location.getArea());
             parseLocation(location.getCity());
@@ -160,7 +170,7 @@ public class MovieListFragment extends Fragment {
                     success = true;
 
                     //this movie will be used to locate the header inside the adapter
-                    Movie notRealMovie = new Movie("", "0 " + getString(R.string.text_results_for) + " \"" + location + "\"", "", "", "-1", "", "", "", "");
+                    Movie notRealMovie = new Movie("", "0 " + sResultsFor + " \"" + location + "\"", "", "", "-1", "", "", "", "");
 
                     //save the pos of the header, to change it later
                     int headerPos = movies.size();
@@ -209,13 +219,11 @@ public class MovieListFragment extends Fragment {
 
                     }
 
-                    movies.get(headerPos).setTitle(moviesCount + " " + getString(R.string.text_results_for) + " \"" + location + "\"");
+                    movies.get(headerPos).setTitle(moviesCount + " " + sResultsFor + " \"" + location + "\"");
 
                 } catch (IOException e) {
-                    Log.i("nikos", "IO Exception");
                     e.printStackTrace();
                 } catch (IndexOutOfBoundsException e) {
-                    Log.i("nikos", "Out of bounds Exception");
                     e.printStackTrace();
                 }
             }

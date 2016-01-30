@@ -42,7 +42,7 @@ public class GPSUtils extends Service implements LocationListener {
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 100; // 100 meters
 
     // The minimum time between updates in milliseconds
-    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 5 ; // 5 minutes
+    private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 5; // 5 minutes
 
     // Declaring a Location Manager
     protected LocationManager locationManager;
@@ -75,14 +75,13 @@ public class GPSUtils extends Service implements LocationListener {
                 if (isNetworkEnabled) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
+
                             //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
                             // here to request the missing permissions, and then overriding
                             //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
                             //                                          int[] grantResults)
                             // to handle the case where the user grants the permission. See the documentation
                             // for Activity#requestPermissions for more details.
-                            //                        return TODO;
                         }
                     }
                     locationManager.requestLocationUpdates(
@@ -143,7 +142,6 @@ public class GPSUtils extends Service implements LocationListener {
         if (locationManager != null) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
                     //    public void requestPermissions(@NonNull String[] permissions, int requestCode)
                     // here to request the missing permissions, and then overriding
                     //   public void onRequestPermissionsResult(int requestCode, String[] permissions,

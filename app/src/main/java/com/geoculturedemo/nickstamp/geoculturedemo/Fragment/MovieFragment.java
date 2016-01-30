@@ -48,6 +48,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton fab;
     private boolean isSaved;
     private Database database;
+    private MovieDetailsParser movieDetailsParser;
 
     public MovieFragment() {
 
@@ -111,7 +112,8 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
 
             database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
 
-            new MovieDetailsParser().execute();
+            movieDetailsParser = new MovieDetailsParser();
+            movieDetailsParser.execute();
         }
 
         return fragmentView;
@@ -133,6 +135,10 @@ public class MovieFragment extends Fragment implements View.OnClickListener {
             Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
         }
         isSaved = !isSaved;
+    }
+
+    public void shutDownAsyncTask() {
+        movieDetailsParser.cancel(true);
     }
 
     public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {

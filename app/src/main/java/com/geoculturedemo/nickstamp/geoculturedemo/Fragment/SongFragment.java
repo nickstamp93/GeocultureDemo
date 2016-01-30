@@ -56,6 +56,7 @@ public class SongFragment extends Fragment implements View.OnClickListener {
     private FloatingActionButton fab;
     private boolean isSaved;
     private Database database;
+    private SongDetailsParser songDetailsParser;
 
     public SongFragment() {
         artists = new ArrayList<>();
@@ -109,7 +110,8 @@ public class SongFragment extends Fragment implements View.OnClickListener {
 
             database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
 
-            new SongDetailsParser().execute();
+            songDetailsParser = new SongDetailsParser();
+            songDetailsParser.execute();
         }
 
 
@@ -135,6 +137,10 @@ public class SongFragment extends Fragment implements View.OnClickListener {
 
         isSaved = !isSaved;
 
+    }
+
+    public void shutDownAsyncTask() {
+        songDetailsParser.cancel(true);
     }
 
     public class SongDetailsParser extends AsyncTask<Void, Void, Void> {
