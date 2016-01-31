@@ -6,6 +6,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -14,6 +17,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
 import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
@@ -23,6 +27,8 @@ import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class MovieFragment extends Fragment implements View.OnClickListener, OnMovieDetailsDownloaded {
 
@@ -43,6 +49,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
     private Database database;
 
     private boolean isSaved;
+    private OnFavoriteDelete onFavoriteDelete;
 
     public MovieFragment() {
 
@@ -64,6 +71,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             movie = (Movie) getArguments().getSerializable(ARG_MOVIE);
             isOffline = getArguments().getBoolean(ARG_OFFLINE);
         }
+        setHasOptionsMenu(isOffline);
     }
 
     @Override
@@ -112,11 +120,45 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             if (!isOffline) {
                 movieDetailsParser = new MovieDetailsParser(movie, this);
                 movieDetailsParser.execute();
+            } else {
+                pbImage.setVisibility(View.INVISIBLE);
+                ivMovieImage.setVisibility(View.VISIBLE);
+                Picasso.with(getContext())
+                        .load(new File(movie.getImgUrl()))
+                        .into(ivMovieImage);
+
+                tvMovieTitle.setText(movie.getTitle());
+                tvMovieWriter.setText(movie.getWriter());
+                tvMovieSynopsis.setText(movie.getSynopsis());
+
             }
 
         }
 
         return fragmentView;
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_favorite_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_delete_favorite:
+                database.delete(movie);
+                onFavoriteDelete.onDelete(movie);
+                break;
+        }
+        return true;
+    }
+
+    public void setOnFavoriteDelete(OnFavoriteDelete onFavoriteDelete) {
+        this.onFavoriteDelete = onFavoriteDelete;
     }
 
     @Override
@@ -140,7 +182,6 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
     public void shutDownAsyncTask() {
         movieDetailsParser.cancel(true);
     }
-
 
     @Override
     public void onDownload(Movie movie) {

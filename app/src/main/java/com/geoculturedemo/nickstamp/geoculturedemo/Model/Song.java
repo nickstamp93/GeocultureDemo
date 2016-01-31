@@ -61,6 +61,9 @@ public class Song implements Serializable {
     }
 
     public String getLyricsCreator() {
+
+        if (lyricsCreator.trim().equals(""))
+            return "Άγνωστος";
         return lyricsCreator;
     }
 
@@ -112,6 +115,9 @@ public class Song implements Serializable {
     }
 
     public String getMusicCreator() {
+
+        if (musicCreator.trim().equals(""))
+            return "Άγνωστος";
         return musicCreator;
     }
 

@@ -5,16 +5,17 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
 import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
@@ -31,15 +33,6 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Parser.SongDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
-
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SongFragment extends Fragment implements View.OnClickListener, OnSongDetailsDownloaded {
 
@@ -61,6 +54,7 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
     private boolean isSaved;
     private Database database;
     private SongDetailsParser songDetailsParser;
+    private OnFavoriteDelete onFavoriteDelete;
 
     public SongFragment() {
 
@@ -83,6 +77,7 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             song = (Song) getArguments().getSerializable(ARG_SONG);
             isOffline = getArguments().getBoolean(ARG_OFFLINE);
         }
+        setHasOptionsMenu(isOffline);
     }
 
     @Override
@@ -117,6 +112,13 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             if (!isOffline) {
                 songDetailsParser = new SongDetailsParser(song, this);
                 songDetailsParser.execute();
+            } else {
+                generateTableRows();
+                tvLyrics.setText(this.song.getLyrics());
+                pbArtists.setVisibility(View.INVISIBLE);
+                pbLyrics.setVisibility(View.INVISIBLE);
+                llArtists.setVisibility(View.VISIBLE);
+                tvLyrics.setVisibility(View.VISIBLE);
             }
         }
 
@@ -124,6 +126,31 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
         return fragmentView;
 
     }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_favorite_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_delete_favorite:
+                database.delete(song);
+                onFavoriteDelete.onDelete(song);
+                break;
+        }
+        return true;
+    }
+
+
+    public void setOnFavoriteDelete(OnFavoriteDelete onFavoriteDelete) {
+        this.onFavoriteDelete = onFavoriteDelete;
+    }
+
 
     @Override
     public void onClick(View v) {
@@ -162,8 +189,20 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
 
         tvLyrics.setText(this.song.getLyrics());
 
+        generateTableRows();
+
+        isSaved = database.isSaved(song);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
+        fab.show();
+    }
+
+    private void generateTableRows() {
         String[] artists = this.song.getArtist().split("\\|");
         String[] links = this.song.getLinks().split("\\|");
+
         for (int i = 0; i < artists.length; i++) {
             final String currentArtist = artists[i];
 
@@ -225,14 +264,8 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             llArtists.addView(tv);
         }
-
-        isSaved = database.isSaved(song);
-        if (isSaved)
-            fab.setImageResource(R.drawable.ic_star);
-        else
-            fab.setImageResource(R.drawable.ic_star_outline);
-        fab.show();
     }
+
 }
 
 

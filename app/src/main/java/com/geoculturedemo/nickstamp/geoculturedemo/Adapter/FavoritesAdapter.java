@@ -3,7 +3,6 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Adapter;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,7 +87,10 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
             Song song = ((Song) objects.get(position));
 
             holder.songTitle.setText(position + "." + song.getTitle());
-            holder.songArtist.setText(song.getArtist().split("\\|")[0].split("\\.")[1]);
+            if (song.getArtist().equals("Άγνωστος"))
+                holder.songArtist.setText("Άγνωστος");
+            else
+                holder.songArtist.setText(song.getArtist().split("\\|")[0].split("\\.")[1]);
 
         }
 
