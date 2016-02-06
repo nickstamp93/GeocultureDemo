@@ -52,6 +52,8 @@ public class SongListFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private String urlQuery;
 
+    private String sResults;
+
 
     public SongListFragment() {
         songs = new ArrayList<>();
@@ -89,6 +91,8 @@ public class SongListFragment extends Fragment {
             linearLayoutManager = new LinearLayoutManager(context);
             recyclerView.setLayoutManager(linearLayoutManager);
 
+            sResults = getString(R.string.text_results_for);
+
             parseSongs();
 
 
@@ -105,6 +109,10 @@ public class SongListFragment extends Fragment {
 
     public void setOnSongClicked(OnSongClicked listener) {
         onSongClicked = listener;
+    }
+
+    public void shutDownAsyncTask() {
+        songParser.cancel(true);
     }
 
     public class SongParser extends AsyncTask<Void, Void, Void> {
@@ -127,6 +135,9 @@ public class SongListFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
 
+            if (isCancelled())
+                return null;
+
             if (location != null && !location.getCity().equals(location.getArea()))
                 parseSongList(location.getArea());
             parseSongList(location.getCity());
@@ -147,73 +158,74 @@ public class SongListFragment extends Fragment {
             AnimationUtils.crossfade(recyclerView, pbList);
 
         }
-    }
+        private void parseSongList(String location) {
 
-    private void parseSongList(String location) {
+            urlQuery = "http://www.stixoi.info/stixoi.php?keywords=" + location + "&act=ss&info=SS";
 
-        urlQuery = "http://www.stixoi.info/stixoi.php?keywords=" + location + "&act=ss&info=SS";
+            //try to connect 3 times
+            int tries = 0;
+            boolean success = false;
 
-        //try to connect 3 times
-        int tries = 0;
-        boolean success = false;
+            while (tries < 3 && !success) {
+                tries++;
+                try {
+                    // Connect to the web site
+                    Document document = Jsoup.connect(urlQuery).get();
 
-        while (tries < 3 && !success) {
-            tries++;
-            try {
-                // Connect to the web site
-                Document document = Jsoup.connect(urlQuery).get();
+                    success = true;
 
-                success = true;
+                    if(isCancelled())
+                        return;
 
-                //this song will be used to locate the header inside the adapter
-                Song notRealSong = new Song("", "0 " + getString(R.string.text_results_for) + " \"" + location + "\"", "-1", "", "", "", "");
-                //save the pos of the header, to change it later
-                int headerPos = songs.size();
-                songs.add(notRealSong);
+                    //this song will be used to locate the header inside the adapter
+                    Song notRealSong = new Song("", "0 " + sResults + " \"" + location + "\"", "-1", "", "", "", "");
+                    //save the pos of the header, to change it later
+                    int headerPos = songs.size();
+                    songs.add(notRealSong);
 
-                int songCount = 0;
+                    int songCount = 0;
 
-                Elements elements = document.select("table");
+                    Elements elements = document.select("table");
 
-                Element table = elements.get(5);
+                    Element table = elements.get(5);
 
-                Elements rows = table.getElementsByTag("tr");
-                for (int currentRow = 1; currentRow < rows.size(); currentRow++) {
-                    Element row = rows.get(currentRow);
-                    Elements rowElements = row.getElementsByTag("td");
+                    Elements rows = table.getElementsByTag("tr");
+                    for (int currentRow = 1; currentRow < rows.size(); currentRow++) {
 
-                    String id = rowElements.get(0).text();
-                    String title = rowElements.get(2).text();
-                    String url = rowElements.get(2).getElementsByTag("a").attr("href");
-                    String lyricist = rowElements.get(3).text();
-                    String composer = rowElements.get(4).text();
-                    String singer = rowElements.get(5).text();
-                    String year = rowElements.get(6).text();
+                        Element row = rows.get(currentRow);
+                        Elements rowElements = row.getElementsByTag("td");
 
-                    Song song = new Song(id, title, year, lyricist, composer, singer, url);
+                        String id = rowElements.get(0).text();
+                        String title = rowElements.get(2).text();
+                        String url = rowElements.get(2).getElementsByTag("a").attr("href");
+                        String lyricist = rowElements.get(3).text();
+                        String composer = rowElements.get(4).text();
+                        String singer = rowElements.get(5).text();
+                        String year = rowElements.get(6).text();
 
-                    if (!songs.contains(song)) {
-                        songs.add(song);
-                        songCount++;
+                        Song song = new Song(id, title, year, lyricist, composer, singer, url);
+
+                        if (!songs.contains(song)) {
+                            songs.add(song);
+                            songCount++;
+                        }
+
                     }
 
+
+                    songs.get(headerPos).setTitle(songCount + " " + sResults + " \"" + location + "\"");
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (IndexOutOfBoundsException e) {
+                    e.printStackTrace();
                 }
-
-
-                songs.get(headerPos).setTitle(songCount + " " + getString(R.string.text_results_for) + " \"" + location + "\"");
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.i("nikos", "IO Exception");
-            } catch (IndexOutOfBoundsException e) {
-                e.printStackTrace();
-                Log.i("nikos", "Out of bounds Exception");
             }
-        }
-        if (!success) {
-            Snackbar.make(fragmentView, getString(R.string.snackbar_went_wrong), Snackbar.LENGTH_LONG).show();
-        }
+            if (!success) {
+                Snackbar.make(fragmentView, getString(R.string.snackbar_went_wrong), Snackbar.LENGTH_LONG).show();
+            }
 
+        }
 
     }
 

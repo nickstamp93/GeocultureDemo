@@ -4,14 +4,17 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.view.View;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
 /**
  * Created by nickstamp on 1/13/2016.
  */
 public class AnimationUtils {
 
-    private static final int ANIM_DURATION_LONG = 800;
+    private static final int ANIM_DURATION_SHORT = 700;
 
-    public static void switchCards(final View cardToShow, final View cardToHide) {
+    /*public static void switchCards(final View cardToShow, final View cardToHide) {
         
         // Set the content view to 0% opacity but visible, so that it is visible
         // (but fully transparent) during the animation.
@@ -43,9 +46,9 @@ public class AnimationUtils {
                         cardToHide.setVisibility(View.GONE);
                     }
                 });
-    }
+    }*/
 
-    public static void crossfade(View viewToShow, final View viewToHide) {
+    /*public static void crossfade(View viewToShow, final View viewToHide) {
 
         // Set the content view to 0% opacity but visible, so that it is visible
         // (but fully transparent) during the animation.
@@ -71,6 +74,30 @@ public class AnimationUtils {
                         viewToHide.setVisibility(View.GONE);
                     }
                 });
+    }*/
+
+    public static void switchCards(final View cardToShow, final View cardToHide) {
+
+        YoYo.with(Techniques.ZoomOutRight)
+                .duration(ANIM_DURATION_SHORT)
+                .playOn(cardToHide);
+        cardToShow.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.ZoomInLeft)
+                .duration(ANIM_DURATION_SHORT)
+                .playOn(cardToShow);
+    }
+
+    public static void crossfade(View viewToShow, final View viewToHide) {
+
+        viewToShow.setVisibility(View.VISIBLE);
+        YoYo.with(Techniques.FadeIn)
+                .duration(ANIM_DURATION_SHORT)
+                .playOn(viewToShow);
+
+        YoYo.with(Techniques.FadeOut)
+                .duration(ANIM_DURATION_SHORT)
+                .playOn(viewToHide);
+
     }
 
 

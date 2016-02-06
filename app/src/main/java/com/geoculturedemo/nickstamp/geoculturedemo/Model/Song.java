@@ -1,5 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
+import android.database.Cursor;
+
 import java.io.Serializable;
 
 /**
@@ -9,13 +11,14 @@ public class Song implements Serializable {
 
 
     private String id;
+    private String url;
     private String title;
     private String year;
     private String lyricsCreator;
-    private final String musicCreator;
+    private String musicCreator;
     private String artist;
     private String lyrics;
-    private String url;
+    private String links;
 
 
     public Song(String id, String title, String year, String lyricsCreator, String musicCreator, String artist, String url) {
@@ -27,6 +30,21 @@ public class Song implements Serializable {
         this.musicCreator = musicCreator;
         this.artist = artist;
         this.url = url;
+        this.links = "";
+        this.lyrics = "";
+    }
+
+    public Song(Cursor cSongs) {
+        this.id = cSongs.getString(0);
+        this.url = cSongs.getString(1);
+        this.title = cSongs.getString(2);
+        this.year = cSongs.getString(3);
+        this.lyricsCreator = cSongs.getString(4);
+        this.musicCreator = cSongs.getString(5);
+        this.artist = cSongs.getString(6);
+        this.lyrics = cSongs.getString(7);
+        this.links = cSongs.getString(8);
+
     }
 
     @Override
@@ -43,6 +61,9 @@ public class Song implements Serializable {
     }
 
     public String getLyricsCreator() {
+
+        if (lyricsCreator.trim().equals(""))
+            return "Άγνωστος";
         return lyricsCreator;
     }
 
@@ -94,6 +115,9 @@ public class Song implements Serializable {
     }
 
     public String getMusicCreator() {
+
+        if (musicCreator.trim().equals(""))
+            return "Άγνωστος";
         return musicCreator;
     }
 
@@ -103,5 +127,13 @@ public class Song implements Serializable {
 
     public void setLyrics(String lyrics) {
         this.lyrics = lyrics;
+    }
+
+    public void setLinks(String links) {
+        this.links = links;
+    }
+
+    public String getLinks() {
+        return links;
     }
 }

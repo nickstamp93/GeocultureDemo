@@ -5,59 +5,67 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.text.Html;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongDetailsDownloaded;
+import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApplication;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
+import com.geoculturedemo.nickstamp.geoculturedemo.Parser.SongDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-public class SongFragment extends Fragment {
+public class SongFragment extends Fragment implements View.OnClickListener, OnSongDetailsDownloaded {
 
     private static final String ARG_SONG = "song";
+    private static final String ARG_OFFLINE = "offline";
+
+    private boolean isOffline;
+
     private Song song;
 
     private TextView tvLyricsBy, tvTitle, tvMusicBy, tvLyrics;
     private LinearLayout llArtists;
     private ProgressBar pbArtists, pbLyrics;
 
-    List<String> artists, links;
-
     private Typeface typeface;
     private View fragmentView;
 
+    private FloatingActionButton fab;
+    private boolean isSaved;
+    private Database database;
+    private SongDetailsParser songDetailsParser;
+    private OnFavoriteDelete onFavoriteDelete;
+
     public SongFragment() {
-        artists = new ArrayList<>();
-        links = new ArrayList<>();
 
     }
 
-    public static SongFragment newInstance(Song song1) {
+    public static SongFragment newInstance(Song song1, boolean isOffline) {
 
         SongFragment fragment = new SongFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_SONG, song1);
+        args.putBoolean(ARG_OFFLINE, isOffline);
         fragment.setArguments(args);
         return fragment;
     }
@@ -67,7 +75,9 @@ public class SongFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             song = (Song) getArguments().getSerializable(ARG_SONG);
+            isOffline = getArguments().getBoolean(ARG_OFFLINE);
         }
+        setHasOptionsMenu(isOffline);
     }
 
     @Override
@@ -88,13 +98,28 @@ public class SongFragment extends Fragment {
             pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
             pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
 
-            FontUtils.setRobotoFont(getContext(), fragmentView);
+            FontUtils.setFont(getContext(), fragmentView);
 
             tvTitle.setText(song.getTitle());
             tvMusicBy.setText(song.getMusicCreator());
             tvLyricsBy.setText(song.getLyricsCreator());
 
-            new SongDetailsParser().execute();
+            fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+            fab.setOnClickListener(this);
+
+            database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
+
+            if (!isOffline) {
+                songDetailsParser = new SongDetailsParser(song, this);
+                songDetailsParser.execute();
+            } else {
+                generateTableRows();
+                tvLyrics.setText(this.song.getLyrics());
+                pbArtists.setVisibility(View.INVISIBLE);
+                pbLyrics.setVisibility(View.INVISIBLE);
+                llArtists.setVisibility(View.VISIBLE);
+                tvLyrics.setVisibility(View.VISIBLE);
+            }
         }
 
 
@@ -102,149 +127,143 @@ public class SongFragment extends Fragment {
 
     }
 
-    public class SongDetailsParser extends AsyncTask<Void, Void, Void> {
 
-        private String lyrics;
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_favorite_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
 
-        public SongDetailsParser() {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_delete_favorite:
+                database.delete(song);
+                onFavoriteDelete.onDelete(song);
+                break;
+        }
+        return true;
+    }
 
 
+    public void setOnFavoriteDelete(OnFavoriteDelete onFavoriteDelete) {
+        this.onFavoriteDelete = onFavoriteDelete;
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
+        YoYo.with(Techniques.Pulse)
+                .duration(500)
+                .playOn(fab);
+        if (isSaved) {
+            database.delete(song);
+            fab.setImageResource(R.drawable.ic_star_outline);
+            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+        } else {
+            database.insert(song);
+            fab.setImageResource(R.drawable.ic_star);
+            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
         }
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
+        isSaved = !isSaved;
 
-        }
+    }
 
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //try to connect 3 times
-            int tries = 0;
-            boolean success = false;
-
-            while (tries < 3 && !success) {
-                tries++;
-
-                try {
-                    // Connect to the web site
-                    Document document = Jsoup.connect(song.getUrl()).get();
-
-                    Element table = document.select(".row3").get(0);
-
-                    Element singerElement = table.getElementsByClass("singers").get(0);
-                    Elements trSingers = singerElement.getElementsByTag("tr");
-                    for (Element e : trSingers) {
-                        String singer = e.text();
-                        artists.add(singer);
-                        for (int i = 0; i < e.getElementsByTag("td").size(); i++) {
-                            String s = e.getElementsByTag("td").get(i).getElementsByTag("a").attr("href");
-                            if (s.contains("youtube")) {
-                                links.add(s);
-                                break;
-                            }
-                        }
-                        if (artists.size() > links.size())
-                            links.add("");
-                    }
-
-                    Elements divs = table.getElementsByTag("div");
-                    divs.remove();
-
-                    Elements b = table.getElementsByTag("b");
-                    if (b != null)
-                        b.remove();
-
-                    lyrics = Html.fromHtml(table.html()).toString();
-                    song.setLyrics(lyrics);
-
-                    success = true;
-
-                } catch (IOException e) {
-                    Log.i("nikos", "IO Exception");
-                    e.printStackTrace();
-                } catch (IndexOutOfBoundsException e) {
-                    Log.i("nikos", "Out of bounds Exception");
-                    e.printStackTrace();
-                }
-            }
-
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-            AnimationUtils.crossfade(llArtists, pbArtists);
-            AnimationUtils.crossfade(tvLyrics, pbLyrics);
-
-            tvLyrics.setText(lyrics);
+    public void shutDownAsyncTask() {
+        songDetailsParser.cancel(true);
+    }
 
 
-            for (int i = 0; i < artists.size(); i++) {
-                final String currentArtist = artists.get(i);
+    @Override
+    public void onDownload(final Song song) {
 
-                TextView tv = new TextView(getContext());
-                tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-                tv.setText(currentArtist);
-                typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
-                tv.setTypeface(typeface);
+        this.song.setArtist(song.getArtist());
+        this.song.setLinks(song.getLinks());
+        this.song.setLyrics(song.getLyrics());
+
+        AnimationUtils.crossfade(llArtists, pbArtists);
+        AnimationUtils.crossfade(tvLyrics, pbLyrics);
+
+        tvLyrics.setText(this.song.getLyrics());
+
+        generateTableRows();
+
+        isSaved = database.isSaved(song);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
+        fab.show();
+    }
+
+    private void generateTableRows() {
+        String[] artists = this.song.getArtist().split("\\|");
+        String[] links = this.song.getLinks().split("\\|");
+
+        for (int i = 0; i < artists.length; i++) {
+            final String currentArtist = artists[i];
+
+            TextView tv = new TextView(getContext());
+            tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            tv.setText(currentArtist);
+            typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
+            tv.setTypeface(typeface);
 
                 /*int padding_in_dp = 8;  // 12 dps
                 final float scale = getResources().getDisplayMetrics().density;
                 int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
                 tv.setPadding(0, padding_in_px, 0, padding_in_px);*/
 
-                int[] attrs = new int[]{R.attr.selectableItemBackground};
-                TypedArray typedArray = getActivity().obtainStyledAttributes(attrs);
-                int backgroundResource = typedArray.getResourceId(0, 0);
-                tv.setClickable(true);
-                tv.setBackgroundResource(backgroundResource);
-                typedArray.recycle();
+            int[] attrs = new int[]{R.attr.selectableItemBackground};
+            TypedArray typedArray = getActivity().obtainStyledAttributes(attrs);
+            int backgroundResource = typedArray.getResourceId(0, 0);
+            tv.setClickable(true);
+            tv.setBackgroundResource(backgroundResource);
+            typedArray.recycle();
 
-                tv.setGravity(Gravity.CENTER_VERTICAL);
-                if (links.get(i).trim().length() > 0) {
-                    final String link = links.get(i);
+            tv.setGravity(Gravity.CENTER_VERTICAL);
+            if (links[i].trim().length() > 0
+                    && !links[i].equals("-")) {
+                final String link = links[i];
 
-                    tv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
-                        }
-                    });
-                    tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_tube, 0);
-                    tv.setCompoundDrawablePadding(4);
-                } else {
+                Log.i("nikos", "link:" + link);
+
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(link)));
+                    }
+                });
+                tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_tube, 0);
+                tv.setCompoundDrawablePadding(4);
+            } else {
 
 
-                    tv.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-                            Intent intent = new Intent(Intent.ACTION_SEARCH);
-                            intent.setPackage("com.google.android.youtube");
+                        Intent intent = new Intent(Intent.ACTION_SEARCH);
+                        intent.setPackage("com.google.android.youtube");
 
-                            String s = currentArtist.substring(2, currentArtist.length());
+                        String s = currentArtist.substring(2, currentArtist.length());
 
-                            intent.putExtra("query", song.getTitle() + " " + s);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                        intent.putExtra("query", song.getTitle() + " " + s);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
 
-                        }
-                    });
-                    tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
-                    tv.setCompoundDrawablePadding(4);
-                }
-
-                tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                llArtists.addView(tv);
+                    }
+                });
+                tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
+                tv.setCompoundDrawablePadding(4);
             }
 
+            tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            llArtists.addView(tv);
         }
-
     }
 
 }

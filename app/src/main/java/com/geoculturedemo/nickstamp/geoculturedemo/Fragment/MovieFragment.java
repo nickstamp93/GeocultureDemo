@@ -1,33 +1,41 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieDetailsDownloaded;
+import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApplication;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
+import com.geoculturedemo.nickstamp.geoculturedemo.Parser.MovieDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import java.io.File;
 
-import java.io.IOException;
-
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment implements View.OnClickListener, OnMovieDetailsDownloaded {
 
     private static final String ARG_MOVIE = "movie";
+    private static final String ARG_OFFLINE = "offline";
+
+    private boolean isOffline;
 
     private TextView tvMovieTitle, tvMovieGenre, tvMovieCast, tvMovieDirector, tvMovieWriter, tvMovieRating, tvMovieRuntime, tvMovieSynopsis;
     private ImageView ivMovieImage;
@@ -35,15 +43,23 @@ public class MovieFragment extends Fragment {
 
     private Movie movie;
     private View fragmentView;
+    private MovieDetailsParser movieDetailsParser;
+
+    private FloatingActionButton fab;
+    private Database database;
+
+    private boolean isSaved;
+    private OnFavoriteDelete onFavoriteDelete;
 
     public MovieFragment() {
 
     }
 
-    public static MovieFragment newInstance(Movie movie1) {
+    public static MovieFragment newInstance(Movie movie1, boolean isOffline) {
         MovieFragment fragment = new MovieFragment();
         Bundle args = new Bundle();
         args.putSerializable(ARG_MOVIE, movie1);
+        args.putBoolean(ARG_OFFLINE, isOffline);
         fragment.setArguments(args);
         return fragment;
     }
@@ -53,7 +69,9 @@ public class MovieFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             movie = (Movie) getArguments().getSerializable(ARG_MOVIE);
+            isOffline = getArguments().getBoolean(ARG_OFFLINE);
         }
+        setHasOptionsMenu(isOffline);
     }
 
     @Override
@@ -76,7 +94,7 @@ public class MovieFragment extends Fragment {
             tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
             tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
-            FontUtils.setRobotoFont(getContext(), fragmentView);
+            FontUtils.setFont(getContext(), fragmentView);
 
             tvMovieRating.setText(movie.getRating());
             tvMovieRuntime.setText(movie.getRuntime());
@@ -84,108 +102,120 @@ public class MovieFragment extends Fragment {
             tvMovieDirector.setText(movie.getDirector());
             tvMovieCast.setText(movie.getCast());
 
-            if (movie.getCast() == null || movie.getCast().trim().length() == 0)
-                tvMovieCast.setText(getString(R.string.text_not_available));
-            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0)
-                tvMovieDirector.setText(getString(R.string.text_not_available));
+            if (movie.getCast() == null || movie.getCast().trim().length() == 0) {
+                movie.setCast(getString(R.string.text_not_available));
+                tvMovieCast.setText(movie.getCast());
+            }
+            if (movie.getDirector() == null || movie.getDirector().trim().length() == 0) {
+                movie.setDirector(getString(R.string.text_not_available));
+                tvMovieDirector.setText(movie.getDirector());
+            }
 
-            new MovieDetailsParser().execute();
+            fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
+            fab.setOnClickListener(this);
+
+            database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
+
+            //if it's not offline, must download the extra details of the item
+            if (!isOffline) {
+                movieDetailsParser = new MovieDetailsParser(movie, this);
+                movieDetailsParser.execute();
+            } else {
+                pbImage.setVisibility(View.INVISIBLE);
+                ivMovieImage.setVisibility(View.VISIBLE);
+                Picasso.with(getContext())
+                        .load(new File(movie.getImgUrl()))
+                        .into(ivMovieImage);
+
+                tvMovieTitle.setText(movie.getTitle());
+                tvMovieWriter.setText(movie.getWriter());
+                tvMovieSynopsis.setText(movie.getSynopsis());
+
+            }
+
         }
 
         return fragmentView;
     }
 
-    public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {
 
-        public MovieDetailsParser() {
-
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-
-            //try to connect 3 times
-            int tries = 0;
-            boolean success = false;
-
-            while (tries < 3 && !success) {
-                tries++;
-
-                try {
-                    // Connect to the web site
-                    Document document = Jsoup.connect(movie.getUrl()).get();
-
-                    // Using Elements to get the class data
-                    Elements images = document.select("#img_primary");
-                    if (images.size() > 0) {
-                        Element image = images.get(0);
-                        movie.setImgUrl(image.getElementsByTag("img").attr("src"));
-                    }
-                    Element overview = document.getElementById("overview-top");
-
-                    String title = overview.getElementsByClass("header").text();
-                    movie.setTitle(title);
-
-                    Elements writers = overview.getElementsByAttributeValue("itemprop", "creator").select("a[itemprop=url]");
-                    String writer = "";
-                    for (Element w : writers) {
-                        writer += w.text() + " , ";
-                    }
-                    movie.setWriter(writer.substring(0, writer.length() - 3));
-
-                    Elements storylines = document.select("#titleStoryLine");
-                    if (storylines.size() > 0) {
-
-                        String synopsis = storylines.first().getElementsByTag("p").text();
-                        int pos = synopsis.indexOf("Written by");
-                        synopsis = synopsis.substring(0, pos);
-                        movie.setSynopsis(synopsis);
-                    }
-
-
-                    success = true;
-
-                } catch (IOException e) {
-                    Log.i("nikos", "IO Exception");
-                    e.printStackTrace();
-                } catch (IndexOutOfBoundsException e) {
-                    Log.i("nikos", "Out of bounds Exception");
-                    e.printStackTrace();
-                }
-            }
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-
-
-            Picasso.with(getContext())
-                    .load(movie.getImgUrl())
-                    .into(ivMovieImage);
-
-            AnimationUtils.crossfade(ivMovieImage, pbImage);
-
-            tvMovieTitle.setText(movie.getTitle());
-            tvMovieWriter.setText(movie.getWriter());
-            tvMovieSynopsis.setText(movie.getSynopsis());
-
-            if (movie.getWriter() == null || movie.getWriter().trim().length() == 0)
-                tvMovieWriter.setText(getString(R.string.text_not_available));
-            if (movie.getSynopsis() == null || movie.getSynopsis().trim().length() == 0)
-                tvMovieSynopsis.setText(getString(R.string.text_not_available));
-
-        }
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_favorite_fragment, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.action_delete_favorite:
+                database.delete(movie);
+                onFavoriteDelete.onDelete(movie);
+                break;
+        }
+        return true;
+    }
+
+    public void setOnFavoriteDelete(OnFavoriteDelete onFavoriteDelete) {
+        this.onFavoriteDelete = onFavoriteDelete;
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        YoYo.with(Techniques.Pulse)
+                .duration(500)
+                .playOn(fab);
+        if (isSaved) {
+            database.delete(movie);
+            fab.setImageResource(R.drawable.ic_star_outline);
+            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+        } else {
+            database.insert(movie);
+            fab.setImageResource(R.drawable.ic_star);
+            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+        }
+        isSaved = !isSaved;
+    }
+
+    public void shutDownAsyncTask() {
+        movieDetailsParser.cancel(true);
+    }
+
+    @Override
+    public void onDownload(Movie movie) {
+        this.movie.setTitle(movie.getTitle());
+        this.movie.setImgUrl(movie.getImgUrl());
+        this.movie.setSynopsis(movie.getSynopsis());
+        this.movie.setWriter(movie.getWriter());
+
+        Picasso.with(getContext())
+                .load(this.movie.getImgUrl())
+                .into(ivMovieImage);
+
+        AnimationUtils.crossfade(ivMovieImage, pbImage);
+
+        tvMovieTitle.setText(this.movie.getTitle());
+        tvMovieWriter.setText(this.movie.getWriter());
+        tvMovieSynopsis.setText(this.movie.getSynopsis());
+
+        if (this.movie.getWriter() == null || this.movie.getWriter().trim().length() == 0) {
+            this.movie.setWriter(getString(R.string.text_not_available));
+            tvMovieWriter.setText(this.movie.getWriter());
+        }
+        if (this.movie.getSynopsis() == null || this.movie.getSynopsis().trim().length() == 0) {
+            this.movie.setSynopsis(getString(R.string.text_not_available));
+            tvMovieSynopsis.setText(this.movie.getSynopsis());
+        }
+
+        isSaved = database.isSaved(this.movie);
+        if (isSaved)
+            fab.setImageResource(R.drawable.ic_star);
+        else
+            fab.setImageResource(R.drawable.ic_star_outline);
+        fab.show();
+    }
+
 
 }
