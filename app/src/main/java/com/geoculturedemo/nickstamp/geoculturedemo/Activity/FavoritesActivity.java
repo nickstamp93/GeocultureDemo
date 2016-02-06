@@ -77,7 +77,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     public void onSong(Song song) {
         SongFragment songFragment = SongFragment.newInstance(song, true);
         songFragment.setOnFavoriteDelete(this);
-        fragmentManager.beginTransaction().replace(R.id.container, songFragment, TAG_MOVIE_DETAILS).addToBackStack(null).commit();
+        fragmentManager.beginTransaction().replace(R.id.container, songFragment, TAG_SONG_DETAILS).addToBackStack(null).commit();
 
     }
 

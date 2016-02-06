@@ -27,7 +27,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
-import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApplication;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.Parser.SongDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
@@ -98,7 +98,7 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             pbArtists = (ProgressBar) fragmentView.findViewById(R.id.pbArtists);
             pbLyrics = (ProgressBar) fragmentView.findViewById(R.id.pbLyrics);
 
-            FontUtils.setRobotoFont(getContext(), fragmentView);
+            FontUtils.setFont(getContext(), fragmentView);
 
             tvTitle.setText(song.getTitle());
             tvMusicBy.setText(song.getMusicCreator());
@@ -107,7 +107,7 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
             fab.setOnClickListener(this);
 
-            database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
+            database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
 
             if (!isOffline) {
                 songDetailsParser = new SongDetailsParser(song, this);

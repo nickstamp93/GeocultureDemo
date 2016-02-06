@@ -106,7 +106,7 @@ public class Database extends SQLiteOpenHelper {
      *
      * @return the list with the saved items
      */
-    public ArrayList<Object> getAllFavorites() {
+    public ArrayList<Object> getFavorites() {
         ArrayList<Object> objects = new ArrayList<>();
         ArrayList songs = getListSongs();
         objects.addAll(songs);

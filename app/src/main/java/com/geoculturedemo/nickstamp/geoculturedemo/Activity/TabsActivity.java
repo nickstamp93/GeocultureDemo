@@ -189,20 +189,6 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
             return POSITION_NONE;
 
-            /*if (object instanceof MovieListFragment && movieTab instanceof MovieFragment) {
-                return POSITION_NONE;
-            }
-            if (object instanceof MovieFragment && movieTab instanceof MovieListFragment) {
-                return POSITION_NONE;
-            }
-            if (object instanceof MovieListFragment && movieTab instanceof MovieListFragment) {
-                return POSITION_NONE;
-            }
-            if (object instanceof PlaceholderFragment) {
-                return POSITION_UNCHANGED;
-            }
-            return POSITION_UNCHANGED;*/
-
         }
 
     }

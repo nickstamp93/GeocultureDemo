@@ -20,7 +20,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
-import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApplication;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Parser.MovieDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
@@ -94,7 +94,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
             tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
-            FontUtils.setRobotoFont(getContext(), fragmentView);
+            FontUtils.setFont(getContext(), fragmentView);
 
             tvMovieRating.setText(movie.getRating());
             tvMovieRuntime.setText(movie.getRuntime());
@@ -114,7 +114,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             fab = (FloatingActionButton) fragmentView.findViewById(R.id.fab);
             fab.setOnClickListener(this);
 
-            database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
+            database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
 
             //if it's not offline, must download the extra details of the item
             if (!isOffline) {

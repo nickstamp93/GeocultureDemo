@@ -37,7 +37,7 @@ public class FontUtils {
      * @param fontType
      * @return
      */
-    private static Typeface getRobotoTypeface(Context context, String fontType) {
+    private static Typeface getTypeface(Context context, String fontType) {
         String fontPath = ((String) fontMap.get(fontType));
         if (!typefaceCache.containsKey(fontType)) {
             typefaceCache.put(fontType, Typeface.createFromAsset(context.getAssets(), fontPath));
@@ -52,7 +52,7 @@ public class FontUtils {
      * @param context
      * @return
      */
-    private static Typeface getRobotoTypeface(Context context, Typeface originalTypeface) {
+    private static Typeface getTypeface(Context context, Typeface originalTypeface) {
         String robotoFontType = FontTypes.REGULAR; //default Regular Roboto font
         if (originalTypeface != null) {
             int style = originalTypeface.getStyle();
@@ -65,7 +65,7 @@ public class FontUtils {
                     break;
             }
         }
-        return getRobotoTypeface(context, robotoFontType);
+        return getTypeface(context, robotoFontType);
     }
 
     /**
@@ -74,14 +74,14 @@ public class FontUtils {
      * @param context - to reach assets
      * @param view    - root view to apply typeface to
      */
-    public static void setRobotoFont(Context context, View view) {
+    public static void setFont(Context context, View view) {
         if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                setRobotoFont(context, ((ViewGroup) view).getChildAt(i));
+                setFont(context, ((ViewGroup) view).getChildAt(i));
             }
         } else if (view instanceof TextView) {
             Typeface currentTypeface = ((TextView) view).getTypeface();
-            ((TextView) view).setTypeface(getRobotoTypeface(context, currentTypeface));
+            ((TextView) view).setTypeface(getTypeface(context, currentTypeface));
         }
     }
 }

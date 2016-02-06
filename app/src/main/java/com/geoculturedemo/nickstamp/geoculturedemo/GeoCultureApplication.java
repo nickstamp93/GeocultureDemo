@@ -11,7 +11,7 @@ import java.io.File;
 /**
  * Created by nickstamp on 1/28/2016.
  */
-public class GeoCultureApp extends Application {
+public class GeoCultureApplication extends Application {
 
     private Database database;
 

@@ -29,15 +29,7 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.OkHttpDownloader;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Request;
 
-import org.jsoup.helper.HttpConnection;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -67,7 +59,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_home);
 
         //set the font all over the activity
-        FontUtils.setRobotoFont(this, getWindow().getDecorView());
+        FontUtils.setFont(this, getWindow().getDecorView());
 
         //initialize the UI views
         initViews();

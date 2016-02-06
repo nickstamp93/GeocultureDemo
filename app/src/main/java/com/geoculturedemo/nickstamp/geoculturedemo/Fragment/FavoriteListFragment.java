@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.FavoritesAdapter;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Database.Database;
-import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApp;
+import com.geoculturedemo.nickstamp.geoculturedemo.GeoCultureApplication;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
@@ -66,8 +65,8 @@ public class FavoriteListFragment extends Fragment implements OnSongClicked, OnM
             context = getContext();
 
             recyclerView = (RecyclerView) fragmentView.findViewById(R.id.recyclerList);
-            database = ((GeoCultureApp) getActivity().getApplication()).getDatabase();
-            objects = database.getAllFavorites();
+            database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
+            objects = database.getFavorites();
             favoritesAdapter = new FavoritesAdapter(context, objects, this, this);
 
             //get the width of the current screen in dp
