@@ -27,4 +27,5 @@
     <string name="text_songs">ΤΡΑΓΟΥΔΙΑ</string>
     <string name="text_not_available">Μη Διαθέσιμο</string>
     <string name="text_new_pick">ΝΕΑ ΕΠΙΛΟΓΗ</string>
+    <string name="text_no_internet">Δεν υπάρχει σύνδεση στο ίντερνετ</string>
 </resources>

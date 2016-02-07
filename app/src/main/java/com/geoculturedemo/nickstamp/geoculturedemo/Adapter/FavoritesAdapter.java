@@ -2,6 +2,7 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Adapter;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -152,7 +153,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         @Override
         public void onClick(View v) {
             if (objects.get(getAdapterPosition()) instanceof Movie)
-                onMovieClicked.onMovie(((Movie) objects.get(getAdapterPosition())));
+                onMovieClicked.onMovie(((Movie) objects.get(getAdapterPosition())), movieImage);
             else
                 onSongClicked.onSong(((Song) objects.get(getAdapterPosition())));
         }

@@ -1,11 +1,19 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.ChangeBounds;
+import android.transition.ChangeImageTransform;
+import android.transition.ChangeTransform;
+import android.transition.Fade;
+import android.transition.TransitionSet;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnFavoriteDelete;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
@@ -64,12 +72,74 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
 
 
     @Override
-    public void onMovie(Movie movie) {
+    public void onMovie(Movie movie, ImageView movieImage) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            movieImage.setTransitionName(movie.getTitle());
+        }
 
         MovieFragment movieFragment = MovieFragment.newInstance(movie, true);
         movieFragment.setOnFavoriteDelete(this);
-        fragmentManager.beginTransaction().replace(R.id.container, movieFragment, TAG_MOVIE_DETAILS).addToBackStack(null).commit();
 
+
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Log.i("nikos","if");
+            movieFragment.setSharedElementEnterTransition(
+                    TransitionInflater
+                            .from(this).inflateTransition(R.transition.change_image_trans));
+            movieFragment.setSharedElementReturnTransition(
+                    TransitionInflater
+                    .from(this).inflateTransition(R.transition.change_image_trans));
+            fragmentManager
+                    .beginTransaction()
+                    .addSharedElement(movieImage, movieImage.getTransitionName())
+                    .replace(R.id.container, movieFragment)
+                    .addToBackStack(null)
+                    .commit();
+
+        } else {
+            Log.i("nikos","else");
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.container, movieFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }*/
+
+        int transitionDuration = 800;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            movieFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(transitionDuration));
+            movieFragment.setEnterTransition(new Fade().setDuration(transitionDuration));
+            movieFragment.setExitTransition(new Fade().setDuration(transitionDuration));
+            movieFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(transitionDuration));
+        }
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.container, movieFragment)
+                .addToBackStack(null)
+                .addSharedElement(movieImage, movie.getTitle())
+                .commit();
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            favoriteListFragment.setSharedElementReturnTransition(TransitionInflater.from(
+                    this).inflateTransition(R.transition.change_image_trans));
+            favoriteListFragment.setExitTransition(TransitionInflater.from(
+                    this).inflateTransition(android.R.transition.fade));
+            movieFragment.setSharedElementEnterTransition(TransitionInflater.from(
+                    this).inflateTransition(R.transition.change_image_trans));
+            movieFragment.setEnterTransition(TransitionInflater.from(
+                    this).inflateTransition(android.R.transition.fade));
+        }
+
+        fragmentManager
+                .beginTransaction()
+                .replace(R.id.container, movieFragment)
+                .addToBackStack(null)
+                .addSharedElement(movieImage, getString(R.string.trans_name_image))
+                .commit();*/
 
     }
 
@@ -85,6 +155,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     public void onBackPressed() {
         super.onBackPressed();
         menu.clear();
+
     }
 
     @Override
@@ -98,4 +169,16 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         fragmentManager.popBackStack();
         favoriteListFragment.remove(song);
     }
+
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    public class DetailsTransition extends TransitionSet {
+        @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+        public DetailsTransition() {
+            setOrdering(ORDERING_TOGETHER);
+            addTransition(new ChangeBounds()).
+                    addTransition(new ChangeTransform()).
+                    addTransition(new ChangeImageTransform());
+        }
+    }
+
 }

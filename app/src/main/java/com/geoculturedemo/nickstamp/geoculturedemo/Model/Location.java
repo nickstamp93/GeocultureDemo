@@ -1,30 +1,31 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
-import android.util.Log;
-
 import java.io.Serializable;
 
 /**
  * Created by nickstamp on 1/6/2016.
  */
-public class Location implements Serializable{
+public class Location implements Serializable {
     private double longitude, latitude;
     private String country, city, area;
 
     public Location() {
         latitude = 0;
         longitude = 0;
+        country = "";
+        city = "";
+        area = "";
     }
 
-    public Location(String fullName){
+    public Location(String fullName) {
         latitude = 0;
         longitude = 0;
         String[] tokens = fullName.split(",");
-        if(tokens.length == 3){
+        if (tokens.length == 3) {
             area = tokens[0];
             city = tokens[1];
             country = tokens[2];
-        }else{
+        } else {
             area = tokens[0];
             city = tokens[0];
             country = tokens[1];

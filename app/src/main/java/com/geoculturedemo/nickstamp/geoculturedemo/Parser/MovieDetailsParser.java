@@ -49,11 +49,11 @@ public class MovieDetailsParser extends AsyncTask<Void, Void, Void> {
                 // Connect to the web site
                 Document document = Jsoup.connect(movie.getUrl()).get();
 
-                Element titleSection = document.select("div.titleBar").get(0);
+                /*Element titleSection = document.select("div.titleBar").get(0);
 
                 Element titleWrapper = titleSection.getElementsByClass("title_wrapper").get(0);
                 String title = titleWrapper.getElementsByTag("h1").text();
-                movie.setTitle(title);
+                movie.setTitle(title);*/
 
                 String imgUrl = document.select("div.poster").get(0).getElementsByTag("img").attr("src");
                 movie.setImgUrl(imgUrl);

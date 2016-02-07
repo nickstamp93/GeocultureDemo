@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
@@ -115,7 +116,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
     }
 
     @Override
-    public void onMovie(Movie movie) {
+    public void onMovie(Movie movie,ImageView movieImage) {
 
         //remove the movie list fragment and create a movie details fragment with the movie selected
         manager.beginTransaction().remove(components.get(currentMovieTag)).commit();
