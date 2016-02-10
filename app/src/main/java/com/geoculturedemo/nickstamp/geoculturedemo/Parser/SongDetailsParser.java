@@ -1,21 +1,10 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Parser;
 
-import android.content.Intent;
-import android.content.res.TypedArray;
-import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.text.Html;
-import android.util.TypedValue;
-import android.view.Gravity;
-import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongDetailsDownloaded;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
-import com.geoculturedemo.nickstamp.geoculturedemo.R;
-import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -66,33 +55,45 @@ public class SongDetailsParser extends AsyncTask<Void, Void, Void> {
 
                 Element table = document.select(".row3").get(0);
 
-                Element singerElement = table.getElementsByClass("singers").get(0);
-                Elements trSingers = singerElement.getElementsByTag("tr");
-                for (Element e : trSingers) {
-                    String singer = e.text();
-                    artists.add(singer);
-                    for (int i = 0; i < e.getElementsByTag("td").size(); i++) {
-                        String s = e.getElementsByTag("td").get(i).getElementsByTag("a").attr("href");
-                        if (s.contains("youtube")) {
-                            links.add(s);
-                            break;
-                        }
-                    }
-                    if (artists.size() > links.size())
-                        links.add("-");
+                Element singersTable = table.getElementsByTag("table").get(0);
+                Elements singerRows = singersTable.getElementsByTag("tr");
+                for (Element e : singerRows) {
+
                 }
 
-                StringBuilder sbArtists = new StringBuilder(), sbLinks = new StringBuilder();
-                for (String s : artists) {
-                    sbArtists.append(s).append("|");
+                Elements singerWrapperNodes = table.getElementsByClass("singers");
+                if (singerWrapperNodes.size() > 0) {
+                    Element singerElement = table.getElementsByClass("singers").get(0);
+                    Elements trSingers = singerElement.getElementsByTag("tr");
+                    for (Element e : trSingers) {
+                        String singer = e.text();
+                        artists.add(singer);
+                        for (int i = 0; i < e.getElementsByTag("td").size(); i++) {
+                            String s = e.getElementsByTag("td").get(i).getElementsByTag("a").attr("href");
+                            if (s.contains("youtube")) {
+                                links.add(s);
+                                break;
+                            }
+                        }
+                        if (artists.size() > links.size())
+                            links.add("-");
+                    }
+
+                    StringBuilder sbArtists = new StringBuilder(), sbLinks = new StringBuilder();
+                    for (String s : artists) {
+                        sbArtists.append(s).append("|");
+                    }
+                    for (String s : links) {
+                        sbLinks.append(s).append("|");
+                    }
+
+                    if (sbArtists.length() > 0)
+                        sbArtists.deleteCharAt(sbArtists.length() - 1);
+                    if (sbLinks.length() > 0)
+                        sbLinks.deleteCharAt(sbLinks.length() - 1);
+                    song.setArtist(sbArtists.toString());
+                    song.setLinks(sbLinks.toString());
                 }
-                for (String s : links) {
-                    sbLinks.append(s).append("|");
-                }
-                sbArtists.deleteCharAt(sbArtists.length() - 1);
-                sbLinks.deleteCharAt(sbLinks.length() - 1);
-                song.setArtist(sbArtists.toString());
-                song.setLinks(sbLinks.toString());
 
                 Elements divs = table.getElementsByTag("div");
                 divs.remove();

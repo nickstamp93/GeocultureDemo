@@ -81,32 +81,6 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         MovieFragment movieFragment = MovieFragment.newInstance(movie, true);
         movieFragment.setOnFavoriteDelete(this);
 
-
-       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            Log.i("nikos","if");
-            movieFragment.setSharedElementEnterTransition(
-                    TransitionInflater
-                            .from(this).inflateTransition(R.transition.change_image_trans));
-            movieFragment.setSharedElementReturnTransition(
-                    TransitionInflater
-                    .from(this).inflateTransition(R.transition.change_image_trans));
-            fragmentManager
-                    .beginTransaction()
-                    .addSharedElement(movieImage, movieImage.getTransitionName())
-                    .replace(R.id.container, movieFragment)
-                    .addToBackStack(null)
-                    .commit();
-
-        } else {
-            Log.i("nikos","else");
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.container, movieFragment)
-                    .addToBackStack(null)
-                    .commit();
-        }*/
-
         int transitionDuration = 800;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -121,25 +95,6 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
                 .addToBackStack(null)
                 .addSharedElement(movieImage, movie.getTitle())
                 .commit();
-
-        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            favoriteListFragment.setSharedElementReturnTransition(TransitionInflater.from(
-                    this).inflateTransition(R.transition.change_image_trans));
-            favoriteListFragment.setExitTransition(TransitionInflater.from(
-                    this).inflateTransition(android.R.transition.fade));
-            movieFragment.setSharedElementEnterTransition(TransitionInflater.from(
-                    this).inflateTransition(R.transition.change_image_trans));
-            movieFragment.setEnterTransition(TransitionInflater.from(
-                    this).inflateTransition(android.R.transition.fade));
-        }
-
-        fragmentManager
-                .beginTransaction()
-                .replace(R.id.container, movieFragment)
-                .addToBackStack(null)
-                .addSharedElement(movieImage, getString(R.string.trans_name_image))
-                .commit();*/
 
     }
 

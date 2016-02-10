@@ -24,7 +24,6 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.HistoryUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.LocationUtils;
-import com.geoculturedemo.nickstamp.geoculturedemo.Utils.NetworkUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.location.places.Place;
@@ -53,7 +52,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     //Location objects for current location and custom location
     private Location currentLocation, customLocation;
-    private NetworkUtils networkUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,8 +60,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         //set the font all over the activity
         FontUtils.setFont(this, getWindow().getDecorView());
-
-        networkUtils = new NetworkUtils(this);
 
         //initialize the UI views
         initViews();
@@ -118,7 +114,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (networkUtils.hasInternet()) {
+                        if (gpsUtils.isNetworkEnabled()) {
                             Intent i = new Intent(HomeActivity.this, TabsActivity.class);
                             i.putExtra("location", new Location(sPlace));
                             startActivity(i);
@@ -139,7 +135,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             cardRecentSearches.setVisibility(View.VISIBLE);
             for (final String sSearch : recentSearches) {
 
-                TextView tv = new TextView(this);
+                final TextView tv = new TextView(this);
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
                 tv.setText(sSearch);
                 tv.setTypeface(typeface);
@@ -155,9 +151,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(HomeActivity.this, TabsActivity.class);
-                        i.putExtra("location", new Location(sSearch));
-                        startActivity(i);
+                        if (gpsUtils.isNetworkEnabled()) {
+                            Intent i = new Intent(HomeActivity.this, TabsActivity.class);
+                            i.putExtra("location", new Location(sSearch));
+                            startActivity(i);
+                        } else {
+                            Snackbar.make(tv, getString(R.string.text_no_internet), Snackbar.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
 
@@ -381,8 +382,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             } else {
 
-                if (!gpsUtils.canGetLocation()) {
+                if (!gpsUtils.isGPSEnabled()) {
                     gpsUtils.showGPSErrorDialog();
+                } else if (!gpsUtils.isNetworkEnabled()) {
+                    gpsUtils.showInternetErrorDialog();
                 } else {
                     Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
                 }

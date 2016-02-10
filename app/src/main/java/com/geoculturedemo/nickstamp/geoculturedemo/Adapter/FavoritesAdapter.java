@@ -77,7 +77,7 @@ public class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.Favo
         if (holder.type == VIEW_TYPE_MOVIE) {
             Movie movie = ((Movie) objects.get(position));
 
-            holder.movieTitle.setText(movie.getTitle());
+            holder.movieTitle.setText(movie.getTitle() + " " +  movie.getYear());
             Picasso.with(context)
                     .load(new File(movie.getImgUrl()))
                     .into(holder.movieImage);

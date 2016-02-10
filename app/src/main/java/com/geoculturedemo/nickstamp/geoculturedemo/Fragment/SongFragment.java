@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -212,11 +211,6 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             typeface = Typeface.createFromAsset(getContext().getAssets(), "fonts/Roboto-Regular.ttf");
             tv.setTypeface(typeface);
 
-                /*int padding_in_dp = 8;  // 12 dps
-                final float scale = getResources().getDisplayMetrics().density;
-                int padding_in_px = (int) (padding_in_dp * scale + 0.5f);
-                tv.setPadding(0, padding_in_px, 0, padding_in_px);*/
-
             int[] attrs = new int[]{R.attr.selectableItemBackground};
             TypedArray typedArray = getActivity().obtainStyledAttributes(attrs);
             int backgroundResource = typedArray.getResourceId(0, 0);
@@ -229,8 +223,6 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
                     && !links[i].equals("-")) {
                 final String link = links[i];
 
-                Log.i("nikos", "link:" + link);
-
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -241,24 +233,27 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
                 tv.setCompoundDrawablePadding(4);
             } else {
 
+                //if artist is not
+                if(!artists[i].equals("Άγνωστος")){
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                tv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_SEARCH);
+                            intent.setPackage("com.google.android.youtube");
 
-                        Intent intent = new Intent(Intent.ACTION_SEARCH);
-                        intent.setPackage("com.google.android.youtube");
+                            String s = currentArtist.substring(2, currentArtist.length());
 
-                        String s = currentArtist.substring(2, currentArtist.length());
+                            intent.putExtra("query", song.getTitle() + " " + s);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
 
-                        intent.putExtra("query", song.getTitle() + " " + s);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        }
+                    });
+                    tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
+                    tv.setCompoundDrawablePadding(4);
+                }
 
-                    }
-                });
-                tv.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_search, 0);
-                tv.setCompoundDrawablePadding(4);
             }
 
             tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
