@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -139,6 +140,7 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
         switch (item.getItemId()) {
             case R.id.action_delete_favorite:
                 database.delete(song);
+                Toast.makeText(getContext(), "\"" + song.getTitle() + "\" " + getString(R.string.text_deleted), Toast.LENGTH_LONG).show();
                 onFavoriteDelete.onDelete(song);
                 break;
         }
@@ -160,11 +162,11 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
         if (isSaved) {
             database.delete(song);
             fab.setImageResource(R.drawable.ic_star_outline);
-            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
         } else {
             database.insert(song);
             fab.setImageResource(R.drawable.ic_star);
-            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
         }
 
         isSaved = !isSaved;

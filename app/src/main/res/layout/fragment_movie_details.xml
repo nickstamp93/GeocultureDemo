@@ -196,7 +196,7 @@
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="8dp">
@@ -227,6 +227,29 @@
                         android:textSize="16sp" />
 
                 </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:id="@+id/bFullInfo"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:foreground="?selectableItemBackground">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@mipmap/ic_open_in_new"
+                    android:drawablePadding="8dp"
+                    android:padding="16dp"
+                    android:text="@string/text_full_info_button"
+                    android:textSize="20sp" />
 
             </android.support.v7.widget.CardView>
 

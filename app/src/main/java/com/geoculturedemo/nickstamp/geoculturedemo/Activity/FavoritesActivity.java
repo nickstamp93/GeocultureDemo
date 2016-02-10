@@ -10,6 +10,8 @@ import android.transition.ChangeBounds;
 import android.transition.ChangeImageTransform;
 import android.transition.ChangeTransform;
 import android.transition.Fade;
+import android.transition.Slide;
+import android.transition.Transition;
 import android.transition.TransitionSet;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -31,10 +33,15 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     private static final String TAG_MOVIE_DETAILS = "movie_details";
     private static final String TAG_SONG_DETAILS = "song_details";
 
+
+    private static final int transitionDuration = 800;
+
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     FavoriteListFragment favoriteListFragment;
     private Menu menu;
+    private MovieFragment movieFragment;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +85,9 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
             movieImage.setTransitionName(movie.getTitle());
         }
 
-        MovieFragment movieFragment = MovieFragment.newInstance(movie, true);
+        movieFragment = MovieFragment.newInstance(movie, true);
         movieFragment.setOnFavoriteDelete(this);
 
-        int transitionDuration = 800;
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             movieFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(transitionDuration));
@@ -91,7 +97,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         }
         fragmentManager
                 .beginTransaction()
-                .replace(R.id.container, movieFragment)
+                .replace(R.id.container, movieFragment, TAG_MOVIE_DETAILS)
                 .addToBackStack(null)
                 .addSharedElement(movieImage, movie.getTitle())
                 .commit();
@@ -115,12 +121,25 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
 
     @Override
     public void onDelete(Movie movie) {
-        fragmentManager.popBackStack();
+
+        //change the animation to be
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+
+            Transition slide = new Slide().setDuration(transitionDuration);
+
+            movieFragment.setSharedElementEnterTransition(slide);
+            movieFragment.setExitTransition(slide);
+            movieFragment.setEnterTransition(slide);
+            movieFragment.setSharedElementReturnTransition(slide);
+
+        }
         favoriteListFragment.remove(movie);
+        fragmentManager.popBackStack();
     }
 
     @Override
     public void onDelete(Song song) {
+
         fragmentManager.popBackStack();
         favoriteListFragment.remove(song);
     }

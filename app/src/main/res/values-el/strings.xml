@@ -6,7 +6,7 @@
     <string name="snackbar_went_wrong">Κάτι πήγε στραβά. Προσπαθήστε ξανά.</string>
     <string name="text_artists">Ερμηνευτές</string>
     <string name="text_cast">Ηθοποιοί :\u0020</string>
-    <string name="text_director">Σκηνοθεσία : \u0020</string>
+    <string name="text_director">Σκηνοθεσία :\u0020</string>
     <string name="text_explore">ΕΞΕΡΕΥΝΗΣΗ</string>
     <string name="text_genre">Είδος :\u0020</string>
     <string name="text_last_searches">Τελευταίες Αναζητήσεις</string>
@@ -33,4 +33,8 @@
     <string name="text_settings">Ρυθμίσεις</string>
     <string name="gps_error_title">Σφάλμα GPS</string>
     <string name="gps_error_message">Ο δέκτης GPS δεν είναι ενεργοποιημένος. Ενεργοποιήστε τον και προσπαθήστε ξανά.</string>
+    <string name="text_full_info_button">Προβολή πλήρους προφίλ</string>
+    <string name="snackbar_saved">Αποθηκεύτηκε</string>
+    <string name="snackbar_deleted_saved">Αφαιρέθηκε από τα Αποθηκευμένα</string>
+    <string name="text_deleted">διαγράφηκε</string>
 </resources>

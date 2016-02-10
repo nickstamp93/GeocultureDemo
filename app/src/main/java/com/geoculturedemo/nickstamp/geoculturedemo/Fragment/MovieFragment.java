@@ -1,6 +1,8 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -44,7 +46,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
     private ProgressBar pbImage;
 
     private Movie movie;
-    private View fragmentView;
+    private View fragmentView, bFullInfo;
     private MovieDetailsParser movieDetailsParser = null;
 
     private FloatingActionButton fab;
@@ -98,6 +100,17 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             tvMovieRating = (TextView) fragmentView.findViewById(R.id.tvMovieRating);
             tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
             tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
+
+            bFullInfo = fragmentView.findViewById(R.id.bFullInfo);
+            bFullInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = movie.getUrl();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }
+            });
 
             FontUtils.setFont(getContext(), fragmentView);
 
@@ -164,7 +177,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
         switch (item.getItemId()) {
             case R.id.action_delete_favorite:
                 if (database.delete(movie)) {
-                    Toast.makeText(getContext(), movie.getTitle() + " deleted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "\"" + movie.getTitle() + "\" " + getString(R.string.text_deleted), Toast.LENGTH_LONG).show();
                 }
                 onFavoriteDelete.onDelete(movie);
                 break;
@@ -185,11 +198,11 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
         if (isSaved) {
             database.delete(movie);
             fab.setImageResource(R.drawable.ic_star_outline);
-            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
         } else {
             database.insert(movie);
             fab.setImageResource(R.drawable.ic_star);
-            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
         }
         isSaved = !isSaved;
     }

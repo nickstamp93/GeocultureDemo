@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
@@ -93,8 +92,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_note_white_24dp);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie_white_24dp);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_note);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie);
     }
 
     private void setUpToolbar() {
