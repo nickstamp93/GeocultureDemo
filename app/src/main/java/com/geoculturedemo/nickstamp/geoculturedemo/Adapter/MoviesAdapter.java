@@ -129,7 +129,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MoviesView
 
         @Override
         public void onClick(View v) {
-            onMovieClicked.onMovie(movies.get(getAdapterPosition()));
+            onMovieClicked.onMovie(movies.get(getAdapterPosition()),null);
         }
     }
 }

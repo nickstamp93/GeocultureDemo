@@ -18,7 +18,6 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * Created by nickstamp on 1/28/2016.
@@ -153,7 +152,6 @@ public class Database extends SQLiteOpenHelper {
                     @Override
                     public void run() {
 
-
                         File file = new File(path);
                         try {
                             file.createNewFile();
@@ -217,7 +215,7 @@ public class Database extends SQLiteOpenHelper {
      * @return whether there is a local copy of the requested movie
      */
     public boolean isSaved(Movie movie) {
-        //find the exercise
+        //find the movie
         Cursor c = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + Contract.Movies.TABLE_NAME +
                         " WHERE " + Contract.Movies.COLUMN_TITLE + "=\"" + movie.getTitle()
@@ -236,7 +234,7 @@ public class Database extends SQLiteOpenHelper {
      * @return whether there is a local copy of the requested song
      */
     public boolean isSaved(Song song) {
-        //find the exercise
+        //find the song
         Cursor c = getReadableDatabase().rawQuery(
                 "SELECT * FROM " + Contract.Songs.TABLE_NAME +
                         " WHERE " + Contract.Songs.COLUMN_TITLE + "=\"" + song.getTitle()
@@ -253,14 +251,19 @@ public class Database extends SQLiteOpenHelper {
      * Delete a movie from the local database
      *
      * @param movie the movie to be deleted
+     * @return true if the movie image was deleted successfully
      */
-    public void delete(Movie movie) {
+    public boolean delete(Movie movie) {
 
         String selection = Contract.Movies.COLUMN_TITLE + " = ?";
 
         String[] selectionArgs = {movie.getTitle()};
 
         getWritableDatabase().delete(Contract.Movies.TABLE_NAME, selection, selectionArgs);
+
+        File file = new File(movie.getImgUrl());
+        return file.delete();
+
 
     }
 
@@ -271,18 +274,24 @@ public class Database extends SQLiteOpenHelper {
      */
     public void delete(Song song) {
 
-        /*String selection = Contract.Songs.COLUMN_TITLE + " = ? AND " +
-                Contract.Songs.COLUMN_ARTIST + " = ? AND " +
-                Contract.Songs.COLUMN_YEAR + " = ?";
-
-        String[] selectionArgs = {song.getTitle(), song.getArtist(), song.getYear()};*/
-
         String selection = Contract.Songs.COLUMN_LYRICS + " = ?";
 
         String[] selectionArgs = {song.getLyrics()};
 
         getWritableDatabase().delete(Contract.Songs.TABLE_NAME, selection, selectionArgs);
 
+    }
+
+    public Movie get(Movie movie) {
+        //find the movie
+        Cursor c = getReadableDatabase().rawQuery(
+                "SELECT * FROM " + Contract.Movies.TABLE_NAME +
+                        " WHERE " + Contract.Movies.COLUMN_TITLE + "=\"" + movie.getTitle()
+                        + "\" AND " + Contract.Movies.COLUMN_YEAR + "=\"" + movie.getYear() + "\"", null);
+
+        if (c.moveToFirst()) {
+            return new Movie(c);
+        } else return null;
     }
 
 }

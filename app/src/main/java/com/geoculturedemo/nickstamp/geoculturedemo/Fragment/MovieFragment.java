@@ -1,6 +1,9 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
@@ -42,8 +46,8 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
     private ProgressBar pbImage;
 
     private Movie movie;
-    private View fragmentView;
-    private MovieDetailsParser movieDetailsParser;
+    private View fragmentView, bFullInfo;
+    private MovieDetailsParser movieDetailsParser = null;
 
     private FloatingActionButton fab;
     private Database database;
@@ -83,6 +87,9 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             fragmentView = inflater.inflate(R.layout.fragment_movie_details, container, false);
 
             ivMovieImage = (ImageView) fragmentView.findViewById(R.id.ivMovieImage);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ivMovieImage.setTransitionName(movie.getTitle());
+            }
             pbImage = (ProgressBar) fragmentView.findViewById(R.id.pbImage);
 
             tvMovieTitle = (TextView) fragmentView.findViewById(R.id.tvMovieTitle);
@@ -94,8 +101,20 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             tvMovieRuntime = (TextView) fragmentView.findViewById(R.id.tvMovieRuntime);
             tvMovieSynopsis = (TextView) fragmentView.findViewById(R.id.tvMovieSynopsis);
 
+            bFullInfo = fragmentView.findViewById(R.id.bFullInfo);
+            bFullInfo.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String url = movie.getUrl();
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(url));
+                    startActivity(i);
+                }
+            });
+
             FontUtils.setFont(getContext(), fragmentView);
 
+            tvMovieTitle.setText(movie.getTitle() + "\n" + movie.getYear());
             tvMovieRating.setText(movie.getRating());
             tvMovieRuntime.setText(movie.getRuntime());
             tvMovieGenre.setText(movie.getGenre());
@@ -115,12 +134,19 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             fab.setOnClickListener(this);
 
             database = ((GeoCultureApplication) getActivity().getApplication()).getDatabase();
+            isSaved = database.isSaved(this.movie);
 
             //if it's not offline, must download the extra details of the item
-            if (!isOffline) {
+            if (!isOffline && !isSaved) {
                 movieDetailsParser = new MovieDetailsParser(movie, this);
                 movieDetailsParser.execute();
             } else {
+                if (!isOffline) {
+                    movie = database.get(movie);
+                    fab.setImageResource(R.drawable.ic_star);
+                    fab.show();
+                }
+
                 pbImage.setVisibility(View.INVISIBLE);
                 ivMovieImage.setVisibility(View.VISIBLE);
                 Picasso.with(getContext())
@@ -150,7 +176,9 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
 
         switch (item.getItemId()) {
             case R.id.action_delete_favorite:
-                database.delete(movie);
+                if (database.delete(movie)) {
+                    Toast.makeText(getContext(), "\"" + movie.getTitle() + "\" " + getString(R.string.text_deleted), Toast.LENGTH_LONG).show();
+                }
                 onFavoriteDelete.onDelete(movie);
                 break;
         }
@@ -170,22 +198,23 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
         if (isSaved) {
             database.delete(movie);
             fab.setImageResource(R.drawable.ic_star_outline);
-            Snackbar.make(fragmentView, "Removed from favorites", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
         } else {
             database.insert(movie);
             fab.setImageResource(R.drawable.ic_star);
-            Snackbar.make(fragmentView, "Saved", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
         }
         isSaved = !isSaved;
     }
 
     public void shutDownAsyncTask() {
-        movieDetailsParser.cancel(true);
+        if (movieDetailsParser != null)
+            movieDetailsParser.cancel(true);
     }
 
     @Override
     public void onDownload(Movie movie) {
-        this.movie.setTitle(movie.getTitle());
+//        this.movie.setTitle(movie.getTitle());
         this.movie.setImgUrl(movie.getImgUrl());
         this.movie.setSynopsis(movie.getSynopsis());
         this.movie.setWriter(movie.getWriter());
@@ -196,7 +225,6 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
 
         AnimationUtils.crossfade(ivMovieImage, pbImage);
 
-        tvMovieTitle.setText(this.movie.getTitle());
         tvMovieWriter.setText(this.movie.getWriter());
         tvMovieSynopsis.setText(this.movie.getSynopsis());
 
@@ -209,7 +237,6 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
             tvMovieSynopsis.setText(this.movie.getSynopsis());
         }
 
-        isSaved = database.isSaved(this.movie);
         if (isSaved)
             fab.setImageResource(R.drawable.ic_star);
         else

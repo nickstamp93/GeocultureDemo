@@ -9,6 +9,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -16,6 +18,8 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
+
+import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
 /**
  * Created by nickstamp on 1/6/2016.
@@ -27,8 +31,14 @@ public class GPSUtils extends Service implements LocationListener {
     // flag for GPS status
     boolean isGPSEnabled = false;
 
-    // flag for network status
+    // flag for GPS status
     boolean isNetworkEnabled = false;
+
+    // Whether there is a Wi-Fi connection.
+    private static boolean wifiConnected = false;
+    // Whether there is a mobile connection.
+    private static boolean mobileConnected = false;
+
 
     // flag for GPS status
     boolean canGetLocation = false;
@@ -64,8 +74,7 @@ public class GPSUtils extends Service implements LocationListener {
                     .isProviderEnabled(LocationManager.GPS_PROVIDER);
 
             // getting network status
-            isNetworkEnabled = locationManager
-                    .isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            isNetworkEnabled = hasInternet();
 
             if (!isGPSEnabled && !isNetworkEnabled) {
                 // no provider is enabled
@@ -88,7 +97,6 @@ public class GPSUtils extends Service implements LocationListener {
                             LocationManager.NETWORK_PROVIDER,
                             MIN_TIME_BW_UPDATES,
                             MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                    Log.d("Network", "Network");
                     if (locationManager != null) {
                         location = locationManager
                                 .getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -105,7 +113,6 @@ public class GPSUtils extends Service implements LocationListener {
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
                                 MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
-                        Log.d("GPS Enabled", "GPS Enabled");
                         if (locationManager != null) {
                             location = locationManager
                                     .getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -125,13 +132,84 @@ public class GPSUtils extends Service implements LocationListener {
         return location;
     }
 
+    public boolean hasInternet() {
+        checkConnections();
+        return (wifiConnected || mobileConnected);
+    }
+
+
+    // Checks the network connection and sets the wifiConnected and mobileConnected
+    // variables accordingly.
+    private void checkConnections() {
+        ConnectivityManager connMgr =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeInfo = connMgr.getActiveNetworkInfo();
+        if (activeInfo != null && activeInfo.isConnected()) {
+            wifiConnected = (activeInfo.getType() == ConnectivityManager.TYPE_WIFI);
+            mobileConnected = (activeInfo.getType() == ConnectivityManager.TYPE_MOBILE);
+        } else {
+            wifiConnected = false;
+            mobileConnected = false;
+        }
+    }
+
+    public void showInternetErrorDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+
+        // Setting Dialog Title
+        alertDialog.setTitle(context.getString(R.string.network_error_title));
+
+        // Setting Dialog Message
+        alertDialog.setMessage(R.string.network_error_message);
+
+        // Setting Icon to Dialog
+        alertDialog.setIcon(android.R.drawable.stat_notify_error);
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(Settings.ACTION_WIFI_SETTINGS);
+                context.startActivity(intent);
+            }
+        });
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Showing Alert Message
+        alertDialog.show();
+    }
+
+    /**
+     * Function to check GPS/wifi enabled
+     *
+     * @return boolean
+     */
+    public boolean isNetworkEnabled() {
+        return hasInternet();
+    }
+
+    /**
+     * Function to check GPS/wifi enabled
+     *
+     * @return boolean
+     */
+    public boolean isGPSEnabled() {
+        return this.isGPSEnabled;
+    }
+
     /**
      * Function to check GPS/wifi enabled
      *
      * @return boolean
      */
     public boolean canGetLocation() {
-        return this.canGetLocation;
+        return isNetworkEnabled() && isGPSEnabled();
     }
 
     /**
@@ -162,16 +240,16 @@ public class GPSUtils extends Service implements LocationListener {
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
 
         // Setting Dialog Title
-        alertDialog.setTitle("GPS is settings");
+        alertDialog.setTitle(R.string.gps_error_title);
 
         // Setting Dialog Message
-        alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
+        alertDialog.setMessage(R.string.gps_error_message);
 
         // Setting Icon to Dialog
         alertDialog.setIcon(android.R.drawable.stat_notify_error);
 
         // On pressing Settings button
-        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+        alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 context.startActivity(intent);
@@ -179,7 +257,7 @@ public class GPSUtils extends Service implements LocationListener {
         });
 
         // on pressing cancel button
-        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        alertDialog.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
             }

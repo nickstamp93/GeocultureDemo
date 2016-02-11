@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.FavoritesAdapter;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
@@ -115,15 +116,12 @@ public class FavoriteListFragment extends Fragment implements OnSongClicked, OnM
 
 
     @Override
-    public void onMovie(Movie movie) {
-//        Snackbar.make(recyclerView, movie.getTitle(), Snackbar.LENGTH_SHORT).show();
-
-        onMovieClicked.onMovie(movie);
+    public void onMovie(Movie movie, ImageView movieImage) {
+        onMovieClicked.onMovie(movie, movieImage);
     }
 
     @Override
     public void onSong(Song song) {
-//        Snackbar.make(recyclerView, song.getTitle(), Snackbar.LENGTH_SHORT).show();
         onSongClicked.onSong(song);
     }
 

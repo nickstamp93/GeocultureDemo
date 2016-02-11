@@ -98,7 +98,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             cardRecentPlaces.setVisibility(View.VISIBLE);
             for (final String sPlace : recentPlaces) {
 
-                TextView tv = new TextView(this);
+                final TextView tv = new TextView(this);
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
                 tv.setText(sPlace);
                 tv.setTypeface(typeface);
@@ -114,9 +114,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(HomeActivity.this, TabsActivity.class);
-                        i.putExtra("location", new Location(sPlace));
-                        startActivity(i);
+                        if (gpsUtils.isNetworkEnabled()) {
+                            Intent i = new Intent(HomeActivity.this, TabsActivity.class);
+                            i.putExtra("location", new Location(sPlace));
+                            startActivity(i);
+                        } else {
+                            Snackbar.make(tv, getString(R.string.text_no_internet), Snackbar.LENGTH_SHORT).show();
+                        }
                     }
                 });
 
@@ -131,7 +135,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             cardRecentSearches.setVisibility(View.VISIBLE);
             for (final String sSearch : recentSearches) {
 
-                TextView tv = new TextView(this);
+                final TextView tv = new TextView(this);
                 tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, textSize);
                 tv.setText(sSearch);
                 tv.setTypeface(typeface);
@@ -147,9 +151,14 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(HomeActivity.this, TabsActivity.class);
-                        i.putExtra("location", new Location(sSearch));
-                        startActivity(i);
+                        if (gpsUtils.isNetworkEnabled()) {
+                            Intent i = new Intent(HomeActivity.this, TabsActivity.class);
+                            i.putExtra("location", new Location(sSearch));
+                            startActivity(i);
+                        } else {
+                            Snackbar.make(tv, getString(R.string.text_no_internet), Snackbar.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
 
@@ -373,8 +382,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
             } else {
 
-                if (!gpsUtils.canGetLocation()) {
+                if (!gpsUtils.isGPSEnabled()) {
                     gpsUtils.showGPSErrorDialog();
+                } else if (!gpsUtils.isNetworkEnabled()) {
+                    gpsUtils.showInternetErrorDialog();
                 } else {
                     Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
                 }

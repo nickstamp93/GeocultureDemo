@@ -39,14 +39,13 @@
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCpOA4kxOpbtcHgTAW-Ih1Ymgfx87d-s38" />
+            android:value="API_KEY" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
         <activity
             android:name=".Activity.FavoritesActivity"
-            android:label="@string/title_activity_favorites"
             android:parentActivityName=".Activity.HomeActivity"
             android:theme="@style/AppThemeWithActionBar">
             <meta-data

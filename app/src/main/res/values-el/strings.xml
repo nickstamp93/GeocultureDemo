@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GeoCulture</string>
+
     <string name="content_desc_movie_image">Εικόνα Ταινίας</string>
     <string name="snackbar_no_location">Η τοποθεσία δεν βρέθηκε. Προσπαθήστε ξανά σε λίγο.</string>
     <string name="snackbar_went_wrong">Κάτι πήγε στραβά. Προσπαθήστε ξανά.</string>
     <string name="text_artists">Ερμηνευτές</string>
     <string name="text_cast">Ηθοποιοί :\u0020</string>
-    <string name="text_director">Σκηνοθεσία : \u0020</string>
+    <string name="text_director">Σκηνοθεσία :\u0020</string>
     <string name="text_explore">ΕΞΕΡΕΥΝΗΣΗ</string>
     <string name="text_genre">Είδος :\u0020</string>
     <string name="text_last_searches">Τελευταίες Αναζητήσεις</string>
@@ -27,4 +27,14 @@
     <string name="text_songs">ΤΡΑΓΟΥΔΙΑ</string>
     <string name="text_not_available">Μη Διαθέσιμο</string>
     <string name="text_new_pick">ΝΕΑ ΕΠΙΛΟΓΗ</string>
+    <string name="text_no_internet">Δεν υπάρχει σύνδεση στο ίντερνετ</string>
+    <string name="network_error_title">Σφάλμα δικτύου</string>
+    <string name="network_error_message">Δεν υπάρχει ενεργή σύνδεση στο διακίκτυο. Συνδεθείτε και προσπαθήστε ξανά.</string>
+    <string name="text_settings">Ρυθμίσεις</string>
+    <string name="gps_error_title">Σφάλμα GPS</string>
+    <string name="gps_error_message">Ο δέκτης GPS δεν είναι ενεργοποιημένος. Ενεργοποιήστε τον και προσπαθήστε ξανά.</string>
+    <string name="text_full_info_button">Προβολή πλήρους προφίλ</string>
+    <string name="snackbar_saved">Αποθηκεύτηκε</string>
+    <string name="snackbar_deleted_saved">Αφαιρέθηκε από τα Αποθηκευμένα</string>
+    <string name="text_deleted">διαγράφηκε</string>
 </resources>
