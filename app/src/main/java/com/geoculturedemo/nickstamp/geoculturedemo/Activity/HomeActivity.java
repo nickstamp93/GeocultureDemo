@@ -33,7 +33,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener, OnLocationFound {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, OnLocationFound, GPSUtils.LocationCallback {
 
     private static final int PLACE_PICKER_REQUEST = 1;
     private LatLngBounds lastBounds = null;
@@ -47,8 +47,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
-    //Gps utilities
-    private GPSUtils gpsUtils;
 
     //Location objects for current location and custom location
     private Location currentLocation, customLocation;
@@ -67,14 +65,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         //initialize the UI views
         initViews();
 
-
-        gpsUtils = new GPSUtils(HomeActivity.this);
-        gpsUtils.getLocation();
-        GeocodeWebService.ReverseGeocode reverseGeocode = new GeocodeWebService.ReverseGeocode(this, this, true, Locale.getDefault());
-        reverseGeocode.execute(gpsUtils.getLatitude(), gpsUtils.getLongitude());
-
         //fill the history cards
         initHistoryCards();
+
+        GPSUtils.searchCurrentLocation(this, this);
 
     }
 
@@ -122,7 +116,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (gpsUtils.isNetworkEnabled()) {
+                        if (GPSUtils.isNetworkEnabled(HomeActivity.this)) {
                             Intent i = new Intent(HomeActivity.this, TabsActivity.class);
                             i.putExtra("location", location);
                             startActivity(i);
@@ -161,7 +155,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (gpsUtils.isNetworkEnabled()) {
+                        if (GPSUtils.isNetworkEnabled(HomeActivity.this)) {
                             Intent i = new Intent(HomeActivity.this, TabsActivity.class);
                             i.putExtra("location", location);
                             startActivity(i);
@@ -223,9 +217,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             case R.id.bRetry:
-                gpsUtils.getLocation();
-                GeocodeWebService.ReverseGeocode reverseGeocode = new GeocodeWebService.ReverseGeocode(this, this, true, Locale.getDefault());
-                reverseGeocode.execute(gpsUtils.getLatitude(), gpsUtils.getLongitude());
+                llSearchLocation.setVisibility(View.VISIBLE);
+                llRetry.setVisibility(View.INVISIBLE);
+                GPSUtils.searchCurrentLocation(this, this);
                 break;
             case R.id.bExploreLocal:
                 i = new Intent(HomeActivity.this, TabsActivity.class);
@@ -342,13 +336,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             initHistoryCards();
         } else {
             if (isCurrentLocation) {
-                if (!gpsUtils.isGPSEnabled()) {
-                    gpsUtils.showGPSErrorDialog();
-                } else if (!gpsUtils.isNetworkEnabled()) {
-                    gpsUtils.showInternetErrorDialog();
-                } else {
-                    Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
-                }
+
+                Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
+
                 llRetry.setVisibility(View.VISIBLE);
                 llSearchLocation.setVisibility(View.INVISIBLE);
             } else {
@@ -360,4 +350,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    public void onNewLocationAvailable(GPSUtils.GPSCoordinates location) {
+
+        GeocodeWebService.ReverseGeocode reverseGeocode = new GeocodeWebService.ReverseGeocode(this, this, true, Locale.getDefault());
+        reverseGeocode.execute(location.latitude, location.longitude);
+
+    }
+
+    @Override
+    public void onGPSError() {
+        GPSUtils.showGPSErrorDialog(this);
+        llRetry.setVisibility(View.VISIBLE);
+        llSearchLocation.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onNetworkError() {
+        GPSUtils.showInternetErrorDialog(this);
+        llRetry.setVisibility(View.VISIBLE);
+        llSearchLocation.setVisibility(View.INVISIBLE);
+    }
 }

@@ -132,6 +132,7 @@ public class GeocodeWebService {
                         .build();
 
                 URL url = new URL(builtUri.toString());
+                Log.i("nikos", url.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -180,6 +181,8 @@ public class GeocodeWebService {
 
             try {
                 Location location = getDataFromJSON(jsonResponse);
+                if (location.getCity().equals("") && location.getArea().equals(""))
+                    return null;
                 location.setLatitude(params[0]);
                 location.setLongitude(params[1]);
                 location.setLocale(locale);

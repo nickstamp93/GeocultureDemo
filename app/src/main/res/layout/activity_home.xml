@@ -40,7 +40,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:visibility="invisible">
+                        android:visibility="visible">
 
                         <ProgressBar
                             android:id="@+id/pbLocation"
@@ -62,7 +62,8 @@
                         android:id="@+id/llRetry"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:visibility="invisible">
 
                         <TextView
                             android:layout_width="match_parent"
@@ -144,102 +145,102 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/cardPickLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="16dp"
-            android:visibility="gone">
-
-            <LinearLayout
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardPickLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingLeft="16dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="16dp">
+                    android:orientation="vertical">
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="@string/text_selected_location"
-                        android:textSize="20sp" />
+                        android:orientation="vertical"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:paddingTop="16dp">
 
-                    <TextView
-                        android:id="@+id/tvCustomLocation"
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/text_selected_location"
+                            android:textSize="20sp" />
+
+                        <TextView
+                            android:id="@+id/tvCustomLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="24sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/bPickLocation"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?selectableItemBackground"
+                            android:singleLine="true"
+                            android:text="@string/text_new_pick"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="18sp" />
+
+                        <Button
+                            android:id="@+id/bExploreCustom"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="?selectableItemBackground"
+                            android:singleLine="true"
+                            android:text="@string/text_explore"
+                            android:textColor="@color/colorAccent"
+                            android:textSize="18sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:orientation="horizontal">
-
-                    <Button
-                        android:id="@+id/bPickLocation"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?selectableItemBackground"
-                        android:singleLine="true"
-                        android:text="@string/text_new_pick"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="18sp" />
-
-                    <Button
-                        android:id="@+id/bExploreCustom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:background="?selectableItemBackground"
-                        android:singleLine="true"
-                        android:text="@string/text_explore"
-                        android:textColor="@color/colorAccent"
-                        android:textSize="18sp" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>
 
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/cardbuttonPickLocation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:clickable="true"
-            android:foreground="?selectableItemBackground"
-            cardview:contentPadding="8dp">
-
-            <TextView
-                android:layout_width="wrap_content"
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardbuttonPickLocation"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/button"
-                android:layout_gravity="center"
-                android:drawableLeft="@mipmap/ic_earth"
-                android:drawablePadding="4dp"
-                android:gravity="center"
-                android:text="@string/text_pick_location"
-                android:textColor="@color/colorAccent"
-                android:textSize="18sp" />
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:clickable="true"
+                android:foreground="?selectableItemBackground"
+                cardview:contentPadding="8dp">
 
-        </android.support.v7.widget.CardView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/button"
+                    android:layout_gravity="center"
+                    android:drawableLeft="@mipmap/ic_earth"
+                    android:drawablePadding="4dp"
+                    android:gravity="center"
+                    android:text="@string/text_pick_location"
+                    android:textColor="@color/colorAccent"
+                    android:textSize="18sp" />
+
+            </android.support.v7.widget.CardView>
 
         </FrameLayout>
 
