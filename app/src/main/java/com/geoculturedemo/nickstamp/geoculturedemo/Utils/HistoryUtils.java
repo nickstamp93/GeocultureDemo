@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -18,31 +19,31 @@ public class HistoryUtils {
     private static final String TAG_RECENT_PLACES = "recent_places";
     private static final String TAG_RECENT_SEARCHES = "recent_searches";
 
-    public static void updateRecentPlaces(Context context, String newEntry) {
-        updateList(context,newEntry,TAG_RECENT_PLACES);
+    public static void updateRecentPlaces(Context context, Location newEntry) {
+        updateList(context, newEntry, TAG_RECENT_PLACES);
     }
 
-    public static void updateRecentSearches(Context context, String newEntry) {
+    public static void updateRecentSearches(Context context, Location newEntry) {
 
-        updateList(context,newEntry,TAG_RECENT_SEARCHES);
+        updateList(context, newEntry, TAG_RECENT_SEARCHES);
     }
 
-    public static ArrayList<String> getRecentPlaces(Context context) {
-        return  getList(context, TAG_RECENT_PLACES);
+    public static ArrayList<Location> getRecentPlaces(Context context) {
+        return getList(context, TAG_RECENT_PLACES);
     }
 
-    public static ArrayList<String> getRecentSearches(Context context) {
-        return  getList(context, TAG_RECENT_SEARCHES);
+    public static ArrayList<Location> getRecentSearches(Context context) {
+        return getList(context, TAG_RECENT_SEARCHES);
     }
 
-    private static ArrayList<String> getList(Context context, String tag) {
+    private static ArrayList<Location> getList(Context context, String tag) {
 
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         Gson gson = new Gson();
         String json = sharedPrefs.getString(tag, null);
-        Type type = new TypeToken<ArrayList<String>>() {
+        Type type = new TypeToken<ArrayList<Location>>() {
         }.getType();
-        ArrayList<String> arrayList = gson.fromJson(json, type);
+        ArrayList<Location> arrayList = gson.fromJson(json, type);
 
         if (arrayList == null)
             return new ArrayList<>();
@@ -51,17 +52,18 @@ public class HistoryUtils {
 
     }
 
-    private static void updateList(Context context, String newEntry, String tag) {
+    private static void updateList(Context context, Location newEntry, String tag) {
+
         SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = sharedPrefs.edit();
         Gson gson = new Gson();
 
-        ArrayList<String> arrayList = getList(context, tag);
+        ArrayList<Location> arrayList = getList(context, tag);
 
         boolean found = false;
-        for (String s : arrayList) {
-            if (s.equals(newEntry)) {
-                int index = arrayList.indexOf(s);
+        for (Location location : arrayList) {
+            if (location.getFullName().equals(newEntry.getFullName())) {
+                int index = arrayList.indexOf(location);
                 arrayList.remove(index);
                 arrayList.add(0, newEntry);
                 found = true;

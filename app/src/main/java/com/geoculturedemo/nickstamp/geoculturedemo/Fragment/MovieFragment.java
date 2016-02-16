@@ -1,12 +1,15 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Fragment;
 
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +32,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Parser.MovieDetailsParser;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.Constants;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.squareup.picasso.Picasso;
 
@@ -191,20 +195,62 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
 
     @Override
     public void onClick(View v) {
+        //if the location permission is not granted, ask the user
+        if (ActivityCompat.checkSelfPermission(
+                getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
 
-        YoYo.with(Techniques.Pulse)
-                .duration(500)
-                .playOn(fab);
-        if (isSaved) {
-            database.delete(movie);
-            fab.setImageResource(R.drawable.ic_star_outline);
-            Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
+            //request permission to use location
+            ActivityCompat.requestPermissions(getActivity(),
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    Constants.REQUEST_CODE_PERMISSION_STORAGE
+            );
+
+            //else request location update
         } else {
-            database.insert(movie);
-            fab.setImageResource(R.drawable.ic_star);
-            Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
+            YoYo.with(Techniques.Pulse)
+                    .duration(500)
+                    .playOn(fab);
+            if (isSaved) {
+                database.delete(movie);
+                fab.setImageResource(R.drawable.ic_star_outline);
+                Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
+            } else {
+                database.insert(movie);
+                fab.setImageResource(R.drawable.ic_star);
+                Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
+            }
+            isSaved = !isSaved;
         }
-        isSaved = !isSaved;
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case Constants.REQUEST_CODE_PERMISSION_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    if (isSaved) {
+                        database.delete(movie);
+                        fab.setImageResource(R.drawable.ic_star_outline);
+                        Snackbar.make(fragmentView, getString(R.string.snackbar_deleted_saved), Snackbar.LENGTH_SHORT).show();
+                    } else {
+                        database.insert(movie);
+                        fab.setImageResource(R.drawable.ic_star);
+                        Snackbar.make(fragmentView, getString(R.string.snackbar_saved), Snackbar.LENGTH_SHORT).show();
+                    }
+                    isSaved = !isSaved;
+
+                } else {
+                    Toast.makeText(getContext(), "You can't save movies until you grant the storage permission", Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+        }
     }
 
     public void shutDownAsyncTask() {

@@ -1,6 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Model;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 /**
  * Created by nickstamp on 1/6/2016.
@@ -8,6 +9,7 @@ import java.io.Serializable;
 public class Location implements Serializable {
     private double longitude, latitude;
     private String country, city, area;
+    private Locale locale;
 
     public Location() {
         latitude = 0;
@@ -15,21 +17,6 @@ public class Location implements Serializable {
         country = "";
         city = "";
         area = "";
-    }
-
-    public Location(String fullName) {
-        latitude = 0;
-        longitude = 0;
-        String[] tokens = fullName.split(",");
-        if (tokens.length == 3) {
-            area = tokens[0];
-            city = tokens[1];
-            country = tokens[2];
-        } else {
-            area = tokens[0];
-            city = tokens[0];
-            country = tokens[1];
-        }
     }
 
     public double getLongitude() {
@@ -78,5 +65,13 @@ public class Location implements Serializable {
         } else {
             return area + " , " + city + " , " + country;
         }
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
     }
 }

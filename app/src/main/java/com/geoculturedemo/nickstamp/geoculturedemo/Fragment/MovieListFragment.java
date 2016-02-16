@@ -7,18 +7,19 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.MoviesAdapter;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocaleChanged;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GeocodeWebService;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -27,8 +28,9 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
 
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment implements OnLocaleChanged {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
     private static final String SORT_BY_YEAR = "&sort=year,desc";
@@ -49,10 +51,12 @@ public class MovieListFragment extends Fragment {
     private String urlQuery;
 
     private String sResultsFor;
+    private boolean isLocalized;
 
     public MovieListFragment() {
         movies = new ArrayList<>();
         moviesAdapter = null;
+        isLocalized = false;
     }
 
     public static MovieListFragment newInstance(Location location) {
@@ -68,6 +72,8 @@ public class MovieListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             location = (Location) getArguments().getSerializable(ARG_LOCATION);
+            if (!isLocalized)
+                GeocodeWebService.getLocalized(getContext(),this, location, new Locale("en", "US"));
         }
     }
 
@@ -89,8 +95,6 @@ public class MovieListFragment extends Fragment {
 
             sResultsFor = getString(R.string.text_results_for);
 
-            parseMovies();
-
         }
 
         return fragmentView;
@@ -107,6 +111,14 @@ public class MovieListFragment extends Fragment {
 
     public void shutDownAsyncTask() {
         moviesParser.cancel(true);
+    }
+
+    @Override
+    public void onLocaleChanged(Location location) {
+        isLocalized = true;
+        this.location = location;
+        parseMovies();
+
     }
 
     public class MovieParser extends AsyncTask<Void, Void, Void> {
