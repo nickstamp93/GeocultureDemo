@@ -14,7 +14,7 @@
     <string name="text_music">Μουσική :\u0020</string>
     <string name="text_no_location">Η τρέχουσα τοποθεσία δεν βρέθηκε.</string>
     <string name="text_pick_location">ΕΠΙΛΟΓΗ ΤΟΠΟΘΕΣΙΑΣ</string>
-    <string name="text_recent_places">ΠΡΟΣΦΑΤΕΣ ΤΟΠΟΘΕΣΙΕΣ</string>
+    <string name="text_recent_places">Πρόσφατες Τοποθεσίες</string>
     <string name="text_results_for">αποτελέσματα για</string>
     <string name="text_retry">ΝΕΑ ΠΡΟΣΠΑΘΕΙΑ</string>
     <string name="text_searching_locatin">Αναζήτηση τοποθεσίας...</string>
