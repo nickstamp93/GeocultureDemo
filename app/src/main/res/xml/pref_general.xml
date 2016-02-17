@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/pref_key_animations"
+        android:title="@string/pref_label_animations" />
+
+    <Preference
+        android:title="@string/pref_label_evaluate"
+        android:key="@string/pref_key_evaluate" />
+
+</PreferenceScreen>

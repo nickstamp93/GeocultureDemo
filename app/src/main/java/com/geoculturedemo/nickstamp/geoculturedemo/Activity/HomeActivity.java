@@ -5,9 +5,9 @@ import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -29,11 +29,8 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GeocodeWebService;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.HistoryUtils;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
@@ -55,6 +52,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
     //Location objects for current location and custom location
     private Location currentLocation, customLocation;
+    private boolean hasAnimations;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +73,13 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         GPSUtils.searchCurrentLocation(this, this);
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hasAnimations = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_key_animations), true);
     }
 
     /**
@@ -257,6 +262,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_item_favorites:
                 startActivity(new Intent(this, FavoritesActivity.class));
                 break;
+            case R.id.menu_item_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
         return true;
     }
@@ -318,7 +326,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentLocation.setText(currentLocation.getFullName());
 
-                AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
+                AnimationUtils.switchCards(cardLocationFound, cardNoLocation, hasAnimations);
 
             } else {
                 boolean previous = false;
@@ -334,7 +342,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tvCustomLocation.setText(customLocation.getFullName());
 
                 if (!previous)
-                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation);
+                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation, hasAnimations);
 
             }
 

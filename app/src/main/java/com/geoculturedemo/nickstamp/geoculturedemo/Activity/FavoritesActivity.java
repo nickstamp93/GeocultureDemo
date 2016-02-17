@@ -3,6 +3,7 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     FavoriteListFragment favoriteListFragment;
     private Menu menu;
     private MovieFragment movieFragment;
+    private boolean hasAnimations;
 
 
     @Override
@@ -77,11 +79,17 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hasAnimations = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_key_animations), true);
+    }
 
     @Override
     public void onMovie(Movie movie, ImageView movieImage) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasAnimations) {
             movieImage.setTransitionName(movie.getTitle());
         }
 
@@ -89,18 +97,20 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         movieFragment.setOnFavoriteDelete(this);
 
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasAnimations) {
             movieFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(transitionDuration));
             movieFragment.setEnterTransition(new Fade().setDuration(transitionDuration));
             movieFragment.setExitTransition(new Fade().setDuration(transitionDuration));
             movieFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(transitionDuration));
         }
-        fragmentManager
-                .beginTransaction()
+
+        FragmentTransaction transaction = fragmentManager.beginTransaction()
                 .replace(R.id.container, movieFragment, TAG_MOVIE_DETAILS)
-                .addToBackStack(null)
-                .addSharedElement(movieImage, movie.getTitle())
-                .commit();
+                .addToBackStack(null);
+
+        if (hasAnimations)
+            transaction.addSharedElement(movieImage, movie.getTitle());
+        transaction.commit();
 
     }
 
@@ -123,7 +133,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     public void onDelete(Movie movie) {
 
         //change the animation to be
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasAnimations) {
 
             Transition slide = new Slide().setDuration(transitionDuration);
 

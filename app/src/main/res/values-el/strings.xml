@@ -37,4 +37,9 @@
     <string name="snackbar_saved">Αποθηκεύτηκε</string>
     <string name="snackbar_deleted_saved">Αφαιρέθηκε από τα Αποθηκευμένα</string>
     <string name="text_deleted">διαγράφηκε</string>
+    <string name="pref_label_animations">Animations</string>
+    <string name="title_activity_settings">Ρυθμίσεις</string>
+    <string name="text_enabled">Ενεργοποιημένα</string>
+    <string name="text_disabled">Απενεργοποιημένα</string>
+    <string name="pref_label_evaluate">Αξιολόγηση εφαρμογής</string>
 </resources>
