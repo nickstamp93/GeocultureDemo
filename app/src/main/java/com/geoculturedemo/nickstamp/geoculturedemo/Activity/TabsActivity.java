@@ -92,8 +92,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_note);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_icon_tab);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie_icon_tab);
     }
 
     private void setUpToolbar() {

@@ -6,6 +6,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
@@ -26,11 +27,23 @@ public class SettingsActivity extends PreferenceActivity
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this, R.style.alert_dialog_style)
-                        .setTitle(getString(R.string.pref_label_about))
+                        .setTitle(getString(R.string.pref_label_version))
                         .setMessage(getString(R.string.text_dialog_version_info))
                         .setPositiveButton(getString(android.R.string.ok), null)
                         .setNegativeButton(getString(android.R.string.cancel), null);
                 builder.show();
+                return false;
+            }
+        });
+
+        findPreference(getString(R.string.pref_key_show_tutorial)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                PreferenceManager.getDefaultSharedPreferences(SettingsActivity.this)
+                        .edit()
+                        .putBoolean(getString(R.string.pref_key_show_tutorial), true)
+                        .commit();
+                Toast.makeText(SettingsActivity.this, getString(R.string.toast_text_tutorial), Toast.LENGTH_LONG).show();
                 return false;
             }
         });

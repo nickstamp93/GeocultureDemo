@@ -46,7 +46,21 @@
     <string name="pref_key_evaluate" translatable="false">pref_key_evaluate</string>
     <string name="pref_label_general">General</string>
     <string name="pref_key_about">pref_key_about</string>
-    <string name="pref_label_about" translatable="false">Version Info</string>
-    <string name="text_dialog_version_info" >Alpha Version 0.3.1</string>
+    <string name="pref_label_about">About</string>
+    <string name="text_dialog_version_info">Alpha Version 0.3.1</string>
+    <string name="intro_title_location">Discover Content</string>
+    <string name="intro_text_location">Discover cultural content near your current location or anywhere else</string>
+    <string name="intro_title_movies">Movies</string>
+    <string name="intro_text_movies">Check out all the movies that were filmed near you</string>
+    <string name="intro_title_songs">Music</string>
+    <string name="intro_text_songs">Find all the songs that refer to or are connected with your area</string>
+    <string name="intro_title_local_save">Offline Copy</string>
+    <string name="intro_text_local_save">Save the items that interest you the most for offline viewing</string>
+    <string name="pref_key_show_tutorial" translatable="false">show_tutorial</string>
+    <string name="pref_label_show_tutorial">Run Intro Again</string>
+    <string name="pref_summary_tutorial">Start-up introduction is shown again</string>
+    <string name="toast_text_tutorial">Intro will be run again</string>
+    <string name="pref_label_version">Version Info</string>
+    <string name="toast_location_permission">The application might not work properly until you grant the location  permission</string>
 
 </resources>

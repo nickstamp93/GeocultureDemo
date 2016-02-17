@@ -1,6 +1,7 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.Menu;
@@ -59,6 +61,42 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+
+        //  Declare a new thread to do a preference check
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Initialize SharedPreferences
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                boolean isFirstStart = getPrefs.getBoolean(getString(R.string.pref_key_show_tutorial), true);
+
+                //  If the activity has never started before...
+                if (isFirstStart) {
+
+                    //  Launch app intro
+                    Intent i = new Intent(HomeActivity.this, AppIntroActivity.class);
+                    startActivity(i);
+
+                    //  Make a new preferences editor
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    //  Edit preference to make it false because we don't want this to run again
+                    e.putBoolean(getString(R.string.pref_key_show_tutorial), false);
+
+                    //  Apply changes
+                    e.apply();
+                }
+            }
+        });
+        // Start the thread
+        t.start();
+
+
+        Log.i("nikos", "on create");
+
         customLocation = null;
         currentLocation = null;
 
@@ -72,6 +110,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         initHistoryCards();
 
         GPSUtils.searchCurrentLocation(this, this);
+
+
+        Log.i("nikos", "on create 2");
 
     }
 
@@ -367,6 +408,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+
+        Log.i("nikos","on permission result");
         switch (requestCode) {
             case Constants.REQUEST_CODE_PERMISSION_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -378,6 +421,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else {
 
+                    Toast.makeText(this, getString(R.string.toast_location_permission), Toast.LENGTH_LONG).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     llRetry.setVisibility(View.VISIBLE);
