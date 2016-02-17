@@ -44,5 +44,9 @@
     <string name="text_disabled">Disabled</string>
     <string name="pref_label_evaluate">Evaluate App</string>
     <string name="pref_key_evaluate" translatable="false">pref_key_evaluate</string>
+    <string name="pref_label_general">General</string>
+    <string name="pref_key_about">pref_key_about</string>
+    <string name="pref_label_about" translatable="false">Version Info</string>
+    <string name="text_dialog_version_info" >Alpha Version 0.3.1</string>
 
 </resources>

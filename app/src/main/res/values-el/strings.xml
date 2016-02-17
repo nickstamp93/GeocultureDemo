@@ -42,4 +42,7 @@
     <string name="text_enabled">Ενεργοποιημένα</string>
     <string name="text_disabled">Απενεργοποιημένα</string>
     <string name="pref_label_evaluate">Αξιολόγηση εφαρμογής</string>
+    <string name="pref_label_general">Γενικά</string>
+    <string name="pref_label_about">Πληροφορίες Έκδοσης</string>
+    <string name="text_dialog_version_info">Alpha Version 0.3.1</string>
 </resources>

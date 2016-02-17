@@ -1,12 +1,11 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.support.v7.app.AlertDialog;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
@@ -23,15 +22,15 @@ public class SettingsActivity extends PreferenceActivity
         // updated when the preference changes.
         bindPreferenceSummaryToValue(findPreference(getString(R.string.pref_key_animations)));
 
-        findPreference(getString(R.string.pref_key_evaluate)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        findPreference(getString(R.string.pref_key_about)).setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-
-                String url = "GOOGLE_FORM_URL";
-                Intent i = new Intent(Intent.ACTION_VIEW);
-                i.setData(Uri.parse(url));
-                startActivity(i);
-
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this, R.style.alert_dialog_style)
+                        .setTitle(getString(R.string.pref_label_about))
+                        .setMessage(getString(R.string.text_dialog_version_info))
+                        .setPositiveButton(getString(android.R.string.ok), null)
+                        .setNegativeButton(getString(android.R.string.cancel), null);
+                builder.show();
                 return false;
             }
         });
