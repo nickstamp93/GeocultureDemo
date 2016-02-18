@@ -17,6 +17,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.GPSUtilsCallback;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 
 
@@ -28,7 +29,7 @@ public class GPSUtils {
     // calls back to calling thread, note this is for low grain: if you want higher precision, swap the
     // contents of the else and if. Also be sure to check gps permission/settings are allowed.
     // call usually takes <10ms
-    public static void searchCurrentLocation(final Activity activity, final LocationCallback callback) {
+    public static void searchCurrentLocation(final Activity activity, final GPSUtilsCallback callback) {
         final LocationManager locationManager = (LocationManager) activity.getSystemService(Context.LOCATION_SERVICE);
         boolean isNetworkEnabled = isNetworkEnabled(activity);
         boolean isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -49,7 +50,7 @@ public class GPSUtils {
 
     }
 
-    private static void singleLocationRequest(Activity activity, LocationManager locationManager, final LocationCallback callback) {
+    private static void singleLocationRequest(Activity activity, LocationManager locationManager, final GPSUtilsCallback callback) {
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
 
@@ -70,7 +71,7 @@ public class GPSUtils {
 
                 @Override
                 public void onLocationChanged(Location location) {
-                    callback.onNewLocationAvailable(new GPSCoordinates(location.getLatitude(), location.getLongitude()));
+                    callback.OnCoordinates(location.getLatitude(), location.getLongitude());
                 }
 
                 @Override
@@ -107,15 +108,6 @@ public class GPSUtils {
         }
 
         return wifiConnected || mobileConnected;
-    }
-
-    public interface LocationCallback {
-
-        void onNewLocationAvailable(GPSCoordinates location);
-
-        void onGPSError();
-
-        void onNetworkError();
     }
 
     public static void showInternetErrorDialog(final Context context) {

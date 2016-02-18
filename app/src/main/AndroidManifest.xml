@@ -61,7 +61,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.geoculturedemo.nickstamp.geoculturedemo.Activity.HomeActivity" />
         </activity>
-        <activity android:name=".Activity.AppIntroActivity"></activity>
+        <activity android:name=".Activity.AppIntroActivity" />
     </application>
 
 </manifest>

@@ -1,0 +1,28 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
+    android:paddingLeft="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="8dp">
+
+    <ImageButton
+        android:id="@+id/ibSearch"
+        style="?borderlessButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@mipmap/ic_magnify_grey600_36dp" />
+
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/ibSearch"
+        android:layout_toLeftOf="@id/ibSearch"
+        android:backgroundTint="@color/colorAccent"
+        android:gravity="bottom"
+        android:singleLine="true"
+        android:textColor="@color/colorAccent" />
+
+</RelativeLayout>

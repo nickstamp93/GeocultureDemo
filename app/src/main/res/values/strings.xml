@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name" translatable="false">GeoCulture</string>
 
-    <string name="text_no_location">Location not found</string>
+    <string name="text_no_location">Location cannot be found</string>
     <string name="text_retry">RETRY</string>
     <string name="text_pick_location">PICK LOCATION</string>
     <string name="text_searching_locatin">Searching location...</string>
@@ -63,5 +63,11 @@
     <string name="pref_label_version">Version Info</string>
     <string name="toast_location_permission">The application might not work properly until you grant the location  permission</string>
     <string name="text_mins">mins</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_place_search">PlaceSearchActivity</string>
+    <string name="text_place_picker">Place Search</string>
+    <string name="text_search">Searching</string>
 
 </resources>
