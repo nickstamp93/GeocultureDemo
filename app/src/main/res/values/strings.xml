@@ -62,5 +62,6 @@
     <string name="toast_text_tutorial">Intro will be run again</string>
     <string name="pref_label_version">Version Info</string>
     <string name="toast_location_permission">The application might not work properly until you grant the location  permission</string>
+    <string name="text_mins">mins</string>
 
 </resources>

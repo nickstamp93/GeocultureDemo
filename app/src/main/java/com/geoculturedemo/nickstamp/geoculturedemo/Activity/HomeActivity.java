@@ -61,7 +61,25 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        launchIntro();
 
+        customLocation = null;
+        currentLocation = null;
+
+        //set the font all over the activity
+        FontUtils.setFont(this, getWindow().getDecorView());
+
+        //initialize the UI views
+        initViews();
+
+        //fill the history cards
+        initHistoryCards();
+
+        GPSUtils.searchCurrentLocation(this, this);
+
+    }
+
+    private void launchIntro() {
         //  Declare a new thread to do a preference check
         Thread t = new Thread(new Runnable() {
             @Override
@@ -93,27 +111,6 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         });
         // Start the thread
         t.start();
-
-
-        Log.i("nikos", "on create");
-
-        customLocation = null;
-        currentLocation = null;
-
-        //set the font all over the activity
-        FontUtils.setFont(this, getWindow().getDecorView());
-
-        //initialize the UI views
-        initViews();
-
-        //fill the history cards
-        initHistoryCards();
-
-        GPSUtils.searchCurrentLocation(this, this);
-
-
-        Log.i("nikos", "on create 2");
-
     }
 
     @Override
@@ -409,7 +406,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
 
-        Log.i("nikos","on permission result");
+        Log.i("nikos", "on permission result");
         switch (requestCode) {
             case Constants.REQUEST_CODE_PERMISSION_LOCATION: {
                 // If request is cancelled, the result arrays are empty.

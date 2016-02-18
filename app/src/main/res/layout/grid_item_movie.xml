@@ -18,17 +18,16 @@
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_marginTop="16dp"
-            android:src="@drawable/image" />
+            android:layout_marginTop="16dp" />
 
         <me.grantland.widget.AutofitTextView
             android:id="@+id/tvMovieTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ivMovieImage"
-            android:padding="8dp"
             android:ellipsize="end"
             android:maxLines="2"
+            android:padding="8dp"
             android:text="This is the title of the movie"
             android:textSize="16sp"
             autofit:minTextSize="12sp" />

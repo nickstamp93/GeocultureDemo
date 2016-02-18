@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.util.Log;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
@@ -137,11 +136,8 @@ public class Database extends SQLiteOpenHelper {
         File folder = new File(Environment.getExternalStorageDirectory() +
                 File.separator + "GeoCulture");
         if (!folder.exists()) {
-            Log.i("nikos","not exists");
             folder.mkdir();
         }
-        if(Environment.isExternalStorageEmulated())
-            Log.i("nikos","is emulated");
         final String path = Environment.getExternalStorageDirectory().getPath()
                 + File.separator + "GeoCulture" + File.separator +
                 movie.getTitle() + ".jpg";
@@ -168,7 +164,6 @@ public class Database extends SQLiteOpenHelper {
                             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
                             ostream.close();
                         } catch (Exception e) {
-                            Log.i("nikos","exception: " + path);
                             e.printStackTrace();
                         }
 

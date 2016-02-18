@@ -128,7 +128,7 @@ public class GPSUtils {
         alertDialog.setMessage(R.string.network_error_message);
 
         // Setting Icon to Dialog
-        alertDialog.setIcon(android.R.drawable.stat_notify_error);
+        alertDialog.setIcon(R.mipmap.ic_alert_grey600_24dp);
 
         // On pressing Settings button
         alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {
@@ -162,7 +162,7 @@ public class GPSUtils {
         alertDialog.setMessage(R.string.gps_error_message);
 
         // Setting Icon to Dialog
-        alertDialog.setIcon(android.R.drawable.stat_notify_error);
+        alertDialog.setIcon(R.mipmap.ic_alert_grey600_24dp);
 
         // On pressing Settings button
         alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {

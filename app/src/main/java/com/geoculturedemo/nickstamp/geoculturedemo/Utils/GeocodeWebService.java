@@ -132,7 +132,6 @@ public class GeocodeWebService {
                         .build();
 
                 URL url = new URL(builtUri.toString());
-                Log.i("nikos", url.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();

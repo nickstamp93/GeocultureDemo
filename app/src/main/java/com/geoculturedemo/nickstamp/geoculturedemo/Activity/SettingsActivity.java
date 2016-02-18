@@ -9,6 +9,7 @@ import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
 public class SettingsActivity extends PreferenceActivity
         implements Preference.OnPreferenceChangeListener {
@@ -47,6 +48,9 @@ public class SettingsActivity extends PreferenceActivity
                 return false;
             }
         });
+
+
+        FontUtils.setFont(this, getWindow().getDecorView());
     }
 
     /**

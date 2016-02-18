@@ -34,6 +34,7 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
     private static final String SORT_BY_YEAR = "&sort=year,desc";
+    private static final String SORT_BY_POPULARITY = "&sort=moviemeter";
 
     private ArrayList<Movie> movies;
 
@@ -73,7 +74,7 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
         if (getArguments() != null) {
             location = (Location) getArguments().getSerializable(ARG_LOCATION);
             if (!isLocalized)
-                GeocodeWebService.getLocalized(getContext(),this, location, new Locale("en", "US"));
+                GeocodeWebService.getLocalized(getContext(), this, location, new Locale("en", "US"));
         }
     }
 
@@ -166,7 +167,7 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
 
         private void parseLocation(String location) {
 
-            urlQuery = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location + SORT_BY_YEAR;
+            urlQuery = "http://www.imdb.com/search/title?countries=gr&count=100&locations=" + location + SORT_BY_POPULARITY;
 
             //try to connect 3 times
             int tries = 0;
@@ -201,9 +202,11 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
                         Element elementTitle = row.getElementsByClass("title").get(0);
                         String title = elementTitle.getElementsByTag("a").get(0).text();
                         String year = elementTitle.getElementsByClass("year_type").text();
-                        String url = elementTitle.getElementsByTag("a").get(0).attr("href");
+                        String url = "http://www.imdb.com" + elementTitle.getElementsByTag("a").get(0).attr("href");
                         String genre = elementTitle.getElementsByClass("genre").text();
                         String runtime = elementTitle.getElementsByClass("runtime").text();
+                        if(runtime.length()>0)
+                            runtime = runtime.substring(0,runtime.length()-5) + "'";
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
                         String credit = elementTitle.getElementsByClass("credit").text();
 
