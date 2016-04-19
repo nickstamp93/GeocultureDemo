@@ -1,12 +1,11 @@
 # GeocultureDemo
-Geoculture Demo App
+Geoculture Demonstration application
 
-#Installation
-In order to install the GeoCulture app in your Android device , first of all you should have Android 14 (Ice Cream Sandwich) or higher.
+#Description
+This application is part of a thesis that has been assigned to me when i was studying at the Aristotle University of Thessaloniki, Greece.
+The application presents cultural information that is related to the current location of the device. The user is informed about songs that mention, or are connected on some conceptual level, with his current location. Moreover, the functionality of the application includes the discovery of movies, or any other official filming content, that contain the given geographical position in their filming locations list. The application is ideally used to identify the cucltural fingerprint of a location as well as a source of inspiration. Within the application, different data sources are combined in order to create the final brand new service.
 
-Download the GeoCulture.apk from the "releases" section.
-When the download is complete, find the file in your file system and click on it, or click on the notification to launch the executable.
-A dialog will appear , saying that the insallation is blocked because this is not a production release . Choose "Settings" and in settings check the "Unknown Sources" section and click ok.
-Accept the permissions which are requested and click install. This should lead to a correct installation. You are ready to open the app now.
+#Note
+Currently, the application is fully functional only in Greece, but it may have some functionallity in other countries ,too.
 
-This procedure may vary due to different android versions and skins, but the concept is the same.
+This application uses copyrighted content and it cannot be published until a license is acquired.
