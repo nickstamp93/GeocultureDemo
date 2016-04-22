@@ -5,7 +5,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 /**
  * Created by nickstamp on 1/6/2016.
  */
-public interface OnLocaleChanged {
+public interface OnLocationTranslated {
 
-    void onLocaleChanged(Location location);
+    void onLocationTranslated(Location location);
 }

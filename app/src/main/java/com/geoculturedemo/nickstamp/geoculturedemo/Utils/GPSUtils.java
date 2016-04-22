@@ -120,7 +120,7 @@ public class GPSUtils {
         alertDialog.setMessage(R.string.network_error_message);
 
         // Setting Icon to Dialog
-        alertDialog.setIcon(R.mipmap.ic_alert_grey600_24dp);
+        alertDialog.setIcon(R.mipmap.ic_alert);
 
         // On pressing Settings button
         alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {
@@ -154,7 +154,7 @@ public class GPSUtils {
         alertDialog.setMessage(R.string.gps_error_message);
 
         // Setting Icon to Dialog
-        alertDialog.setIcon(R.mipmap.ic_alert_grey600_24dp);
+        alertDialog.setIcon(R.mipmap.ic_alert);
 
         // On pressing Settings button
         alertDialog.setPositiveButton(R.string.text_settings, new DialogInterface.OnClickListener() {
@@ -173,17 +173,6 @@ public class GPSUtils {
 
         // Showing Alert Message
         alertDialog.show();
-    }
-
-    // consider returning Location instead of this dummy wrapper class
-    public static class GPSCoordinates {
-        public double longitude = -1;
-        public double latitude = -1;
-
-        public GPSCoordinates(double theLatitude, double theLongitude) {
-            longitude = theLongitude;
-            latitude = theLatitude;
-        }
     }
 
 }

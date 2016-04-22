@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocaleChanged;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocationTranslated;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocationFound;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
@@ -71,14 +71,14 @@ public class GeocodeWebService {
     }
 
 
-    public static void getLocalized(Context context, OnLocaleChanged onLocaleChanged, Location location, Locale locale) {
-        ReverseGeocode reverseGeocode = new ReverseGeocode(context, onLocaleChanged, locale);
+    public static void getLocalized(Context context, OnLocationTranslated onLocationTranslated, Location location, Locale locale) {
+        ReverseGeocode reverseGeocode = new ReverseGeocode(context, onLocationTranslated, locale);
         reverseGeocode.execute(location.getLatitude(), location.getLongitude());
     }
 
     public static class ReverseGeocode extends AsyncTask<Double, Void, Location> {
 
-        private OnLocaleChanged onLocaleChanged;
+        private OnLocationTranslated onLocationTranslated;
         private Context context;
         private OnLocationFound onLocationFound;
         private boolean isCurrentLocation;
@@ -87,15 +87,15 @@ public class GeocodeWebService {
         public ReverseGeocode(Context context, OnLocationFound onLocationFound, boolean isCurrentLocation, Locale locale) {
             this.context = context;
             this.onLocationFound = onLocationFound;
-            onLocaleChanged = null;
+            onLocationTranslated = null;
             this.isCurrentLocation = isCurrentLocation;
             this.locale = locale;
         }
 
-        public ReverseGeocode(Context context, OnLocaleChanged onLocaleChanged, Locale locale) {
+        public ReverseGeocode(Context context, OnLocationTranslated onLocationTranslated, Locale locale) {
             this.context = context;
             this.onLocationFound = null;
-            this.onLocaleChanged = onLocaleChanged;
+            this.onLocationTranslated = onLocationTranslated;
             this.isCurrentLocation = false;
             this.locale = locale;
         }
@@ -199,10 +199,10 @@ public class GeocodeWebService {
 
         @Override
         protected void onPostExecute(Location location) {
-            if (onLocaleChanged == null)
+            if (onLocationTranslated == null)
                 onLocationFound.onLocationFound(location, isCurrentLocation);
             else if (onLocationFound == null)
-                onLocaleChanged.onLocaleChanged(location);
+                onLocationTranslated.onLocationTranslated(location);
 
         }
     }

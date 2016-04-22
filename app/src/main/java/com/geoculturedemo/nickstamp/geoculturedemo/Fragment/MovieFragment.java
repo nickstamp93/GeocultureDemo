@@ -118,7 +118,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
 
             FontUtils.setFont(getContext(), fragmentView);
 
-            tvMovieTitle.setText(movie.getTitle() + "\n" + movie.getYear());
+            tvMovieTitle.setText(movie.getTitle() + " " + movie.getYear());
             tvMovieRating.setText(movie.getRating());
             tvMovieRuntime.setText(movie.getRuntime());
             tvMovieGenre.setText(movie.getGenre());
@@ -157,7 +157,7 @@ public class MovieFragment extends Fragment implements View.OnClickListener, OnM
                         .load(new File(movie.getImgUrl()))
                         .into(ivMovieImage);
 
-                tvMovieTitle.setText(movie.getTitle());
+                tvMovieTitle.setText(movie.getTitle() + " " + movie.getYear());
                 tvMovieWriter.setText(movie.getWriter());
                 tvMovieSynopsis.setText(movie.getSynopsis());
 

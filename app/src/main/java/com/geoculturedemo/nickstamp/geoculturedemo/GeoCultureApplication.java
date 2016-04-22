@@ -21,12 +21,6 @@ public class GeoCultureApplication extends Application {
 
         database = Database.getInstance(getApplicationContext());
 
-        /*File folder = new File(Environment.getExternalStorageDirectory() +
-                File.separator + "GeoCulture");
-        if (!folder.exists()) {
-            folder.mkdir();
-        }*/
-
     }
 
     public Database getDatabase() {

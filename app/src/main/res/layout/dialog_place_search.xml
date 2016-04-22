@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:src="@mipmap/ic_magnify_grey600_36dp" />
+        android:src="@mipmap/ic_search" />
 
     <EditText
         android:id="@+id/etSearch"

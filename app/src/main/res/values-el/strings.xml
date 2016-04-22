@@ -44,7 +44,7 @@
     <string name="pref_label_evaluate">Αξιολόγηση εφαρμογής</string>
     <string name="pref_label_general">Γενικά</string>
     <string name="pref_label_about">Σχετικά</string>
-    <string name="text_dialog_version_info">Alpha Version 0.3.1</string>
+    <string name="text_dialog_version_info">Έκδοση v0.3 - alpha</string>
     <string name="intro_title_location">Ανακάλυψη Περιεχομένου</string>
     <string name="intro_text_location">Ανακαλύψτε πολιτιστικό υλικό κοντά στην τοποθεσίας σας ή οπουδήποτε αλλού</string>
     <string name="intro_title_movies">Κινηματογράφος</string>
@@ -58,7 +58,6 @@
     <string name="toast_text_tutorial">Η παρουσίαση θα προβληθεί στην επόμενη εκκίνηση της εφαρμογής</string>
     <string name="pref_label_version">Πληροφορίες Έκδοσης</string>
     <string name="toast_location_permission">Η εφαρμογή ενδέχεται να μην λειτουργεί σωστά μέχρι αν δεν παρέχεται την άδεια χρήσης τοποθεσίας</string>
-    <string name="text_mins">mins</string>
     <string name="text_place_picker">Αναζήτηση Τοποθεσίας</string>
     <string name="text_search">Αναζήτηση για </string>
 </resources>
