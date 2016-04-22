@@ -1,10 +1,14 @@
 package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,11 +18,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.GPSUtilsCallback;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocationFound;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnPlaceSearchFound;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.AnimationUtils;
@@ -27,19 +35,17 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GPSUtils;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.GeocodeWebService;
 import com.geoculturedemo.nickstamp.geoculturedemo.Utils.HistoryUtils;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.PlaceSearchWebService;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlacePicker;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.LatLngBounds;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class HomeActivity extends AppCompatActivity implements View.OnClickListener, OnLocationFound, GPSUtils.LocationCallback {
+public class HomeActivity extends AppCompatActivity implements View.OnClickListener, OnLocationFound, GPSUtilsCallback, OnPlaceSearchFound {
 
     private LatLngBounds lastBounds = null;
 
@@ -49,17 +55,22 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             cardRecentPlaces, cardRecentSearches;
     LinearLayout llPlaces, llSearches;
     //Views
-    private Button bPickLocation, bExploreCustom, bExploreLocal, bRetry;
+    private View bPickLocation, bExploreCustom, bExploreLocal, bRetry;
     private TextView tvCurrentLocation, tvCustomLocation;
 
 
     //Location objects for current location and custom location
     private Location currentLocation, customLocation;
+    private boolean hasAnimations;
+
+    ProgressDialog progressDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        launchIntro();
 
         customLocation = null;
         currentLocation = null;
@@ -75,6 +86,47 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
         GPSUtils.searchCurrentLocation(this, this);
 
+    }
+
+    private void launchIntro() {
+        //  Declare a new thread to do a preference check
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //  Initialize SharedPreferences
+                SharedPreferences getPrefs = PreferenceManager
+                        .getDefaultSharedPreferences(getBaseContext());
+
+                //  Create a new boolean and preference and set it to true
+                boolean isFirstStart = getPrefs.getBoolean(getString(R.string.pref_key_show_tutorial), true);
+
+                //  If the activity has never started before...
+                if (isFirstStart) {
+
+                    //  Launch app intro
+                    Intent i = new Intent(HomeActivity.this, AppIntroActivity.class);
+                    startActivity(i);
+
+                    //  Make a new preferences editor
+                    SharedPreferences.Editor e = getPrefs.edit();
+
+                    //  Edit preference to make it false because we don't want this to run again
+                    e.putBoolean(getString(R.string.pref_key_show_tutorial), false);
+
+                    //  Apply changes
+                    e.apply();
+                }
+            }
+        });
+        // Start the thread
+        t.start();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hasAnimations = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_key_animations), true);
     }
 
     /**
@@ -257,8 +309,38 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.menu_item_favorites:
                 startActivity(new Intent(this, FavoritesActivity.class));
                 break;
+            case R.id.menu_item_settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                break;
         }
         return true;
+    }
+
+    private void launchPlacePickerDialog() {
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.dialog_place_search);
+        dialog.setTitle(getString(R.string.text_place_picker));
+
+        final EditText etQuery = (EditText) dialog.findViewById(R.id.etSearch);
+        ImageButton ibSearch = (ImageButton) dialog.findViewById(R.id.ibSearch);
+        ibSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!GPSUtils.isNetworkEnabled(HomeActivity.this))
+                    GPSUtils.showInternetErrorDialog(HomeActivity.this);
+                else {
+                    new PlaceSearchWebService(HomeActivity.this, HomeActivity.this).execute(etQuery.getText().toString());
+                    progressDialog = new ProgressDialog(HomeActivity.this);
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setMessage(getString(R.string.text_search) + " \"" + etQuery.getText().toString() + "\"");
+                    progressDialog.show();
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        dialog.show();
     }
 
     /**
@@ -280,12 +362,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
             startActivityForResult(intent, Constants.PLACE_PICKER_REQUEST);
 
         } catch (GooglePlayServicesRepairableException e) {
-            Toast.makeText(this, "Something went wrong with Google Play Services", Toast.LENGTH_LONG).show();
+            launchPlacePickerDialog();
             e.printStackTrace();
 
         } catch (GooglePlayServicesNotAvailableException e) {
-            Toast.makeText(this, "This app needs Google Play Services to run properly", Toast.LENGTH_LONG).show();
-
+            launchPlacePickerDialog();
             e.printStackTrace();
 
         }
@@ -308,6 +389,10 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onLocationFound(Location location, boolean isCurrentLocation) {
 
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
 
         if (location != null) {
 
@@ -318,7 +403,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 tvCurrentLocation.setText(currentLocation.getFullName());
 
-                AnimationUtils.switchCards(cardLocationFound, cardNoLocation);
+                AnimationUtils.switchCards(cardLocationFound, cardNoLocation, hasAnimations);
 
             } else {
                 boolean previous = false;
@@ -334,7 +419,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
                 tvCustomLocation.setText(customLocation.getFullName());
 
                 if (!previous)
-                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation);
+                    AnimationUtils.switchCards(cardPickLocation, cardButtonPickLocation, hasAnimations);
 
             }
 
@@ -342,14 +427,12 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             if (isCurrentLocation) {
 
-                Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(cardNoLocation, getString(R.string.snackbar_no_location), Snackbar.LENGTH_LONG).show();
 
                 llRetry.setVisibility(View.VISIBLE);
                 llSearchLocation.setVisibility(View.INVISIBLE);
             } else {
-                Toast.makeText(HomeActivity.this, getString(R.string.toast_service_unavailable), Toast.LENGTH_SHORT).show();
-                cardButtonPickLocation.setVisibility(View.VISIBLE);
-                cardPickLocation.setVisibility(View.GONE);
+                Snackbar.make(cardPickLocation, getString(R.string.text_no_location), Snackbar.LENGTH_LONG).show();
             }
         }
 
@@ -359,6 +442,8 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
+
+        Log.i("nikos", "on permission result");
         switch (requestCode) {
             case Constants.REQUEST_CODE_PERMISSION_LOCATION: {
                 // If request is cancelled, the result arrays are empty.
@@ -370,6 +455,7 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
 
                 } else {
 
+                    Toast.makeText(this, getString(R.string.toast_location_permission), Toast.LENGTH_LONG).show();
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     llRetry.setVisibility(View.VISIBLE);
@@ -382,11 +468,9 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onNewLocationAvailable(GPSUtils.GPSCoordinates location) {
-
+    public void OnCoordinates(double latitude, double longitude) {
         GeocodeWebService.ReverseGeocode reverseGeocode = new GeocodeWebService.ReverseGeocode(this, this, true, Locale.getDefault());
-        reverseGeocode.execute(location.latitude, location.longitude);
-
+        reverseGeocode.execute(latitude, longitude);
     }
 
     @Override
@@ -401,5 +485,11 @@ public class HomeActivity extends AppCompatActivity implements View.OnClickListe
         GPSUtils.showInternetErrorDialog(this);
         llRetry.setVisibility(View.VISIBLE);
         llSearchLocation.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onPlaceFound(double lat, double lng) {
+        GeocodeWebService.ReverseGeocode reverseGeocode = new GeocodeWebService.ReverseGeocode(this, this, false, Locale.getDefault());
+        reverseGeocode.execute(lat, lng);
     }
 }

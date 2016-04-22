@@ -13,7 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.MoviesAdapter;
-import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocaleChanged;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocationTranslated;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnMovieClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
@@ -30,10 +30,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class MovieListFragment extends Fragment implements OnLocaleChanged {
+public class MovieListFragment extends Fragment implements OnLocationTranslated {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
     private static final String SORT_BY_YEAR = "&sort=year,desc";
+    private static final String SORT_BY_POPULARITY = "&sort=moviemeter";
 
     private ArrayList<Movie> movies;
 
@@ -73,7 +74,7 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
         if (getArguments() != null) {
             location = (Location) getArguments().getSerializable(ARG_LOCATION);
             if (!isLocalized)
-                GeocodeWebService.getLocalized(getContext(),this, location, new Locale("en", "US"));
+                GeocodeWebService.getLocalized(getContext(), this, location, new Locale("en", "US"));
         }
     }
 
@@ -114,7 +115,7 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
     }
 
     @Override
-    public void onLocaleChanged(Location location) {
+    public void onLocationTranslated(Location location) {
         isLocalized = true;
         this.location = location;
         parseMovies();
@@ -201,9 +202,11 @@ public class MovieListFragment extends Fragment implements OnLocaleChanged {
                         Element elementTitle = row.getElementsByClass("title").get(0);
                         String title = elementTitle.getElementsByTag("a").get(0).text();
                         String year = elementTitle.getElementsByClass("year_type").text();
-                        String url = elementTitle.getElementsByTag("a").get(0).attr("href");
+                        String url = "http://www.imdb.com" + elementTitle.getElementsByTag("a").get(0).attr("href");
                         String genre = elementTitle.getElementsByClass("genre").text();
                         String runtime = elementTitle.getElementsByClass("runtime").text();
+                        if (runtime.length() > 0)
+                            runtime = runtime.substring(0, runtime.length() - 5) + "'";
                         String rating = elementTitle.getElementsByClass("rating-rating").text().split("/")[0];
                         String credit = elementTitle.getElementsByClass("credit").text();
 

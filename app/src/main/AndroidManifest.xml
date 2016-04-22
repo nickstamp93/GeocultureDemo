@@ -47,11 +47,25 @@
         <activity
             android:name=".Activity.FavoritesActivity"
             android:parentActivityName=".Activity.HomeActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppThemeWithActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.geoculturedemo.nickstamp.geoculturedemo.Activity.HomeActivity" />
         </activity>
+        <activity
+            android:name=".Activity.SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".Activity.HomeActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.geoculturedemo.nickstamp.geoculturedemo.Activity.HomeActivity" />
+        </activity>
+        <activity
+            android:name=".Activity.AppIntroActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

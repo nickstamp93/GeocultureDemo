@@ -3,6 +3,7 @@ package com.geoculturedemo.nickstamp.geoculturedemo.Activity;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Fragment.SongFragment;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
 public class FavoritesActivity extends AppCompatActivity implements OnMovieClicked, OnSongClicked, OnFavoriteDelete {
 
@@ -34,13 +36,14 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     private static final String TAG_SONG_DETAILS = "song_details";
 
 
-    private static final int transitionDuration = 800;
+    private static final int transitionDuration = 600;
 
     FragmentManager fragmentManager;
     FragmentTransaction fragmentTransaction;
     FavoriteListFragment favoriteListFragment;
     private Menu menu;
     private MovieFragment movieFragment;
+    private boolean hasAnimations;
 
 
     @Override
@@ -48,12 +51,18 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorites);
 
+        //set the font all over the activity
+        FontUtils.setFont(this, getWindow().getDecorView());
+
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
 
         favoriteListFragment = FavoriteListFragment.newInstance();
         favoriteListFragment.setOnMovieClickedListener(this);
         favoriteListFragment.setOnSongClickedListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            favoriteListFragment.setEnterTransition(new Fade().setDuration(transitionDuration));
+        }
 
         fragmentTransaction.add(R.id.container, favoriteListFragment, TAG_FAVORITE_LIST).commit();
 
@@ -77,29 +86,41 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        hasAnimations = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(getString(R.string.pref_key_animations), true);
+    }
 
     @Override
     public void onMovie(Movie movie, ImageView movieImage) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasAnimations) {
             movieImage.setTransitionName(movie.getTitle());
-        }
+        }*/
 
         movieFragment = MovieFragment.newInstance(movie, true);
         movieFragment.setOnFavoriteDelete(this);
 
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            movieFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(transitionDuration));
-            movieFragment.setEnterTransition(new Fade().setDuration(transitionDuration));
-            movieFragment.setExitTransition(new Fade().setDuration(transitionDuration));
-            movieFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(transitionDuration));
+        if (hasAnimations) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                movieImage.setTransitionName(movie.getTitle());
+                movieFragment.setSharedElementEnterTransition(new DetailsTransition().setDuration(transitionDuration));
+                movieFragment.setEnterTransition(new Fade().setDuration(transitionDuration));
+                movieFragment.setExitTransition(new Fade().setDuration(transitionDuration));
+                movieFragment.setSharedElementReturnTransition(new DetailsTransition().setDuration(transitionDuration));
+                transaction.addSharedElement(movieImage, movie.getTitle());
+            } else {
+                transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            }
         }
-        fragmentManager
-                .beginTransaction()
+
+        transaction
                 .replace(R.id.container, movieFragment, TAG_MOVIE_DETAILS)
                 .addToBackStack(null)
-                .addSharedElement(movieImage, movie.getTitle())
                 .commit();
 
     }
@@ -108,7 +129,17 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     public void onSong(Song song) {
         SongFragment songFragment = SongFragment.newInstance(song, true);
         songFragment.setOnFavoriteDelete(this);
-        fragmentManager.beginTransaction().replace(R.id.container, songFragment, TAG_SONG_DETAILS).addToBackStack(null).commit();
+
+        FragmentTransaction transaction = fragmentManager
+                .beginTransaction();
+
+        if (hasAnimations)
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+
+        transaction
+                .replace(R.id.container, songFragment, TAG_SONG_DETAILS)
+                .addToBackStack(null)
+                .commit();
 
     }
 
@@ -123,7 +154,7 @@ public class FavoritesActivity extends AppCompatActivity implements OnMovieClick
     public void onDelete(Movie movie) {
 
         //change the animation to be
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && hasAnimations) {
 
             Transition slide = new Slide().setDuration(transitionDuration);
 

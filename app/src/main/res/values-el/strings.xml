@@ -12,7 +12,7 @@
     <string name="text_last_searches">Τελευταίες Αναζητήσεις</string>
     <string name="text_lyrics_by">Στίχοι :\u0020</string>
     <string name="text_music">Μουσική :\u0020</string>
-    <string name="text_no_location">Η τρέχουσα τοποθεσία δεν βρέθηκε.</string>
+    <string name="text_no_location">Η τοποθεσία δεν είναι δυνατόν να βρεθεί</string>
     <string name="text_pick_location">ΕΠΙΛΟΓΗ ΤΟΠΟΘΕΣΙΑΣ</string>
     <string name="text_recent_places">Πρόσφατες Τοποθεσίες</string>
     <string name="text_results_for">αποτελέσματα για</string>
@@ -24,7 +24,7 @@
     <string name="text_your_location">Η τοποθεσία σας :</string>
     <string name="toast_service_unavailable">Η υπηρεσία είναι προσωρινά μη διαθέσιμη.</string>
     <string name="text_movies">ΚΙΝΗΜΑΤΟΓΡΑΦΟΣ</string>
-    <string name="text_songs">ΤΡΑΓΟΥΔΙΑ</string>
+    <string name="text_songs">MOYΣΙΚΗ</string>
     <string name="text_not_available">Μη Διαθέσιμο</string>
     <string name="text_new_pick">ΝΕΑ ΕΠΙΛΟΓΗ</string>
     <string name="text_no_internet">Δεν υπάρχει σύνδεση στο ίντερνετ</string>
@@ -37,4 +37,27 @@
     <string name="snackbar_saved">Αποθηκεύτηκε</string>
     <string name="snackbar_deleted_saved">Αφαιρέθηκε από τα Αποθηκευμένα</string>
     <string name="text_deleted">διαγράφηκε</string>
+    <string name="pref_label_animations">Animations</string>
+    <string name="title_activity_settings">Ρυθμίσεις</string>
+    <string name="text_enabled">Ενεργοποιημένα</string>
+    <string name="text_disabled">Απενεργοποιημένα</string>
+    <string name="pref_label_evaluate">Αξιολόγηση εφαρμογής</string>
+    <string name="pref_label_general">Γενικά</string>
+    <string name="pref_label_about">Σχετικά</string>
+    <string name="text_dialog_version_info">Έκδοση v0.3 - alpha</string>
+    <string name="intro_title_location">Ανακάλυψη Περιεχομένου</string>
+    <string name="intro_text_location">Ανακαλύψτε πολιτιστικό υλικό κοντά στην τοποθεσίας σας ή οπουδήποτε αλλού</string>
+    <string name="intro_title_movies">Κινηματογράφος</string>
+    <string name="intro_text_movies">Γνωρίστε όλες τις ταινίες που έχουν γυριστεί κοντά στην περιοχή σας</string>
+    <string name="intro_title_songs">Μουσική</string>
+    <string name="intro_text_songs">Βρείτε τραγούδια που αναφέρουν ή συνδέονται με την περιοχή σας</string>
+    <string name="intro_title_local_save">Αποθήκευση</string>
+    <string name="intro_text_local_save">Αποθηκεύστε το αγαπημένο σας περιεχόμενο για προβολή χωρίς σύνδεση</string>
+    <string name="pref_label_show_tutorial">Παρουσίαση Εφαμοργής</string>
+    <string name="pref_summary_tutorial">Η παρουσίαση κατά την εκκίνηση της εφαρμογής παίζεται ξανά</string>
+    <string name="toast_text_tutorial">Η παρουσίαση θα προβληθεί στην επόμενη εκκίνηση της εφαρμογής</string>
+    <string name="pref_label_version">Πληροφορίες Έκδοσης</string>
+    <string name="toast_location_permission">Η εφαρμογή ενδέχεται να μην λειτουργεί σωστά μέχρι αν δεν παρέχεται την άδεια χρήσης τοποθεσίας</string>
+    <string name="text_place_picker">Αναζήτηση Τοποθεσίας</string>
+    <string name="text_search">Αναζήτηση για </string>
 </resources>

@@ -21,6 +21,7 @@ import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Movie;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
 import com.geoculturedemo.nickstamp.geoculturedemo.R;
+import com.geoculturedemo.nickstamp.geoculturedemo.Utils.FontUtils;
 
 import java.util.HashMap;
 
@@ -55,6 +56,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         setUpTabs();
 
+        //set the font all over the activity
+        FontUtils.setFont(this, getWindow().getDecorView());
 
     }
 
@@ -92,8 +95,8 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
-        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_note);
-        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie);
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_music_icon_tab);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_movie_icon_tab);
     }
 
     private void setUpToolbar() {
@@ -115,7 +118,7 @@ public class TabsActivity extends AppCompatActivity implements OnMovieClicked, O
     }
 
     @Override
-    public void onMovie(Movie movie,ImageView movieImage) {
+    public void onMovie(Movie movie, ImageView movieImage) {
 
         //remove the movie list fragment and create a movie details fragment with the movie selected
         manager.beginTransaction().remove(components.get(currentMovieTag)).commit();

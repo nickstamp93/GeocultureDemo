@@ -236,19 +236,28 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
             } else {
 
                 //if artist is not
-                if(!artists[i].equals("Άγνωστος")){
+                if (!artists[i].equals("Άγνωστος")) {
                     tv.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
 
-                            Intent intent = new Intent(Intent.ACTION_SEARCH);
-                            intent.setPackage("com.google.android.youtube");
-
                             String s = currentArtist.substring(2, currentArtist.length());
 
-                            intent.putExtra("query", song.getTitle() + " " + s);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                            //if youtube is installed, launch youtube search
+                            if (isAppInstalled("com.google.android.youtube")) {
+
+                                Intent intent = new Intent(Intent.ACTION_SEARCH);
+                                intent.setPackage("com.google.android.youtube");
+
+                                intent.putExtra("query", song.getTitle() + " " + s);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            } else {
+                                Uri uri = Uri.parse("http://www.google.com/#q=" + song.getTitle() + " " + s);
+                                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                                startActivity(intent);
+                            }
+
 
                         }
                     });
@@ -260,6 +269,15 @@ public class SongFragment extends Fragment implements View.OnClickListener, OnSo
 
             tv.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             llArtists.addView(tv);
+        }
+    }
+
+    protected boolean isAppInstalled(String packageName) {
+        Intent mIntent = getContext().getPackageManager().getLaunchIntentForPackage(packageName);
+        if (mIntent != null) {
+            return true;
+        } else {
+            return false;
         }
     }
 

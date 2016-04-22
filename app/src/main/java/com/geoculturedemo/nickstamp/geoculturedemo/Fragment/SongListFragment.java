@@ -14,7 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.geoculturedemo.nickstamp.geoculturedemo.Adapter.SongsAdapter;
-import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocaleChanged;
+import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnLocationTranslated;
 import com.geoculturedemo.nickstamp.geoculturedemo.Callback.OnSongClicked;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Location;
 import com.geoculturedemo.nickstamp.geoculturedemo.Model.Song;
@@ -34,7 +34,7 @@ import java.util.Locale;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SongListFragment extends Fragment implements OnLocaleChanged {
+public class SongListFragment extends Fragment implements OnLocationTranslated {
 
     private static final String ARG_LOCATION = "ARG_LOCATION";
 
@@ -118,7 +118,7 @@ public class SongListFragment extends Fragment implements OnLocaleChanged {
     }
 
     @Override
-    public void onLocaleChanged(Location location) {
+    public void onLocationTranslated(Location location) {
 
         isLocalized = true;
         this.location = location;
